@@ -85,7 +85,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/success_circle" />
 
-            <com.dino.sample.utils.SweetAlert.SuccessTickView
+            <com.dino.ads.utils.SweetAlert.SuccessTickView
                 android:id="@+id/success_tick"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

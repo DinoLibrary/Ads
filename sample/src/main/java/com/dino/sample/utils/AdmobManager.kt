@@ -5,18 +5,20 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import com.dino.sample.AdmobUtils
-import com.dino.sample.AdNativeSize
-import com.dino.sample.utils.admod.InterHolderAdmob
-import com.dino.sample.utils.admod.NativeHolderAdmob
+import com.dino.ads.AdmobUtils
+import com.dino.ads.AdNativeSize
+import com.dino.ads.utils.admod.InterHolderAdmob
+import com.dino.ads.utils.admod.NativeHolderAdmob
 import com.dino.sample.R
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.nativead.NativeAd
 
 object AdmobManager {
-    var nativeHolder = NativeHolderAdmob("ca-app-pub-3940256099942544/2247696110")
-    var nativeHolderFull = NativeHolderAdmob("ca-app-pub-3940256099942544/7342230711")
+    var nativeHolder =
+        com.dino.ads.utils.admod.NativeHolderAdmob("ca-app-pub-3940256099942544/2247696110")
+    var nativeHolderFull =
+        com.dino.ads.utils.admod.NativeHolderAdmob("ca-app-pub-3940256099942544/7342230711")
     var interholder = InterHolderAdmob("ca-app-pub-3940256099942544/1033173712")
 
     fun loadInter(context: Context, interHolder: InterHolderAdmob) {
@@ -27,11 +29,11 @@ object AdmobManager {
                 override fun onInterLoaded(interstitialAd: InterstitialAd?, isLoading: Boolean) {
                     interholder.inter = interstitialAd
                     interHolder.check = isLoading
-                    Utils.getInstance().showMessenger(context, "onAdLoaded")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onAdLoaded")
                 }
 
                 override fun onInterFailed(error: String) {
-                    Utils.getInstance().showMessenger(context, "onAdFail")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onAdFail")
                 }
 
                 override fun onPaid(adValue: AdValue?, adUnitAds: String?) {
@@ -52,7 +54,7 @@ object AdmobManager {
             context as Activity, interHolder, 10000, object :
                 AdmobUtils.InterCallback {
                 override fun onInterLoaded() {
-                    Utils.getInstance().showMessenger(context, "onAdLoaded")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onAdLoaded")
                 }
 
                 override fun onStartAction() {
@@ -63,7 +65,7 @@ object AdmobManager {
                     interHolder.inter = null
                     loadInter(context, interHolder)
                     adListener.onFailed()
-                    Utils.getInstance().showMessenger(context, "onAdFail")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onAdFail")
                 }
 
                 override fun onPaid(adValue: AdValue?, adUnitAds: String?) {
@@ -74,17 +76,17 @@ object AdmobManager {
                     interHolder.inter = null
                     loadInter(context, interHolder)
 //                    adListener.onAdClosed()
-                    Utils.getInstance().showMessenger(context, "onEventClickAdClosed")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onEventClickAdClosed")
                 }
 
                 override fun onInterShowed() {
-                    Utils.getInstance().showMessenger(context, "onAdShowed")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(context, "onAdShowed")
                 }
             }, enableLoadingDialog
         )
     }
 
-    fun loadAdsNativeNew(context: Context, holder: NativeHolderAdmob) {
+    fun loadAdsNativeNew(context: Context, holder: com.dino.ads.utils.admod.NativeHolderAdmob) {
         AdmobUtils.loadNative(
             context,
             holder,
@@ -107,7 +109,7 @@ object AdmobManager {
             })
     }
 
-    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: NativeHolderAdmob) {
+    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: com.dino.ads.utils.admod.NativeHolderAdmob) {
         if (!AdmobUtils.isNetworkConnected(activity)) {
             viewGroup.visibility = View.GONE
             return
@@ -120,11 +122,11 @@ object AdmobManager {
             AdNativeSize.MEDIUM,
             object : AdmobUtils.NativeCallbackSimple {
                 override fun onNativeLoaded() {
-                    Utils.getInstance().showMessenger(activity, "onNativeShow")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(activity, "onNativeShow")
                 }
 
                 override fun onNativeFailed(error: String) {
-                    Utils.getInstance().showMessenger(activity, "onAdsFailed")
+                    com.dino.ads.utils.Utils.getInstance().showMessenger(activity, "onAdsFailed")
                 }
 
                 override fun onPaid(adValue: AdValue?, adUnitAds: String?) {
@@ -135,7 +137,7 @@ object AdmobManager {
 
     fun showAdsNativeFullScreen(
         activity: Activity,
-        nativeHolder: NativeHolderAdmob,
+        nativeHolder: com.dino.ads.utils.admod.NativeHolderAdmob,
         viewGroup: ViewGroup
     ) {
         AdmobUtils.showNativeFullScreen(activity, nativeHolder, viewGroup,

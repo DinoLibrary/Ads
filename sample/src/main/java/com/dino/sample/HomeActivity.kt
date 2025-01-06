@@ -13,15 +13,17 @@ import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
 import com.applovin.sdk.AppLovinSdkUtils
-import com.dino.sample.callback_applovin.BannerCallback
-import com.dino.sample.callback_applovin.NativeCallback
-import com.dino.sample.callback_applovin.RewardCallback
+import com.dino.ads.AdNativeSize
+import com.dino.ads.AdmobUtils
+import com.dino.ads.ApplovinUtils
+import com.dino.ads.callback_applovin.NativeCallback
+import com.dino.ads.callback_applovin.RewardCallback
+import com.dino.ads.utils.admod.RewardHolderAdmob
+import com.dino.ads.utils.admod.RewardedInterstitialHolderAdmob
+import com.dino.ads.utils.admod.remote.BannerPlugin
+import com.dino.sample.databinding.ActivityMainBinding
 import com.dino.sample.utils.AdmobManager
 import com.dino.sample.utils.ApplovinManager
-import com.dino.sample.utils.admod.RewardHolderAdmob
-import com.dino.sample.utils.admod.RewardedInterstitialHolderAdmob
-import com.dino.sample.utils.admod.remote.BannerPlugin
-import com.dino.sample.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.AdView
@@ -277,7 +279,7 @@ class HomeActivity : AppCompatActivity() {
 
         binding.bannerMax.setOnClickListener {
             ApplovinUtils.showBanner(this, binding.bannerContainer, "f443c90308f39f17", object :
-                BannerCallback {
+                com.dino.ads.callback_applovin.BannerCallback {
                 override fun onBannerLoadFail(error: String) {
                 }
 

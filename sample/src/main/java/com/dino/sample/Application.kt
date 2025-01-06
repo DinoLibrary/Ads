@@ -1,7 +1,7 @@
 package com.dino.sample
 
-import com.dino.sample.adjust.AdjustUtils
-import com.dino.sample.application.AdsApplication
+import com.dino.ads.adjust.AdjustUtils
+import com.dino.ads.application.AdsApplication
 
 class Application : AdsApplication() {
     override fun onCreateApplication() {
@@ -11,7 +11,7 @@ class Application : AdsApplication() {
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         if (level == TRIM_MEMORY_UI_HIDDEN){
-            AppOpenUtils.getInstance().timeToBackground = System.currentTimeMillis()
+            com.dino.ads.AppOpenUtils.getInstance().timeToBackground = System.currentTimeMillis()
         }
     }
 }
