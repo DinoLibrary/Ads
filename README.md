@@ -1,24 +1,21 @@
 <!-- GETTING STARTED -->
 
-//Add it in your root build.gradle at the end of repositories:
+// 1.Add to dependencyResolutionManagement:
   maven { url = uri("https://jitpack.io") }
   
-  implementation("com.github.DinoLibrary:Ads:1.0.0")
-// Init Admob, Applovin:
+// 2.Add to build.gradle(app):
+  implementation("com.github.DinoLibrary:Ads:1.0.2")
 
-  Init Admob:
-  AdmobUtils.initAdmob(this, 10000, isDebug = true, isEnableAds = true)
+// 3.Init Admob and/or Applovin:
+  AdmobUtils.initAdmob(this, 10000, isDebug = true, isEnableAds = true, check_test_ad = RemoteConfig.check_test_ad)
+  ApplovinUtil.initApplovin(application, "your-key",testAds = true, enableAds = true, initialization = object : ApplovinUtil.Initialization {})
 
-  ApplovinUtil.initApplovin(application, "your-key",testAds = true,enableAds = true, initialization = object : ApplovinUtil.Initialization{
-                    override fun onInitSuccessful() {
-                       //Start load Ads
-                    }
-                })
-//Init AppOnResume:
+// NOTE:
+    - Init On Resume:
+        AppOpenUtils.getInstance().init(application, "your-id")
+        AppOpenUtils.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
 
- AppOpenManager.getInstance().init(application, "your-id")
- AppOpenManager.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
-
-
+    - Show AOA on SplashActivity:
+        AOAUtils(activity, "your-id", timeOut = 20000, object: AOAManager.AppOpenAdsListener{}).loadAoA()
 
   

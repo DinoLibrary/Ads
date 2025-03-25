@@ -1,17 +1,78 @@
+import javax.xml.parsers.DocumentBuilderFactory
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("maven-publish")
 }
 
+        tasks.register("generateRemoteConfig") {
+            doLast {
+                val xmlPath = project.findProperty("remoteConfigPath") as? String
+                    ?: throw IllegalArgumentException("❌ RemoteConfig XML path not provided by the project!")
+
+                val outputDirPath = "src/main/java/com/example/admob/generated"
+                val packageName = "com.example.admob.generated"
+
+                val xmlFile = File(xmlPath)
+                if (!xmlFile.exists()) {
+                    throw IllegalArgumentException("❌ Missing remote_config_defaults.xml at $xmlFile")
+                }
+
+                val outputDir = file(outputDirPath)
+                val outputFile = File(outputDir, "RemoteConfig.kt")
+
+                val document = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder()
+                    .parse(xmlFile)
+
+                val entries = document.getElementsByTagName("entry")
+
+                val content = buildString {
+                    append("package $packageName\n\n")
+                    append("object RemoteConfig {\n")
+
+                    for (i in 0 until entries.length) {
+                        val node = entries.item(i)
+                        val keyNode = node.childNodes?.let {
+                            (0 until it.length).map { index -> it.item(index) }
+                                .find { it.nodeName == "key" }
+                        }
+                        val valueNode = node.childNodes?.let {
+                            (0 until it.length).map { index -> it.item(index) }
+                                .find { it.nodeName == "value" }
+                        }
+
+                        if (keyNode == null || valueNode == null) {
+                            throw IllegalArgumentException("❌ Invalid entry in remote_config_defaults.xml. Each entry must have both <key> and <value> tags.")
+                        }
+
+                        val key = keyNode.textContent.trim().replace("-", "_")
+                        val defaultValue = valueNode.textContent.trim()
+                        append("    const val $key: String = \"$defaultValue\"\n")
+                    }
+
+                    append("}\n")
+                }
+
+                outputDir.mkdirs()
+                outputFile.writeText(content)
+
+                println("✅ RemoteConfig.kt generated at: $outputFile")
+            }
+        }
+
+// Ensure the task runs before compilation
+tasks.named("preBuild").configure {
+    dependsOn("generateRemoteConfig")
+}
+
 android {
     namespace = "com.dino.ads"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 26
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -76,4 +137,7 @@ dependencies {
     implementation("com.android.installreferrer:installreferrer:2.2")
     implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
     implementation("com.adjust.sdk:adjust-android-webbridge:5.0.0")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
+    implementation(libs.firebase.config.ktx)
 }

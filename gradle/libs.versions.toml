@@ -1,24 +1,57 @@
 [versions]
+adjustAndroid = "5.1.0"
 agp = "8.4.0"
-kotlin = "1.9.0"
+appcompatVersion = "1.5.0"
+applovin = "13.1.0.1"
+applovinSdk = "13.1.0"
+gson = "2.11.0"
+installreferrer = "2.2"
+kotlin = "2.1.0"
 coreKtx = "1.13.1"
 junit = "4.14-SNAPSHOT"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
+lifecycleRuntimeKtx = "2.8.7"
+lottie = "6.6.0"
 material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
+materialishProgress = "1.7"
+playServicesAds = "24.1.0"
+playServicesAdsIdentifier = "18.2.0"
+sdpAndroid = "1.1.1"
+shimmer = "0.5.0"
+userMessagingPlatform = "3.2.0"
+firebaseConfigKtx = "22.1.0"
 
 [libraries]
+adjust-android = { module = "com.adjust.sdk:adjust-android", version.ref = "adjustAndroid" }
+adjust-android-webbridge = { module = "com.adjust.sdk:adjust-android-webbridge", version.ref = "adjustAndroid" }
+androidx-appcompat-v150 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+applovin = { module = "com.google.ads.mediation:applovin", version.ref = "applovin" }
+applovin-sdk = { module = "com.applovin:applovin-sdk", version.ref = "applovinSdk" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+installreferrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installreferrer" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+materialish-progress = { module = "com.pnikosis:materialish-progress", version.ref = "materialishProgress" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
+play-services-ads-identifier = { module = "com.google.android.gms:play-services-ads-identifier", version.ref = "playServicesAdsIdentifier" }
+sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+user-messaging-platform = { module = "com.google.android.ump:user-messaging-platform", version.ref = "userMessagingPlatform" }
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx", version.ref = "firebaseConfigKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
