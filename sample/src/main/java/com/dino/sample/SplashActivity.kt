@@ -10,6 +10,7 @@ import com.dino.ads.AdmobUtils
 import com.dino.ads.AppOpenUtils
 import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.NativeCallback
+import com.dino.ads.remote_config.RemoteConfigUtils
 import com.dino.ads.utils.Utils
 import com.dino.sample.databinding.ActivitySplashBinding
 import com.dino.sample.utils.ApplovinManager
@@ -34,7 +35,9 @@ class SplashActivity : AppCompatActivity() {
         AppOpenUtils.getInstance().init(application, getString(com.dino.ads.R.string.test_ads_admob_app_open_new))
         AppOpenUtils.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
 
-        test()
+//        RemoteConfigUtils.init(R.xml.remote_config_defaults, RemoteConfig.configMap) {
+//            RemoteConfig.updateAll(it)
+//        }
 
         if (ApplovinUtils.isNetworkConnected(this)) {
             ApplovinUtils.initApplovin(
@@ -79,11 +82,4 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun test() {
-//        RemoteConfig
-//        RemoteConfig.ads_splash
-//        RemoteConfigUtils.init(this, R.xml.remote_config_defaults) {
-//            Toast.makeText(this, "Remote Config init success", Toast.LENGTH_SHORT).show()
-//        }
-    }
 }

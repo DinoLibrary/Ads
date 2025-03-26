@@ -1,32 +1,18 @@
+import javax.xml.parsers.DocumentBuilderFactory
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
-// Inside app/build.gradle.kts
-tasks.register("generateRemoteConfig") {
-    doLast {
-        val remoteConfigFile = file("src/main/res/xml/remote_config_defaults.xml")
-        if (!remoteConfigFile.exists()) {
-            throw IllegalArgumentException("❌ remote_config_defaults.xml is missing at ${remoteConfigFile.absolutePath}")
-        }
-
-        // Pass the XML file path to the library
-        project.extensions.extraProperties["remoteConfigPath"] = remoteConfigFile.absolutePath
-    }
-}
-
-// Ensure this task runs before preBuild
-tasks.named("preBuild").configure {
-    dependsOn("generateRemoteConfig")
-}
+val packageName = "com.dino.sample"
 
 android {
-    namespace = "com.dino.sample"
+    namespace = packageName
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.dino.sample"
+        applicationId = packageName
         minSdk = 27
         targetSdk = 35
         versionCode = 1
@@ -37,8 +23,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -50,8 +35,9 @@ android {
         jvmTarget = "1.8"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -67,3 +53,46 @@ dependencies {
     implementation(libs.applovin)
     implementation(libs.play.services.ads)
 }
+
+//* Task to generate RemoteConfig.kt
+val generateRemoteConfig = tasks.register("generateRemoteConfig") {
+    val xmlFile = file("src/main/res/xml/remote_config_defaults.xml")
+    val outputDir = file("build/generated/source/remoteConfig/")
+    val outputFile = File(outputDir, "RemoteConfig.kt")
+    doLast {
+        if (!xmlFile.exists()) throw GradleException("❌ RemoteConfig XML not found!")
+        outputDir.mkdirs()
+        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile)
+        val entries = doc.getElementsByTagName("entry")
+        val configVars = mutableListOf<String>()
+        val delegatedVars = mutableListOf<String>()
+
+        for (i in 0 until entries.length) {
+            val entry = entries.item(i)
+            val key = entry.childNodes.item(1).textContent
+            val value = entry.childNodes.item(3).textContent
+            configVars.add("        \"$key\" to \"$value\"")
+            delegatedVars.add("    var $key: String by configMap")
+        }
+
+        val remoteConfigCode = StringBuilder()
+            .append("package $packageName\n\n")
+            .append("object RemoteConfig {\n")
+            .append("    val configMap: MutableMap<String, String> = mutableMapOf(\n")
+            .append(configVars.joinToString(",\n"))
+            .append("\n    )\n\n")
+            .append(delegatedVars.joinToString("\n"))
+            .append("\n\n    fun updateAll(newConfig: Map<String, String>) {\n")
+            .append("        configMap.putAll(newConfig)\n")
+            .append("    }\n")
+            .append("}\n")
+            .toString()
+        outputFile.writeText(remoteConfigCode)
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(generateRemoteConfig)
+}
+
+android.sourceSets.getByName("main").kotlin.srcDir("build/generated/source/remoteConfig/")

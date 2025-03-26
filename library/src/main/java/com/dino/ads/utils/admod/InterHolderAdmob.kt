@@ -7,4 +7,5 @@ class InterHolderAdmob(var ads: String) {
     var inter: InterstitialAd? = null
     val mutable: MutableLiveData<InterstitialAd> = MutableLiveData()
     var check = false
+    var remoteValue: String = ""
 }

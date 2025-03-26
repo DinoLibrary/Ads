@@ -15,17 +15,17 @@ import com.dino.ads.AdNativeSize
 import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.InterstitialCallback
 import com.dino.ads.callback_applovin.NativeCallback
-import com.dino.ads.utils.InterHolder
+import com.dino.ads.utils.InterHolderApplovin
 
 
 object ApplovinManager {
-    var interHolder = InterHolder("134656413e36e374")
-    var nativeHolder = com.dino.ads.utils.NativeHolder("0f688c4e22b9688b")
+    var interHolder = InterHolderApplovin("134656413e36e374")
+    var nativeHolder = com.dino.ads.utils.NativeHolderApplovin("0f688c4e22b9688b")
     var banner = "f443c90308f39f17"
 
     fun showAdsNative(
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.NativeHolder,
+        nativeHolder: com.dino.ads.utils.NativeHolderApplovin,
         viewGroup: ViewGroup
     ) {
         ApplovinUtils.loadAndShowNative(activity, nativeHolder, viewGroup,
@@ -71,7 +71,7 @@ object ApplovinManager {
         })
     }
 
-    fun showInter(context: AppCompatActivity, interHolder: InterHolder, adsOnClick: AdsOnClick) {
+    fun showInter(context: AppCompatActivity, interHolder: InterHolderApplovin, adsOnClick: AdsOnClick) {
         ApplovinUtils.showInterstitial(context, 800, interHolder, object :
             com.dino.ads.callback_applovin.InterstitialCallbackNew {
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
@@ -110,7 +110,7 @@ object ApplovinManager {
     var isLoad = false
     var native_mutable: MutableLiveData<MaxAd> = MutableLiveData()
 
-    fun loadAndShowIntersial(activity: Activity, idAd: InterHolder, adsOnClick: AdsOnClick) {
+    fun loadAndShowIntersial(activity: Activity, idAd: InterHolderApplovin, adsOnClick: AdsOnClick) {
         ApplovinUtils.loadAndShowInterstitial(activity as AppCompatActivity, idAd, object :
             InterstitialCallback {
             override fun onInterstitialReady() {

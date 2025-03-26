@@ -39,15 +39,14 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
-import com.dino.ads.R
 import com.dino.ads.adjust.AdjustUtils
 import com.dino.ads.callback_applovin.BannerCallback
 import com.dino.ads.callback_applovin.InterstitialCallback
 import com.dino.ads.callback_applovin.InterstitialCallbackNew
 import com.dino.ads.callback_applovin.NativeCallback
 import com.dino.ads.callback_applovin.RewardCallback
-import com.dino.ads.utils.InterHolder
-import com.dino.ads.utils.NativeHolder
+import com.dino.ads.utils.InterHolderApplovin
+import com.dino.ads.utils.NativeHolderApplovin
 import com.dino.ads.utils.SweetAlert.SweetAlertDialog
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -193,12 +192,12 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
 
-        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-            if (!com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (AppOpenUtils.getInstance().isInitialized) {
+            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
@@ -208,8 +207,8 @@ object ApplovinUtils : LifecycleObserver {
         }
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds) {
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (AppOpenUtils.getInstance().isInitialized) {
+                AppOpenUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onInterstitialLoadFail("\"isNetworkConnected\"")
             return
@@ -228,8 +227,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdDisplayed(p0: MaxAd) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
                 callback.onInterstitialShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -237,8 +236,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdHidden(p0: MaxAd) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialClosed()
                 isInterstitialAdShowing = false
@@ -250,15 +249,15 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail(p1.toString())
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail(p1.toString())
             }
@@ -268,9 +267,9 @@ object ApplovinUtils : LifecycleObserver {
         if (interstitialAd.isReady) {
             activity.lifecycleScope.launch {
                 if (dialogShowTime > 0) {
-                    val dialog = com.dino.ads.utils.SweetAlert.SweetAlertDialog(
+                    val dialog = SweetAlertDialog(
                         activity,
-                        com.dino.ads.utils.SweetAlert.SweetAlertDialog.PROGRESS_TYPE
+                        SweetAlertDialog.PROGRESS_TYPE
                     )
                     dialog.progressHelper.barColor = Color.parseColor("#A5DC86")
                     dialog.titleText = "Loading ads. Please wait..."
@@ -291,8 +290,8 @@ object ApplovinUtils : LifecycleObserver {
             }
         } else {
             activity.lifecycleScope.launch(Dispatchers.Main) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail("error")
                 isInterstitialAdShowing = false
@@ -303,8 +302,8 @@ object ApplovinUtils : LifecycleObserver {
 
     fun loadInterstitial(
         context: Context,
-        interHolder: InterHolder,
-        callback: com.dino.ads.callback_applovin.InterstitialCallbackNew
+        interHolder: InterHolderApplovin,
+        callback: InterstitialCallbackNew
     ) {
         if (interHolder.inter != null) {
             Log.d("===AdsInter", "Inter not null")
@@ -363,8 +362,8 @@ object ApplovinUtils : LifecycleObserver {
     @MainThread
     fun showInterstitial(
         activity: AppCompatActivity,
-        dialogShowTime: Long, interHolder: InterHolder,
-        callback: com.dino.ads.callback_applovin.InterstitialCallbackNew
+        dialogShowTime: Long, interHolder: InterHolderApplovin,
+        callback: InterstitialCallbackNew
     ) {
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onInterstitialLoadFail("null")
@@ -374,19 +373,19 @@ object ApplovinUtils : LifecycleObserver {
             callback.onInterstitialLoadFail("SDK not Initialized")
             return
         }
-        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-            if (!com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (AppOpenUtils.getInstance().isInitialized) {
+            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
 
         if (!enableAds) {
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (AppOpenUtils.getInstance().isInitialized) {
+                AppOpenUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onInterstitialLoadFail("\"isNetworkConnected\"")
             return
@@ -415,8 +414,8 @@ object ApplovinUtils : LifecycleObserver {
 
                             override fun onAdDisplayed(p0: MaxAd) {
                                 dismissLoadingDialog()
-                                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                                if (AppOpenUtils.getInstance().isInitialized) {
+                                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                                 }
                                 callback.onInterstitialShowSucceed()
                                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -424,8 +423,8 @@ object ApplovinUtils : LifecycleObserver {
                             }
 
                             override fun onAdHidden(p0: MaxAd) {
-                                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (AppOpenUtils.getInstance().isInitialized) {
+                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 interHolder.inter = null
                                 callback.onInterstitialClosed()
@@ -439,8 +438,8 @@ object ApplovinUtils : LifecycleObserver {
                             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                 dismissLoadingDialog()
                                 isLoadInterstitialFailed = true
-                                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (AppOpenUtils.getInstance().isInitialized) {
+                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 interHolder.inter = null
                                 callback.onInterstitialLoadFail(
@@ -449,8 +448,8 @@ object ApplovinUtils : LifecycleObserver {
                             }
 
                             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (AppOpenUtils.getInstance().isInitialized) {
+                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 callback.onInterstitialLoadFail(
                                     p1.code.toString().replace("-", "")
@@ -465,8 +464,8 @@ object ApplovinUtils : LifecycleObserver {
                 }
             } else {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
-                    if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                        com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                    if (AppOpenUtils.getInstance().isInitialized) {
+                        AppOpenUtils.getInstance().isAppResumeEnabled = true
                     }
                     callback.onInterstitialLoadFail("interHolder.inter not ready")
                     isInterstitialAdShowing = false
@@ -500,8 +499,8 @@ object ApplovinUtils : LifecycleObserver {
 
                                     override fun onAdHidden(p0: MaxAd) {
                                         dismissLoadingDialog()
-                                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (AppOpenUtils.getInstance().isInitialized) {
+                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         interHolder.inter = null
                                         callback.onInterstitialClosed()
@@ -514,8 +513,8 @@ object ApplovinUtils : LifecycleObserver {
 
                                     override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                         isLoadInterstitialFailed = true
-                                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (AppOpenUtils.getInstance().isInitialized) {
+                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         interHolder.inter = null
                                         callback.onInterstitialLoadFail(
@@ -524,8 +523,8 @@ object ApplovinUtils : LifecycleObserver {
                                     }
 
                                     override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (AppOpenUtils.getInstance().isInitialized) {
+                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         callback.onInterstitialLoadFail(
                                             p1.code.toString().replace("-", "")
@@ -541,8 +540,8 @@ object ApplovinUtils : LifecycleObserver {
                         } else {
                             activity.lifecycleScope.launch(Dispatchers.Main) {
                                 interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (AppOpenUtils.getInstance().isInitialized) {
+                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 callback.onInterstitialLoadFail("inter not ready")
                                 isInterstitialAdShowing = false
@@ -553,8 +552,8 @@ object ApplovinUtils : LifecycleObserver {
                         activity.lifecycleScope.launch(Dispatchers.Main) {
                             dismissLoadingDialog()
                             interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                            if (AppOpenUtils.getInstance().isInitialized) {
+                                AppOpenUtils.getInstance().isAppResumeEnabled = true
                             }
                             callback.onInterstitialLoadFail("inter null")
                             isInterstitialAdShowing = false
@@ -584,7 +583,7 @@ object ApplovinUtils : LifecycleObserver {
     @MainThread
     fun loadAndShowInterstitial(
         activity: AppCompatActivity,
-        interHolder: InterHolder,
+        interHolder: InterHolderApplovin,
         callback: InterstitialCallback
     ) {
 
@@ -601,32 +600,32 @@ object ApplovinUtils : LifecycleObserver {
         interstitialAd = MaxInterstitialAd(interHolder.adsId, activity)
         interstitialAd.loadAd()
 
-        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-            if (!com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (AppOpenUtils.getInstance().isInitialized) {
+            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
 
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds || !isNetworkConnected(activity)) {
-            Log.e("isNetworkConnected", "1" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "1" + AppOpenUtils.getInstance().isAppResumeEnabled)
             dismissLoadingDialog()
-            Log.e("isNetworkConnected", "2" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "2" + AppOpenUtils.getInstance().isAppResumeEnabled)
 
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
-                Log.e("isNetworkConnected", "3" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+            if (AppOpenUtils.getInstance().isInitialized) {
+                AppOpenUtils.getInstance().isAppResumeEnabled = true
+                Log.e("isNetworkConnected", "3" + AppOpenUtils.getInstance().isAppResumeEnabled)
 
-                Log.e("isAppResumeEnabled", "3" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+                Log.e("isAppResumeEnabled", "3" + AppOpenUtils.getInstance().isAppResumeEnabled)
             }
-            Log.e("isNetworkConnected", "4" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "4" + AppOpenUtils.getInstance().isAppResumeEnabled)
 
             isInterstitialAdShowing = false
-            Log.e("isNetworkConnected", "5" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "5" + AppOpenUtils.getInstance().isAppResumeEnabled)
 
             callback.onInterstitialLoadFail("isNetworkConnected")
             return
@@ -643,11 +642,11 @@ object ApplovinUtils : LifecycleObserver {
                         interstitialAd.showAd()
                     } else {
                         isLoadInterstitialFailed = true
-                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                        if (AppOpenUtils.getInstance().isInitialized) {
+                            AppOpenUtils.getInstance().isAppResumeEnabled = true
                             Log.e(
                                 "isAppResumeEnabled",
-                                "4" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled
+                                "4" + AppOpenUtils.getInstance().isAppResumeEnabled
                             )
 
                         }
@@ -660,11 +659,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdDisplayed(p0: MaxAd) {
                 dismissLoadingDialog()
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                     Log.e(
                         "isAppResumeEnabled",
-                        "6" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled
+                        "6" + AppOpenUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -675,11 +674,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdHidden(p0: MaxAd) {
                 dismissLoadingDialog()
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "5" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled
+                        "5" + AppOpenUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -694,11 +693,11 @@ object ApplovinUtils : LifecycleObserver {
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 dismissLoadingDialog()
                 isLoadInterstitialFailed = true
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "4" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled
+                        "4" + AppOpenUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -708,11 +707,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 dismissLoadingDialog()
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "7" + com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled
+                        "7" + AppOpenUtils.getInstance().isAppResumeEnabled
                     )
                 }
                 isInterstitialAdShowing = false
@@ -723,7 +722,7 @@ object ApplovinUtils : LifecycleObserver {
 
     fun showBanner(
         activity: AppCompatActivity, bannerContainer: ViewGroup, adId: String,
-        callback: com.dino.ads.callback_applovin.BannerCallback
+        callback: BannerCallback
     ) {
 
         if (!enableAds || !isNetworkConnected(activity)) {
@@ -832,12 +831,12 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
 
-        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-            if (!com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (AppOpenUtils.getInstance().isInitialized) {
+            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
@@ -847,8 +846,8 @@ object ApplovinUtils : LifecycleObserver {
         }
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds) {
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (AppOpenUtils.getInstance().isInitialized) {
+                AppOpenUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onRewardLoadFail("\"isNetworkConnected\"")
             return
@@ -867,8 +866,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdDisplayed(p0: MaxAd) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = false
                 }
                 callback.onRewardShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -876,8 +875,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdHidden(p0: MaxAd) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
                 isInterstitialAdShowing = false
@@ -889,15 +888,15 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardLoadFail(p1.toString())
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
             }
@@ -912,9 +911,9 @@ object ApplovinUtils : LifecycleObserver {
         if (rewardAd.isReady) {
             activity.lifecycleScope.launch {
                 if (dialogShowTime > 0) {
-                    var dialog = com.dino.ads.utils.SweetAlert.SweetAlertDialog(
+                    var dialog = SweetAlertDialog(
                         activity,
-                        com.dino.ads.utils.SweetAlert.SweetAlertDialog.PROGRESS_TYPE
+                        SweetAlertDialog.PROGRESS_TYPE
                     )
                     dialog.progressHelper.barColor = Color.parseColor("#A5DC86")
                     dialog.titleText = "Loading ads. Please wait..."
@@ -935,8 +934,8 @@ object ApplovinUtils : LifecycleObserver {
             }
         } else {
             activity.lifecycleScope.launch(Dispatchers.Main) {
-                if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                    com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (AppOpenUtils.getInstance().isInitialized) {
+                    AppOpenUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
                 isInterstitialAdShowing = false
@@ -1123,7 +1122,7 @@ object ApplovinUtils : LifecycleObserver {
 
     fun loadAndShowNativeWithLayout(
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.NativeHolder,
+        nativeHolder: NativeHolderApplovin,
         layout: Int,
         view: ViewGroup,
         size: AdNativeSize,
@@ -1197,7 +1196,7 @@ object ApplovinUtils : LifecycleObserver {
 
     fun loadAndShowNative(
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.NativeHolder,
+        nativeHolder: NativeHolderApplovin,
         view: ViewGroup,
         size: AdNativeSize,
         adCallback: NativeCallback
@@ -1269,7 +1268,7 @@ object ApplovinUtils : LifecycleObserver {
 
     fun loadNative(
         context: Context,
-        nativeHolder: com.dino.ads.utils.NativeHolder,
+        nativeHolder: NativeHolderApplovin,
         adCallback: NativeCallback
     ) {
         if (!enableAds || !isNetworkConnected(context)) {
@@ -1323,7 +1322,7 @@ object ApplovinUtils : LifecycleObserver {
     fun showNative(
         view: ViewGroup,
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.NativeHolder,
+        nativeHolder: NativeHolderApplovin,
         layout: Int,
         size: AdNativeSize,
         callback: NativeCallback

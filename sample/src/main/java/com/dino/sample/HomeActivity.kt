@@ -19,7 +19,7 @@ import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.NativeCallback
 import com.dino.ads.callback_applovin.RewardCallback
 import com.dino.ads.utils.admod.RewardHolderAdmob
-import com.dino.ads.utils.admod.RewardedInterstitialHolderAdmob
+import com.dino.ads.utils.admod.RewardedInterHolderAdmob
 import com.dino.ads.utils.admod.remote.BannerPlugin
 import com.dino.sample.databinding.ActivityMainBinding
 import com.dino.sample.utils.AdmobManager
@@ -34,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
     val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader: MaxNativeAdLoader
-    var rewardInterHolder = RewardedInterstitialHolderAdmob("")
+    var rewardInterHolder = RewardedInterHolderAdmob("")
     var rewardHolder = RewardHolderAdmob("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
