@@ -13,7 +13,6 @@ import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_
 import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_TOP
 import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_STANDARD
 import com.google.gson.annotations.SerializedName
-import com.vapp.admoblibrary.ads.remote.BannerRemoteConfig
 
 @SuppressLint("ViewConstructor")
 class BannerPlugin(
@@ -76,7 +75,7 @@ class BannerPlugin(
         this.defaultBannerType = BannerType.Adaptive
         this.defaultRefreshRateSec = 10
         this.defaultCBFetchIntervalSec = 20
-        this.loadAdAfterInit = AdmobUtils.isShowAds
+        this.loadAdAfterInit = AdmobUtils.isEnableAds
     }
 
     init {
@@ -87,7 +86,7 @@ class BannerPlugin(
     }
 
     private fun initViewAndConfig() {
-        val tagView = activity.layoutInflater.inflate(R.layout.layoutbanner_loading, null, false)
+        val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
         adContainer.addView(tagView, 0)
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout?.startShimmer()
@@ -97,7 +96,7 @@ class BannerPlugin(
         var refreshRateSec: Int? = config.defaultRefreshRateSec
 
         if (AdmobUtils.isTesting) {
-            adUnitId = activity.getString(R.string.test_ads_admob_banner_collapsible_id)
+            adUnitId = activity.getString(R.string.test_admob_banner_collap_id)
         }
         bannerType = when (bannerConfig?.type) {
             TYPE_STANDARD -> BannerType.Standard

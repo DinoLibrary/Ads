@@ -14,7 +14,6 @@ import androidx.core.view.updateLayoutParams
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
 import com.dino.ads.utils.admod.remote.BannerPlugin.Companion.log
-import com.vapp.admoblibrary.ads.remote.BannerRemoteConfig
 
 @SuppressLint("ViewConstructor")
 internal class BannerAdView(

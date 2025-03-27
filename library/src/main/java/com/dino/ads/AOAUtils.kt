@@ -12,7 +12,6 @@ import android.view.Window
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
-import com.dino.ads.R
 import com.dino.ads.adjust.AdjustUtils
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -47,9 +46,9 @@ class AOAUtils(
         Log.d("===Load", "id1")
         var idAoa = appOpen
         if (AdmobUtils.isTesting) {
-            idAoa = activity.getString(R.string.test_ads_admob_app_open_new)
+            idAoa = activity.getString(R.string.test_admob_on_resume_id)
         }
-        if (!AdmobUtils.isShowAds) {
+        if (!AdmobUtils.isEnableAds) {
             appOpenAdsListener.onAdsFailed("isShowAds false")
             return
         }

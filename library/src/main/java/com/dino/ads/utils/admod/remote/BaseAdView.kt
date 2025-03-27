@@ -7,7 +7,6 @@ import android.os.Looper
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import com.dino.ads.utils.admod.remote.BannerPlugin.Companion.log
-import com.vapp.admoblibrary.ads.remote.BannerRemoteConfig
 import kotlin.math.max
 
 internal abstract class BaseAdView(

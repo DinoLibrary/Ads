@@ -17,7 +17,6 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.dino.ads.R;
 import com.google.android.gms.ads.AdActivity;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -30,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, LifecycleObserver  {
-    private static final String TAG = "AppOpenManager";
+    private static final String TAG = "AppOpenUtils";
     private static volatile AppOpenUtils INSTANCE;
     private AppOpenAd appResumeAd = null;
     private AppOpenAd splashAd = null;
@@ -89,7 +88,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
         this.myApplication = application;
         initAdRequest();
         if (AdmobUtils.isTesting) {
-            this.appResumeAdId = application.getString(R.string.test_ads_admob_app_open_new);
+            this.appResumeAdId = application.getString(R.string.test_admob_on_resume_id);
 
         } else {
             this.appResumeAdId = appOpenAdId;
@@ -382,7 +381,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                 if(AdmobUtils.isAdShowing){
                     return;
                 }
-                if (!AdmobUtils.isShowAds) {
+                if (!AdmobUtils.isEnableAds) {
                     return;
                 }
 

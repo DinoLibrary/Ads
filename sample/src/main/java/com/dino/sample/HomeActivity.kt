@@ -18,9 +18,9 @@ import com.dino.ads.AdmobUtils
 import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.NativeCallback
 import com.dino.ads.callback_applovin.RewardCallback
-import com.dino.ads.utils.admod.RewardHolderAdmob
-import com.dino.ads.utils.admod.RewardedInterHolderAdmob
-import com.dino.ads.utils.admod.remote.BannerPlugin
+import com.dino.ads.utils.admod.BannerAdmob
+import com.dino.ads.utils.admod.RewardAdmob
+import com.dino.ads.utils.admod.RewardInterAdmob
 import com.dino.sample.databinding.ActivityMainBinding
 import com.dino.sample.utils.AdmobManager
 import com.dino.sample.utils.ApplovinManager
@@ -34,8 +34,8 @@ class HomeActivity : AppCompatActivity() {
     val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     lateinit var bannerContainer: ViewGroup
     lateinit var nativeLoader: MaxNativeAdLoader
-    var rewardInterHolder = RewardedInterHolderAdmob("")
-    var rewardHolder = RewardHolderAdmob("")
+    var rewardInterHolder = RewardInterAdmob("")
+    var rewardHolder = RewardAdmob("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setFlags(
@@ -244,37 +244,22 @@ class HomeActivity : AppCompatActivity() {
                     }
                 })
         }
-        binding.loadBanner.setOnClickListener {
-//            AdmobUtils.loadAdBanner(this,"",binding.bannerContainer,object : AdmobUtils.BannerCallBack{
-//                override fun onClickAds() {
-//
-//                }
-//
-//                override fun onLoad() {
-//                }
-//
-//                override fun onFailed(message: String) {
-//                }
-//
-//                override fun onPaid(adValue: AdValue?, mAdView: AdView?) {
-//                }
-//            })
-            AdmobUtils.loadAndShowBanner(this, "", 5, 10, binding.bannerContainer,
-                BannerPlugin.BannerConfig.TYPE_ADAPTIVE, object : AdmobUtils.BannerCollapCallback {
-                    override fun onBannerClicked() {
+        binding.loadAndShowBanner.setOnClickListener {
+            AdmobUtils.loadAndShowBanner(this, BannerAdmob(""), binding.bannerContainer, object : AdmobUtils.BannerCallback {
+                override fun onBannerClicked() {
 
-                    }
+                }
 
-                    override fun onBannerLoaded(adSize: AdSize) {
-                    }
+                override fun onBannerLoaded(adSize: AdSize) {
+                }
 
-                    override fun onBannerFailed(error: String) {
-                    }
+                override fun onBannerFailed(error: String) {
+                }
 
-                    override fun onPaid(adValue: AdValue, adView: AdView) {
-                    }
+                override fun onPaid(adValue: AdValue, adView: AdView) {
+                }
 
-                })
+            })
         }
 
         binding.bannerMax.setOnClickListener {
@@ -322,7 +307,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.loadAndShowNativeAdmob.setOnClickListener {
-            AdmobUtils.loadAndShowNativeCollap(this,
+            AdmobUtils.loadAndShowNativeCollap(
+                this,
                 AdmobManager.nativeHolder,
                 binding.nativead,
                 R.layout.ad_template_medium,
@@ -428,7 +414,8 @@ class HomeActivity : AppCompatActivity() {
 //                }
 //            })
 
-        AdmobUtils.loadNativeFullScreen(this, AdmobManager.nativeHolderFull, MediaAspectRatio.ANY,
+        AdmobUtils.loadNativeFullScreen(
+            this, AdmobManager.nativeHolderFull, MediaAspectRatio.ANY,
             object : AdmobUtils.NativeCallback {
                 override fun onNativeReady(ad: NativeAd?) {
                     Log.d("==full==", "Load onNativeAdLoaded: ")

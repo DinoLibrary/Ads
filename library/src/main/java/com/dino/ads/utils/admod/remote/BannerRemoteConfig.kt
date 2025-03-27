@@ -1,4 +1,4 @@
-package com.vapp.admoblibrary.ads.remote
+package com.dino.ads.utils.admod.remote
 
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue

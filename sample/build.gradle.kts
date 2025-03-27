@@ -1,8 +1,10 @@
+import com.android.build.gradle.internal.generators.BuildConfigGenerator
 import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 val packageName = "com.dino.sample"

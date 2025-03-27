@@ -724,7 +724,6 @@ object ApplovinUtils : LifecycleObserver {
         activity: AppCompatActivity, bannerContainer: ViewGroup, adId: String,
         callback: BannerCallback
     ) {
-
         if (!enableAds || !isNetworkConnected(activity)) {
             callback.onBannerLoadFail("")
             return
@@ -750,7 +749,7 @@ object ApplovinUtils : LifecycleObserver {
         banner?.setExtraParameter("adaptive_banner", "true")
 
         val tagView: View =
-            activity.layoutInflater.inflate(R.layout.banner_shimmer_layout, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
         try {
             bannerContainer.addView(tagView, 0)
             bannerContainer.addView(banner, 1)

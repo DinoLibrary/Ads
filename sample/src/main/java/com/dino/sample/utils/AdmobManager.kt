@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.dino.ads.AdmobUtils
 import com.dino.ads.AdNativeSize
-import com.dino.ads.utils.admod.InterHolderAdmob
-import com.dino.ads.utils.admod.NativeHolderAdmob
+import com.dino.ads.utils.admod.InterAdmob
 import com.dino.sample.R
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -16,12 +15,12 @@ import com.google.android.gms.ads.nativead.NativeAd
 
 object AdmobManager {
     var nativeHolder =
-        com.dino.ads.utils.admod.NativeHolderAdmob("ca-app-pub-3940256099942544/2247696110")
+        com.dino.ads.utils.admod.NativeAdmob("ca-app-pub-3940256099942544/2247696110")
     var nativeHolderFull =
-        com.dino.ads.utils.admod.NativeHolderAdmob("ca-app-pub-3940256099942544/7342230711")
-    var interholder = InterHolderAdmob("ca-app-pub-3940256099942544/1033173712")
+        com.dino.ads.utils.admod.NativeAdmob("ca-app-pub-3940256099942544/7342230711")
+    var interholder = InterAdmob("ca-app-pub-3940256099942544/1033173712")
 
-    fun loadInter(context: Context, interHolder: InterHolderAdmob) {
+    fun loadInter(context: Context, interHolder: InterAdmob) {
         AdmobUtils.loadInterstitial(context, interHolder,
             object :
                 AdmobUtils.LoadInterCallback {
@@ -46,7 +45,7 @@ object AdmobManager {
 
     fun showInter(
         context: Context,
-        interHolder: InterHolderAdmob,
+        interHolder: InterAdmob,
         adListener: AdListener,
         enableLoadingDialog: Boolean
     ) {
@@ -86,7 +85,7 @@ object AdmobManager {
         )
     }
 
-    fun loadAdsNativeNew(context: Context, holder: com.dino.ads.utils.admod.NativeHolderAdmob) {
+    fun loadAdsNativeNew(context: Context, holder: com.dino.ads.utils.admod.NativeAdmob) {
         AdmobUtils.loadNative(
             context,
             holder,
@@ -109,7 +108,7 @@ object AdmobManager {
             })
     }
 
-    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: com.dino.ads.utils.admod.NativeHolderAdmob) {
+    fun showNative(activity: Activity, viewGroup: ViewGroup, holder: com.dino.ads.utils.admod.NativeAdmob) {
         if (!AdmobUtils.isNetworkConnected(activity)) {
             viewGroup.visibility = View.GONE
             return
@@ -137,7 +136,7 @@ object AdmobManager {
 
     fun showAdsNativeFullScreen(
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.admod.NativeHolderAdmob,
+        nativeHolder: com.dino.ads.utils.admod.NativeAdmob,
         viewGroup: ViewGroup
     ) {
         AdmobUtils.showNativeFullScreen(activity, nativeHolder, viewGroup,
