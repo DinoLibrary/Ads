@@ -7,7 +7,7 @@
   implementation("com.github.DinoLibrary:Ads:1.0.2")
 
 // 3.Init Admob and/or Applovin:
-  AdmobUtils.initAdmob(this, 10000, isDebug = true, isEnableAds = true, check_test_ad = RemoteConfig.check_test_ad)
+  AdmobUtils.initAdmob(this, isDebug = true)
   ApplovinUtil.initApplovin(application, "your-key",testAds = true, enableAds = true, initialization = object : ApplovinUtil.Initialization {})
 
 // NOTE:
