@@ -343,7 +343,7 @@ class HomeActivity : AppCompatActivity() {
             AdmobUtils.loadRewarded(
                 this@HomeActivity,
                 rewardHolder,
-                object : AdmobUtils.RewardedInterCallback {
+                object : AdmobUtils.RewardInterCallback {
                     override fun onRewardFailed(error: String) {
                     }
 
