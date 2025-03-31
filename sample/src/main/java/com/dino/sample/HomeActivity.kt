@@ -340,7 +340,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.loadReward.setOnClickListener {
-            AdmobUtils.loadRewarded(
+            AdmobUtils.loadReward(
                 this@HomeActivity,
                 rewardHolder,
                 object : AdmobUtils.RewardInterCallback {
@@ -379,7 +379,7 @@ class HomeActivity : AppCompatActivity() {
 //
 //            })
 
-            AdmobUtils.loadAndShowRewardedInter(this, "", object : AdmobUtils.RewardedCallback {
+            AdmobUtils.loadAndShowRewardInter(this, "", object : AdmobUtils.RewardCallback {
                 override fun onRewardClosed() {
 
                 }

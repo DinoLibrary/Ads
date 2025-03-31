@@ -51,7 +51,7 @@ class SplashActivity : AppCompatActivity() {
             //* Gather consent
             AdmobUtils.setupCMP(this) {
                 //* Init Admob
-                AdmobUtils.initAdmob(this, isDebug = true, isEnableAds = true, checkTestAd = "0")
+                AdmobUtils.initAdmob(this, isDebug = true)
 
                 //* Init Ads On Resume
                 AppOpenUtils.getInstance().init(application, getString(com.dino.ads.R.string.test_admob_on_resume_id))
