@@ -9,7 +9,7 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 
-class AdmobHolder(val uid: String = "") {
+ open class AdmobHolder(val uid: String = "") {
     var enableLoadingDialog = true
 
     var isInterLoading = false
@@ -27,6 +27,11 @@ class AdmobHolder(val uid: String = "") {
     var nativeSize = AdNativeSize.MEDIUM
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData(null)
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+
+    /**
+     * Native is ready when it's loaded successfully
+     */
+    fun isNativeReady() = nativeAd.value != null
 
     /**
      * enable loading dialog when showing Inter or RewardInter

@@ -12,7 +12,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
-object RemoteConfigUtils {
+object RemoteUtils {
+
+    var enableLog = false
 
     @JvmStatic
     fun init(@XmlRes xmlFile: Int, isDebug: Boolean, onCompleted: () -> Unit) {
@@ -26,7 +28,6 @@ object RemoteConfigUtils {
         remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener {
             override fun onUpdate(configUpdate: ConfigUpdate) {
                 remoteConfig.activate().addOnCompleteListener {
-//                    val newEntries = remoteEntries.mapValues { remoteConfig.getString(it.key) }
                     AdmobUtils.isEnableAds = enableAds()
                     onCompleted()
                 }
@@ -39,7 +40,6 @@ object RemoteConfigUtils {
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-//                val newEntries = remoteEntries.mapValues { remoteConfig.getString(it.key) }
                 AdmobUtils.isEnableAds = enableAds()
                 onCompleted()
             }
@@ -48,7 +48,7 @@ object RemoteConfigUtils {
     }
 
     fun getValue(key: String): String {
-        log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
+        if (enableLog) log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
         return FirebaseRemoteConfig.getInstance().getString(key)
     }
 

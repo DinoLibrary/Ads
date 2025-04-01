@@ -9,7 +9,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import com.dino.ads.AdmobUtils
 
 
 fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
@@ -19,7 +18,7 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun log(msg: String) {
-    if (AdmobUtils.isTesting) Log.d("===", msg)
+    Log.d("===", msg)
 }
 
 fun Context.prefs(): SharedPreferences {

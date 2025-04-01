@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnLoadShowBanner.setOnClickListener {
+//            AdmobUtils.loadAndShowBanner(this, binding.flBanner, RemoteConfig.BANNER_HOME, AdmobUtils.BannerCallback().triggerBannerClicked {  })
+
             AdmobUtils.loadAndShowBanner(this, binding.flBanner, RemoteConfig.BANNER_HOME, object : AdmobUtils.BannerCallback {
                 override fun onBannerClicked() {
                 }
@@ -34,9 +36,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onNativeReady(ad: NativeAd?) {
-                }
-
-                override fun onNativeLoaded() {
                 }
 
                 override fun onNativeFailed(error: String) {

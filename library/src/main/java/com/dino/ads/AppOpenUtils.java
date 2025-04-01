@@ -160,11 +160,11 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
     public void fetchAd(final boolean isSplash) {
         Log.d(TAG, "fetchAd: isSplash = " + isSplash);
         if (isAdAvailable(isSplash) || appResumeAdId == null || AppOpenUtils.this.appResumeAd!= null) {
-            Log.d(TAG, "AppOpenManager: Ad is ready or id = null");
+            Log.d(TAG, "===AppOpenUtils: Ad is ready or id = null");
             return;
         }
         if (!isLoading){
-            Log.d(TAG, "===fetchAd: Loading");
+            Log.d(TAG, "===AppOpenUtils: fetchAd");
             isLoading = true;
             loadCallback =
                     new AppOpenAd.AppOpenAdLoadCallback() {
@@ -175,7 +175,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                          */
                         @Override
                         public void onAdLoaded(AppOpenAd ad) {
-                            Log.d(TAG, "AppOpenManager: Loaded");
+                            Log.d(TAG, "===AppOpenUtils: Loaded");
                             AppOpenUtils.this.appResumeAd = ad;
                             AppOpenUtils.this.appResumeLoadTime = (new Date()).getTime();
                         }
@@ -189,7 +189,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                         public void onAdFailedToLoad(LoadAdError loadAdError) {
                             // Handle the error.
                             isLoading = false;
-                            Log.d(TAG, "AppOpenManager: onAdFailedToLoad");
+                            Log.d(TAG, "===AppOpenUtils: onAdFailedToLoad");
                             String a = "fail";
                         }
 
@@ -209,7 +209,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
     public boolean isAdAvailable(boolean isSplash) {
         long loadTime = isSplash ? splashLoadTime : appResumeLoadTime;
         boolean wasLoadTimeLessThanNHoursAgo = wasLoadTimeLessThanNHoursAgo(loadTime, 4);
-        Log.d(TAG, "isAdAvailable: " + wasLoadTimeLessThanNHoursAgo);
+        Log.d(TAG, "===AppOpenUtils: isAdAvailable " + wasLoadTimeLessThanNHoursAgo);
         return (isSplash ? splashAd != null : appResumeAd != null)
                 && wasLoadTimeLessThanNHoursAgo;
     }
@@ -267,7 +267,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
 
     public void showAppOpenAd(final boolean isSplash) {
         if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            Log.d("===Onresume", "STARTED");
+            Log.d("===OnResume", "STARTED");
             if (fullScreenContentCallback != null) {
                 try {
                     dialogFullScreen.dismiss();
@@ -279,7 +279,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
             }
             return;
         }
-        Log.d("===Onresume", "FullScreenContentCallback");
+        Log.d("===OnResume", "FullScreenContentCallback");
         if (!isShowingAd && isAdAvailable(isSplash)) {
             isDismiss = true;
             FullScreenContentCallback callback =
@@ -362,7 +362,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
+//                Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
 
                 if (System.currentTimeMillis() - timeToBackground < 30000){
                     return;
@@ -386,7 +386,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                 }
 
                 if (!isAppResumeEnabled) {
-                    Log.d("===Onresume", "isAppResumeEnabled");
+                    Log.d("===OnResume", "isAppResumeEnabled");
                     return;
                 } else {
                     AdmobUtils.dismissAdDialog();

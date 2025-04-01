@@ -14,7 +14,7 @@ import com.dino.ads.AdmobUtils
 import com.dino.ads.AppOpenUtils
 import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.NativeCallback
-import com.dino.ads.remote_config.RemoteConfigUtils
+import com.dino.ads.remote_config.RemoteUtils
 import com.dino.ads.utils.Utils
 import com.dino.ads.utils.replaceActivity
 import com.dino.sample.databinding.ActivitySplashBinding
@@ -49,7 +49,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         //* Fetch RemoteConfig values
-        RemoteConfigUtils.init(R.xml.remote_config_defaults, isDebug = true) {
+        RemoteUtils.init(R.xml.remote_config_defaults, isDebug = true) {
             //* Gather consent
             AdmobUtils.setupCMP(this) {
                 //* Init Admob
