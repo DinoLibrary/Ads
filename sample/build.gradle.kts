@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.generators.BuildConfigGenerator
 import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
@@ -73,21 +72,28 @@ val generateRemoteConfig = tasks.register("generateRemoteConfig") {
             val entry = entries.item(i)
             val key = entry.childNodes.item(1).textContent
             val value = entry.childNodes.item(3).textContent
-            configVars.add("        \"$key\" to \"$value\"")
-            delegatedVars.add("    var $key: String by configMap")
+            if (key == "check_test_ad" || key == "enable_ads") {
+
+            } else if (key.takeLast(3) == "_id") {
+
+            } else {
+                configVars.add("        \"$key\" to \"$value\"")
+                delegatedVars.add("    var ${key.uppercase()} = AdmobHolder(\"${key.substringAfterLast("_")}\")")
+            }
         }
 
         val remoteConfigCode = StringBuilder()
             .append("package $packageName\n\n")
+            .append("import com.dino.ads.remote_config.AdmobHolder\n\n")
             .append("object RemoteConfig {\n")
-            .append("    val configMap: MutableMap<String, String> = mutableMapOf(\n")
-            .append(configVars.joinToString(",\n"))
-            .append("\n    )\n\n")
+//            .append("    val configMap: MutableMap<String, String> = mutableMapOf(\n")
+//            .append(configVars.joinToString(",\n"))
+//            .append("\n")
             .append(delegatedVars.joinToString("\n"))
-            .append("\n\n    fun updateAll(newConfig: Map<String, String>) {\n")
-            .append("        configMap.putAll(newConfig)\n")
-            .append("    }\n")
-            .append("}\n")
+//            .append("\n\n    fun updateAll(newConfig: Map<String, String>) {\n")
+//            .append("        configMap.putAll(newConfig)\n")
+//            .append("    }\n")
+            .append("\n}\n")
             .toString()
         outputFile.writeText(remoteConfigCode)
     }

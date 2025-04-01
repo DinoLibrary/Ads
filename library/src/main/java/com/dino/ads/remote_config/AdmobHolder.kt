@@ -1,13 +1,15 @@
 package com.dino.ads.remote_config
 
 import androidx.lifecycle.MutableLiveData
+import com.dino.ads.AdNativeSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MediaAspectRatio
 import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 
-class AdmobHolder {
-    var uid: String = ""
+class AdmobHolder(val uid: String = "") {
     var enableLoadingDialog = true
 
     var isInterLoading = false
@@ -21,6 +23,11 @@ class AdmobHolder {
     var anchor = "bottom"
     var bannerAdView: AdView? = null
 
+    var isNativeLoading = false
+    var nativeSize = AdNativeSize.MEDIUM
+    var nativeAd: MutableLiveData<NativeAd> = MutableLiveData(null)
+    var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+
     /**
      * enable loading dialog when showing Inter or RewardInter
      */
@@ -30,11 +37,29 @@ class AdmobHolder {
     }
 
     /**
-     * s: "top" or "bottom"
-     * default is "bottom"
+     * Only for banner on top of the screen
+     * default is bottom collap banner
      */
-    fun anchor(s: String): AdmobHolder {
-        anchor = s
+    fun anchorTop(): AdmobHolder {
+        anchor = "top"
         return this
     }
+
+    fun nativeSmall(): AdmobHolder {
+        nativeSize = AdNativeSize.SMALL
+        return this
+    }
+
+    /**
+     * MediaAspectRatio.SQUARE,
+     * MediaAspectRatio.LANDSCAPE,
+     * MediaAspectRatio.PORTRAIT,
+     * MediaAspectRatio.UNKNOWN.
+     * MediaAspectRatio.ANY
+     */
+    fun mediaAspectRatio(ratio: Int): AdmobHolder {
+        mediaAspectRatio = ratio
+        return this
+    }
+
 }

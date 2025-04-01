@@ -14,7 +14,9 @@ import com.dino.ads.AdmobUtils
 import com.dino.ads.AppOpenUtils
 import com.dino.ads.ApplovinUtils
 import com.dino.ads.callback_applovin.NativeCallback
+import com.dino.ads.remote_config.RemoteConfigUtils
 import com.dino.ads.utils.Utils
+import com.dino.ads.utils.replaceActivity
 import com.dino.sample.databinding.ActivitySplashBinding
 import com.dino.sample.utils.ApplovinManager
 
@@ -47,7 +49,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         //* Fetch RemoteConfig values
-//        RemoteConfigUtils.init(R.xml.remote_config_defaults, RemoteConfig.configMap) {
+        RemoteConfigUtils.init(R.xml.remote_config_defaults, isDebug = true) {
             //* Gather consent
             AdmobUtils.setupCMP(this) {
                 //* Init Admob
@@ -65,7 +67,7 @@ class SplashActivity : AppCompatActivity() {
                     initApplovin()
                 }
             }
-//        }
+        }
     }
 
     private fun showInterOrAoa() {
@@ -107,13 +109,13 @@ class SplashActivity : AppCompatActivity() {
 
                             }
                         })
-                    Utils.getInstance().replaceActivity(this@SplashActivity, HomeActivity::class.java)
+                    Utils.getInstance().replaceActivity(this@SplashActivity, MainActivity::class.java)
                 }
             })
     }
 
     private fun nextActivity() {
-        Utils.getInstance().replaceActivity(this@SplashActivity, HomeActivity::class.java)
+        replaceActivity<MainActivity>()
     }
 
 }

@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import com.dino.ads.R
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -16,11 +15,7 @@ import com.google.android.gms.ads.nativead.NativeAdView
 class NativeHelper {
 
     companion object {
-        fun populateNativeAdView(
-            nativeAd: NativeAd,
-            adView: NativeAdView,
-            size: AdNativeSize
-        ) {
+        fun populateNativeAdView(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -228,11 +223,7 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewClose(
-            nativeAd: NativeAd,
-            adView: NativeAdView,
-            size: AdNativeSize, nativeAdCallbackNew: AdmobUtils.NativeCallback
-        ) {
+        fun populateNativeAdViewClose(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }

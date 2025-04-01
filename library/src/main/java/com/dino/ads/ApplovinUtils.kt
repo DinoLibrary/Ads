@@ -1062,9 +1062,9 @@ object ApplovinUtils : LifecycleObserver {
         }
         nativeAdLoader = MaxNativeAdLoader(adId, activity)
         val tagView: View = if (size === AdNativeSize.MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
         }
         try {
             nativeAdContainer.addView(tagView, 0)
@@ -1142,9 +1142,9 @@ object ApplovinUtils : LifecycleObserver {
 
         }
         val tagView: View = if (size === AdNativeSize.MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
         }
         try {
             view.addView(tagView, 0)
@@ -1215,9 +1215,9 @@ object ApplovinUtils : LifecycleObserver {
 
         }
         val tagView: View = if (size === AdNativeSize.MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
-            activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+            activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
         }
         try {
             view.addView(tagView, 0)
@@ -1379,9 +1379,9 @@ object ApplovinUtils : LifecycleObserver {
             }
         } else {
             val tagView: View = if (size === AdNativeSize.MEDIUM) {
-                activity.layoutInflater.inflate(R.layout.layoutnative_loading_medium, null, false)
+                activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
             } else {
-                activity.layoutInflater.inflate(R.layout.layoutnative_loading_small, null, false)
+                activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
             }
             try {
                 view.addView(tagView, 0)
