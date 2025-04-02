@@ -9,29 +9,29 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 
- open class AdmobHolder(val uid: String = "") {
+open class AdmobHolder(val uid: String = "") {
     var enableLoadingDialog = true
 
     var isInterLoading = false
-    val inter: MutableLiveData<InterstitialAd> = MutableLiveData(null)
+    val inter: MutableLiveData<InterstitialAd> = MutableLiveData()
     var interCount: Int = 0
 
     var isRewardLoading = false
-    val rewardInter: MutableLiveData<RewardedInterstitialAd> = MutableLiveData(null)
-    val reward: MutableLiveData<RewardedAd> = MutableLiveData(null)
+    val rewardInter: MutableLiveData<RewardedInterstitialAd> = MutableLiveData()
+    val reward: MutableLiveData<RewardedAd> = MutableLiveData()
 
     var anchor = "bottom"
     var bannerAdView: AdView? = null
 
     var isNativeLoading = false
     var nativeSize = AdNativeSize.MEDIUM
-    var nativeAd: MutableLiveData<NativeAd> = MutableLiveData(null)
+    var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
 
     /**
      * Native is ready when it's loaded successfully
      */
-    fun isNativeReady() = nativeAd.value != null
+    open fun isNativeReady() = nativeAd.value != null
 
     /**
      * enable loading dialog when showing Inter or RewardInter

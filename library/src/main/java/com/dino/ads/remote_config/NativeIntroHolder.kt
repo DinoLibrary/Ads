@@ -1,5 +1,5 @@
 package com.dino.ads.remote_config
 
-class NativeIntrosHolder: AdmobHolder() {
+class NativeIntroHolder(uid: String): AdmobHolder(uid) {
     val intros = mutableListOf<AdmobHolder>()
 }

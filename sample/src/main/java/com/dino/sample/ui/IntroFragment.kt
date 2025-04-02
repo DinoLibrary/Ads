@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.dino.ads.AdmobUtils
 import com.dino.sample.R
+import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.FragmentIntroBinding
+import com.dino.sample.utils.AdsManager
 
 class IntroFragment : Fragment() {
     private var number = 1
@@ -33,13 +35,7 @@ class IntroFragment : Fragment() {
             return
         }
 
-        AdmobUtils.showNativeIntros(requireActivity(), RemoteConfig.NATIVE_INTRO, binding.frNative, R.layout.ad_template_medium, number, object : AdmobUtils.NativeCallbackSimple {
-            override fun onNativeLoaded() {
-            }
-
-            override fun onNativeFailed(error: String) {
-            }
-        })
+        AdsManager.showNativeIntro(requireActivity(), RemoteConfig.NATIVE_INTRO, binding.frNative,number)
         when (number) {
             1 -> {
                 binding.tvTitle.text = getString(R.string.intro1)

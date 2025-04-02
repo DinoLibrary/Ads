@@ -6,17 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.dino.ads.AdmobUtils
-import com.dino.ads.utils.addActivity
 import com.dino.ads.utils.replaceActivity
+import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivityIntroBinding
-import com.room.temperature.thermometer.indoor.check.ads.AdsManager
-import com.room.temperature.thermometer.indoor.check.ads.Common
-import com.room.temperature.thermometer.indoor.check.ads.RemoteConfig
-import com.room.temperature.thermometer.indoor.check.ads.addActivity
-import com.room.temperature.thermometer.indoor.check.api.WeatherData
-import com.room.temperature.thermometer.indoor.check.databinding.ActivityIntroBinding
-import com.room.temperature.thermometer.indoor.check.ui.LocationActivity
+import com.dino.sample.utils.AdsManager
 import kotlin.system.exitProcess
 
 class IntroActivity : AppCompatActivity() {
@@ -32,11 +25,11 @@ class IntroActivity : AppCompatActivity() {
 
     private fun createListFragment() {
         fragments.add(IntroFragment.newInstance(1))
-        if (RemoteConfig.NATIVE_INTRO_FULL.isNativeReady()) {
+        if (RemoteConfig.NATIVE_INTRO_FULL.isNativeReady() && RemoteConfig.NATIVE_INTRO_FULL.remoteValue.contains("1")) {
             fragments.add(NativeFullScreenFragment())
         }
         fragments.add(IntroFragment.newInstance(2))
-        if (RemoteConfig.NATIVE_INTRO_FULL.isNativeReady()) {
+        if (RemoteConfig.NATIVE_INTRO_FULL.isNativeReady() && RemoteConfig.NATIVE_INTRO_FULL.remoteValue.contains("2")) {
             fragments.add(NativeFullScreenFragment())
         }
         fragments.add(IntroFragment.newInstance(3))
@@ -55,7 +48,7 @@ class IntroActivity : AppCompatActivity() {
 
     fun onNext() {
         if (binding.viewPager.currentItem == fragments.size - 1) {
-            AdmobUtils.loadAndShowInterstitial(this, RemoteConfig.INTER_INTRO) {
+            AdsManager.loadAndShowInter(this, RemoteConfig.INTER_INTRO) {
                 startActivity()
             }
         } else {

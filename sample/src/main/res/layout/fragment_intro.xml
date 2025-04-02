@@ -22,7 +22,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivImage"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="300dp"
                 android:adjustViewBounds="true"
                 android:background="@color/colorAccent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -26,7 +26,13 @@
             android:name=".ui.NativeFullScreenActivity"
             android:exported="true" />
         <activity
+            android:name=".ui.IntroActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ui.InterDummyActivity"
             android:exported="true" />
 
         <meta-data

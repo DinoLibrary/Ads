@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.AdmobUtils
 import com.dino.ads.utils.addActivity
 import com.dino.sample.R
+import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivityMainBinding
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.nativead.NativeAd
+import com.dino.sample.utils.AdsManager
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
@@ -17,53 +17,34 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnLoadShowBanner.setOnClickListener {
-//            AdmobUtils.loadAndShowBanner(this, binding.flBanner, RemoteConfig.BANNER_HOME, AdmobUtils.BannerCallback().triggerBannerClicked {  })
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME, binding.flBanner)
+        }
 
-            AdmobUtils.loadAndShowBanner(this, binding.flBanner, RemoteConfig.BANNER_HOME, object : AdmobUtils.BannerCallback {
-                override fun onBannerClicked() {
-                }
+        binding.btnLoadShowBannerCollap.setOnClickListener {
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME2, binding.flBanner)
+        }
 
-                override fun onBannerLoaded(adSize: AdSize) {
-                }
-
-                override fun onBannerFailed(error: String) {
-                }
-            })
+        binding.btnLoadShowBannerNative.setOnClickListener {
+            AdsManager.loadAndShowBannerNative(this, RemoteConfig.BANNER_HOME3, binding.flBanner)
         }
 
         binding.btnLoadShowNative.setOnClickListener {
-            AdmobUtils.loadAndShowNativeDual(this, binding.flNative, RemoteConfig.NATIVE_HOME, R.layout.ad_template_medium, object : AdmobUtils.NativeCallback {
-                override fun onNativeClicked() {
-                }
+            AdsManager.loadAndShowNative(this, RemoteConfig.NATIVE_HOME, binding.flNative)
+        }
 
-                override fun onNativeReady(ad: NativeAd?) {
-                }
-
-                override fun onNativeFailed(error: String) {
-                }
-            })
+        binding.btnLoadShowNativeCollap.setOnClickListener {
+            AdsManager.loadAndShowNativeCollap(this, RemoteConfig.NATIVE_HOME, binding.flBanner)
         }
 
         binding.btnLoadShowInter.setOnClickListener {
-            AdmobUtils.loadAndShowInterstitial(this, RemoteConfig.INTER_HOME, object : AdmobUtils.InterCallback {
-                override fun onStartAction() {
-                }
-
-                override fun onDismissedInter() {
-                    addActivity<InterDummyActivity>()
-                }
-
-                override fun onInterShowed() {
-                }
-
-                override fun onInterLoaded() {
-                }
-
-                override fun onInterFailed(error: String) {
-                    addActivity<InterDummyActivity>()
-                }
-
-            })
+            AdsManager.loadAndShowInter(this, RemoteConfig.INTER_HOME) {
+                addActivity<InterDummyActivity>()
+            }
+        }
+        binding.btnLoadShowInterNative.setOnClickListener {
+            AdmobUtils.loadAndShowInterNative(this, RemoteConfig.INTER_NATIVE_HOME, binding.clNativeFull, R.layout.ad_template_fullscreen){
+                addActivity<InterDummyActivity>()
+            }
         }
     }
 

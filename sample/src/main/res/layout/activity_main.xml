@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,16 +26,39 @@
                 android:text="load and show Banner" />
 
             <Button
+                android:id="@+id/btnLoadShowBannerCollap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Banner Collap" />
+
+            <Button
+                android:id="@+id/btnLoadShowBannerNative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Banner Native" />
+
+            <Button
                 android:id="@+id/btnLoadShowNative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="load and show Native" />
+            <Button
+                android:id="@+id/btnLoadShowNativeCollap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Native Collap" />
 
             <Button
                 android:id="@+id/btnLoadShowInter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="load and show Inter" />
+
+            <Button
+                android:id="@+id/btnLoadShowInterNative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Inter Native" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -51,5 +75,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clNativeFull"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/flNativeFull"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/ad_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:visibility="invisible"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/ad_timer"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/bg_ad_timer"
+            android:gravity="center"
+            android:text="5"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ad_close"
+            app:layout_constraintEnd_toEndOf="@+id/ad_close"
+            app:layout_constraintStart_toStartOf="@+id/ad_close"
+            app:layout_constraintTop_toTopOf="@+id/ad_close" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

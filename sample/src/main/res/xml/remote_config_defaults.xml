@@ -5,12 +5,36 @@
         <value>1</value>
     </entry>
     <entry>
+        <key>banner_home2</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>banner_home3</key>
+        <value>2</value>
+    </entry>
+    <entry>
         <key>native_home</key>
         <value>1</value>
     </entry>
     <entry>
         <key>inter_home</key>
         <value>1</value>
+    </entry>
+    <entry>
+        <key>inter_native_home</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>inter_intro</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>native_intro</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>native_intro_full</key>
+        <value>0</value>
     </entry>
     <entry>
         <key>check_test_ad</key>

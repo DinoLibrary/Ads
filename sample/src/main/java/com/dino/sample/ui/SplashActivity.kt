@@ -18,7 +18,9 @@ import com.dino.ads.remote_config.RemoteUtils
 import com.dino.ads.utils.Utils
 import com.dino.ads.utils.replaceActivity
 import com.dino.sample.R
+import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivitySplashBinding
+import com.dino.sample.utils.AdsManager
 import com.dino.sample.utils.ApplovinManager
 
 
@@ -60,19 +62,23 @@ class SplashActivity : AppCompatActivity() {
                 AppOpenUtils.getInstance().init(application, getString(com.dino.ads.R.string.test_admob_on_resume_id))
                 AppOpenUtils.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
 
+                AdsManager.loadNativeFullscreen(this@SplashActivity, RemoteConfig.NATIVE_INTRO_FULL)
+                AdsManager.loadNativeIntro(this@SplashActivity, RemoteConfig.NATIVE_INTRO)
+
                 //* Show Interstitial or AOA based on Remote Config value
                 showInterOrAoa()
 
                 //* Init Applovin
-                if (ApplovinUtils.isNetworkConnected(this)) {
-                    initApplovin()
-                }
+//                if (ApplovinUtils.isNetworkConnected(this)) {
+//                    initApplovin()
+//                }
             }
         }
     }
 
     private fun showInterOrAoa() {
-        handler.postDelayed({ nextActivity() }, 3000)
+//        handler.postDelayed({ nextActivity() }, 3000)
+        handler.postDelayed({ replaceActivity<MainActivity>() }, 1)
     }
 
     private fun initApplovin() {
@@ -110,13 +116,13 @@ class SplashActivity : AppCompatActivity() {
 
                             }
                         })
-                    Utils.getInstance().replaceActivity(this@SplashActivity, MainActivity::class.java)
+//                    Utils.getInstance().replaceActivity(this@SplashActivity, MainActivity::class.java)
                 }
             })
     }
 
     private fun nextActivity() {
-        replaceActivity<MainActivity>()
+        replaceActivity<IntroActivity>()
     }
 
 }

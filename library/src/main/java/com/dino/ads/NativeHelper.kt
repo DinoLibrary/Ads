@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -280,7 +281,8 @@ class NativeHelper {
                     adView.iconView!!.visibility = View.VISIBLE
                 }
             }
-            adView.findViewById<ImageView>(R.id.ivClose)?.let { ivClose ->
+            adView.findViewById<ImageView>(R.id.ad_close)?.let { ivClose ->
+                ivClose.isVisible = true
                 ivClose.setOnClickListener {
                     nativeAdCallbackNew.onNativeClicked()
                     it.visibility = View.GONE

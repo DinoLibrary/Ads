@@ -53,28 +53,26 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.5.1")
 
     // UI
-    implementation("androidx.appcompat:appcompat:1.5.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.pnikosis:materialish-progress:1.7")
     implementation("com.facebook.shimmer:shimmer:0.5.0@aar")
 
     // Ads
-    implementation("com.applovin:applovin-sdk:13.0.0")
-    implementation("com.google.android.gms:play-services-ads:23.3.0")
+    implementation("com.applovin:applovin-sdk:13.1.0")
+    implementation("com.google.android.gms:play-services-ads:24.1.0")
     implementation("com.intuit.sdp:sdp-android:1.1.1")
 
     // Other
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.airbnb.android:lottie:6.4.0")
-    implementation("com.google.android.ump:user-messaging-platform:3.0.0")
+    implementation("com.google.android.ump:user-messaging-platform:3.2.0")
 
     //Adjust
-    implementation("com.adjust.sdk:adjust-android:5.0.0")
+    implementation("com.adjust.sdk:adjust-android:5.1.0")
     implementation("com.android.installreferrer:installreferrer:2.2")
-    implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
-    implementation("com.adjust.sdk:adjust-android-webbridge:5.0.0")
+    implementation("com.google.android.gms:play-services-ads-identifier:18.2.0")
+    implementation("com.adjust.sdk:adjust-android-webbridge:5.1.0")
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.0")
     implementation(libs.firebase.config.ktx)
 }
