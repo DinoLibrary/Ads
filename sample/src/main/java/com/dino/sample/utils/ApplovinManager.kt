@@ -11,21 +11,24 @@ import com.applovin.mediation.MaxAd
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
-import com.dino.ads.AdNativeSize
-import com.dino.ads.ApplovinUtils
-import com.dino.ads.callback_applovin.InterstitialCallback
-import com.dino.ads.callback_applovin.NativeCallback
-import com.dino.ads.utils.InterHolderApplovin
+import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.applovin.ApplovinUtils
+import com.dino.ads.admob.OnResumeUtils
+import com.dino.ads.applovin.InterstitialCallbackNew
+import com.dino.ads.applovin.InterstitialCallback
+import com.dino.ads.applovin.NativeCallback
+import com.dino.ads.applovin.NativeHolderApplovin
+import com.dino.ads.applovin.InterHolderApplovin
 
 
 object ApplovinManager {
     var interHolder = InterHolderApplovin("134656413e36e374")
-    var nativeHolder = com.dino.ads.utils.NativeHolderApplovin("0f688c4e22b9688b")
+    var nativeHolder = NativeHolderApplovin("0f688c4e22b9688b")
     var banner = "f443c90308f39f17"
 
     fun showAdsNative(
         activity: Activity,
-        nativeHolder: com.dino.ads.utils.NativeHolderApplovin,
+        nativeHolder: NativeHolderApplovin,
         viewGroup: ViewGroup
     ) {
         ApplovinUtils.loadAndShowNative(activity, nativeHolder, viewGroup,
@@ -48,7 +51,7 @@ object ApplovinManager {
 
     fun loadInter(context: Context) {
         ApplovinUtils.loadInterstitial(context, interHolder, object :
-            com.dino.ads.callback_applovin.InterstitialCallbackNew {
+            InterstitialCallbackNew {
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
 //                Toast.makeText(context,"Loaded",Toast.LENGTH_SHORT).show()
             }
@@ -73,7 +76,7 @@ object ApplovinManager {
 
     fun showInter(context: AppCompatActivity, interHolder: InterHolderApplovin, adsOnClick: AdsOnClick) {
         ApplovinUtils.showInterstitial(context, 800, interHolder, object :
-            com.dino.ads.callback_applovin.InterstitialCallbackNew {
+            InterstitialCallbackNew {
             override fun onInterstitialReady(interstitialAd: MaxInterstitialAd) {
                 Toast.makeText(context, "Ready", Toast.LENGTH_SHORT).show()
             }
@@ -114,7 +117,7 @@ object ApplovinManager {
         ApplovinUtils.loadAndShowInterstitial(activity as AppCompatActivity, idAd, object :
             InterstitialCallback {
             override fun onInterstitialReady() {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                OnResumeUtils.getInstance().isAppResumeEnabled = false
             }
 
             override fun onInterstitialClosed() {
@@ -127,7 +130,7 @@ object ApplovinManager {
             }
 
             override fun onInterstitialShowSucceed() {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+                OnResumeUtils.getInstance().isAppResumeEnabled = false
             }
 
             override fun onAdRevenuePaid(ad: MaxAd) {

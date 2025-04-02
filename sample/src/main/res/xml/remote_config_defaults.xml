@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <defaultsMap>
     <entry>
+        <key>ads_splash</key>
+        <value>0</value>
+    </entry>
+    <entry>
         <key>banner_home</key>
         <value>1</value>
     </entry>
@@ -10,7 +14,7 @@
     </entry>
     <entry>
         <key>banner_home3</key>
-        <value>2</value>
+        <value>4</value>
     </entry>
     <entry>
         <key>native_home</key>
@@ -43,5 +47,9 @@
     <entry>
         <key>enable_ads</key>
         <value>1</value>
+    </entry>
+    <entry>
+        <key>BANNER_HOME_ID</key>
+        <value>ca-app-pub-3940256099942544/6300978111</value>
     </entry>
 </defaultsMap>

@@ -1,6 +1,5 @@
-package com.dino.ads
+package com.dino.ads.admob
 
-import android.content.Context
 import android.os.Build
 import android.view.View
 import android.widget.Button
@@ -8,6 +7,8 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.core.view.isVisible
+import com.dino.ads.R
+import com.dino.ads.utils.AdNativeSize
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -308,10 +309,4 @@ class NativeHelper {
         }
 
     }
-
-}
-
-fun Int.dpToPx(context: Context): Int {
-    val density = context.resources.displayMetrics.density
-    return (this * density).toInt()
 }

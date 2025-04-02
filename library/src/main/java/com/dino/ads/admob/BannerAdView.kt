@@ -1,4 +1,4 @@
-package com.dino.ads.utils.admod.remote
+package com.dino.ads.admob
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -13,7 +13,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.*
-import com.dino.ads.utils.admod.remote.BannerPlugin.Companion.log
+import com.dino.ads.admob.BannerPlugin.Companion.log
 
 @SuppressLint("ViewConstructor")
 internal class BannerAdView(
@@ -65,7 +65,7 @@ internal class BannerAdView(
     private fun getAdSize(bannerType: BannerPlugin.BannerType): AdSize {
         return when (bannerType) {
             BannerPlugin.BannerType.Standard -> AdSize.BANNER
-            BannerPlugin.BannerType.Adaptive->{
+            BannerPlugin.BannerType.Adaptive ->{
                 val display = activity.windowManager.defaultDisplay
                 val outMetrics = DisplayMetrics()
                 display.getMetrics(outMetrics)

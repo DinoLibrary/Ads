@@ -1,4 +1,4 @@
-package com.dino.ads.utils.admod.remote
+package com.dino.ads.admob
 
 import android.app.Activity
 import android.content.Context
@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.FrameLayout
 import androidx.annotation.CallSuper
-import com.dino.ads.utils.admod.remote.BannerPlugin.Companion.log
+import com.dino.ads.admob.BannerPlugin.Companion.log
 import kotlin.math.max
 
 internal abstract class BaseAdView(

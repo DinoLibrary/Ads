@@ -1,4 +1,4 @@
-package com.dino.ads
+package com.dino.ads.applovin
 
 import android.app.Activity
 import android.app.Application
@@ -39,14 +39,10 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
+import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.admob.OnResumeUtils
+import com.dino.ads.R
 import com.dino.ads.adjust.AdjustUtils
-import com.dino.ads.callback_applovin.BannerCallback
-import com.dino.ads.callback_applovin.InterstitialCallback
-import com.dino.ads.callback_applovin.InterstitialCallbackNew
-import com.dino.ads.callback_applovin.NativeCallback
-import com.dino.ads.callback_applovin.RewardCallback
-import com.dino.ads.utils.InterHolderApplovin
-import com.dino.ads.utils.NativeHolderApplovin
 import com.dino.ads.utils.SweetAlert.SweetAlertDialog
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
@@ -82,7 +78,7 @@ object ApplovinUtils : LifecycleObserver {
         callback: Initialization
     ) {
         isClickAds = false
-        this.enableAds = isEnableAds
+        enableAds = isEnableAds
         val executor = Executors.newSingleThreadExecutor()
         executor.execute {
             val initConfigBuilder =
@@ -192,12 +188,12 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
 
-        if (AppOpenUtils.getInstance().isInitialized) {
-            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (OnResumeUtils.getInstance().isInitialized) {
+            if (!OnResumeUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
@@ -207,8 +203,8 @@ object ApplovinUtils : LifecycleObserver {
         }
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds) {
-            if (AppOpenUtils.getInstance().isInitialized) {
-                AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onInterstitialLoadFail("\"isNetworkConnected\"")
             return
@@ -227,8 +223,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdDisplayed(p0: MaxAd) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
                 callback.onInterstitialShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -236,8 +232,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdHidden(p0: MaxAd) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialClosed()
                 isInterstitialAdShowing = false
@@ -249,15 +245,15 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail(p1.toString())
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail(p1.toString())
             }
@@ -290,8 +286,8 @@ object ApplovinUtils : LifecycleObserver {
             }
         } else {
             activity.lifecycleScope.launch(Dispatchers.Main) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onInterstitialLoadFail("error")
                 isInterstitialAdShowing = false
@@ -373,19 +369,19 @@ object ApplovinUtils : LifecycleObserver {
             callback.onInterstitialLoadFail("SDK not Initialized")
             return
         }
-        if (AppOpenUtils.getInstance().isInitialized) {
-            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (OnResumeUtils.getInstance().isInitialized) {
+            if (!OnResumeUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
 
         if (!enableAds) {
-            if (AppOpenUtils.getInstance().isInitialized) {
-                AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onInterstitialLoadFail("\"isNetworkConnected\"")
             return
@@ -414,8 +410,8 @@ object ApplovinUtils : LifecycleObserver {
 
                             override fun onAdDisplayed(p0: MaxAd) {
                                 dismissLoadingDialog()
-                                if (AppOpenUtils.getInstance().isInitialized) {
-                                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                                 }
                                 callback.onInterstitialShowSucceed()
                                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -423,8 +419,8 @@ object ApplovinUtils : LifecycleObserver {
                             }
 
                             override fun onAdHidden(p0: MaxAd) {
-                                if (AppOpenUtils.getInstance().isInitialized) {
-                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 interHolder.inter = null
                                 callback.onInterstitialClosed()
@@ -438,8 +434,8 @@ object ApplovinUtils : LifecycleObserver {
                             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                 dismissLoadingDialog()
                                 isLoadInterstitialFailed = true
-                                if (AppOpenUtils.getInstance().isInitialized) {
-                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 interHolder.inter = null
                                 callback.onInterstitialLoadFail(
@@ -448,8 +444,8 @@ object ApplovinUtils : LifecycleObserver {
                             }
 
                             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                                if (AppOpenUtils.getInstance().isInitialized) {
-                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 callback.onInterstitialLoadFail(
                                     p1.code.toString().replace("-", "")
@@ -464,8 +460,8 @@ object ApplovinUtils : LifecycleObserver {
                 }
             } else {
                 activity.lifecycleScope.launch(Dispatchers.Main) {
-                    if (AppOpenUtils.getInstance().isInitialized) {
-                        AppOpenUtils.getInstance().isAppResumeEnabled = true
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isAppResumeEnabled = true
                     }
                     callback.onInterstitialLoadFail("interHolder.inter not ready")
                     isInterstitialAdShowing = false
@@ -499,8 +495,8 @@ object ApplovinUtils : LifecycleObserver {
 
                                     override fun onAdHidden(p0: MaxAd) {
                                         dismissLoadingDialog()
-                                        if (AppOpenUtils.getInstance().isInitialized) {
-                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (OnResumeUtils.getInstance().isInitialized) {
+                                            OnResumeUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         interHolder.inter = null
                                         callback.onInterstitialClosed()
@@ -513,8 +509,8 @@ object ApplovinUtils : LifecycleObserver {
 
                                     override fun onAdLoadFailed(p0: String, p1: MaxError) {
                                         isLoadInterstitialFailed = true
-                                        if (AppOpenUtils.getInstance().isInitialized) {
-                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (OnResumeUtils.getInstance().isInitialized) {
+                                            OnResumeUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         interHolder.inter = null
                                         callback.onInterstitialLoadFail(
@@ -523,8 +519,8 @@ object ApplovinUtils : LifecycleObserver {
                                     }
 
                                     override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                                        if (AppOpenUtils.getInstance().isInitialized) {
-                                            AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                        if (OnResumeUtils.getInstance().isInitialized) {
+                                            OnResumeUtils.getInstance().isAppResumeEnabled = true
                                         }
                                         callback.onInterstitialLoadFail(
                                             p1.code.toString().replace("-", "")
@@ -540,8 +536,8 @@ object ApplovinUtils : LifecycleObserver {
                         } else {
                             activity.lifecycleScope.launch(Dispatchers.Main) {
                                 interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                                if (AppOpenUtils.getInstance().isInitialized) {
-                                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                                 }
                                 callback.onInterstitialLoadFail("inter not ready")
                                 isInterstitialAdShowing = false
@@ -552,8 +548,8 @@ object ApplovinUtils : LifecycleObserver {
                         activity.lifecycleScope.launch(Dispatchers.Main) {
                             dismissLoadingDialog()
                             interHolder.mutable.removeObservers(activity as LifecycleOwner)
-                            if (AppOpenUtils.getInstance().isInitialized) {
-                                AppOpenUtils.getInstance().isAppResumeEnabled = true
+                            if (OnResumeUtils.getInstance().isInitialized) {
+                                OnResumeUtils.getInstance().isAppResumeEnabled = true
                             }
                             callback.onInterstitialLoadFail("inter null")
                             isInterstitialAdShowing = false
@@ -600,32 +596,32 @@ object ApplovinUtils : LifecycleObserver {
         interstitialAd = MaxInterstitialAd(interHolder.adsId, activity)
         interstitialAd.loadAd()
 
-        if (AppOpenUtils.getInstance().isInitialized) {
-            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (OnResumeUtils.getInstance().isInitialized) {
+            if (!OnResumeUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
 
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds || !isNetworkConnected(activity)) {
-            Log.e("isNetworkConnected", "1" + AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "1" + OnResumeUtils.getInstance().isAppResumeEnabled)
             dismissLoadingDialog()
-            Log.e("isNetworkConnected", "2" + AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "2" + OnResumeUtils.getInstance().isAppResumeEnabled)
 
-            if (AppOpenUtils.getInstance().isInitialized) {
-                AppOpenUtils.getInstance().isAppResumeEnabled = true
-                Log.e("isNetworkConnected", "3" + AppOpenUtils.getInstance().isAppResumeEnabled)
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = true
+                Log.e("isNetworkConnected", "3" + OnResumeUtils.getInstance().isAppResumeEnabled)
 
-                Log.e("isAppResumeEnabled", "3" + AppOpenUtils.getInstance().isAppResumeEnabled)
+                Log.e("isAppResumeEnabled", "3" + OnResumeUtils.getInstance().isAppResumeEnabled)
             }
-            Log.e("isNetworkConnected", "4" + AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "4" + OnResumeUtils.getInstance().isAppResumeEnabled)
 
             isInterstitialAdShowing = false
-            Log.e("isNetworkConnected", "5" + AppOpenUtils.getInstance().isAppResumeEnabled)
+            Log.e("isNetworkConnected", "5" + OnResumeUtils.getInstance().isAppResumeEnabled)
 
             callback.onInterstitialLoadFail("isNetworkConnected")
             return
@@ -642,11 +638,11 @@ object ApplovinUtils : LifecycleObserver {
                         interstitialAd.showAd()
                     } else {
                         isLoadInterstitialFailed = true
-                        if (AppOpenUtils.getInstance().isInitialized) {
-                            AppOpenUtils.getInstance().isAppResumeEnabled = true
+                        if (OnResumeUtils.getInstance().isInitialized) {
+                            OnResumeUtils.getInstance().isAppResumeEnabled = true
                             Log.e(
                                 "isAppResumeEnabled",
-                                "4" + AppOpenUtils.getInstance().isAppResumeEnabled
+                                "4" + OnResumeUtils.getInstance().isAppResumeEnabled
                             )
 
                         }
@@ -659,11 +655,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdDisplayed(p0: MaxAd) {
                 dismissLoadingDialog()
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                     Log.e(
                         "isAppResumeEnabled",
-                        "6" + AppOpenUtils.getInstance().isAppResumeEnabled
+                        "6" + OnResumeUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -674,11 +670,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdHidden(p0: MaxAd) {
                 dismissLoadingDialog()
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "5" + AppOpenUtils.getInstance().isAppResumeEnabled
+                        "5" + OnResumeUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -693,11 +689,11 @@ object ApplovinUtils : LifecycleObserver {
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 dismissLoadingDialog()
                 isLoadInterstitialFailed = true
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "4" + AppOpenUtils.getInstance().isAppResumeEnabled
+                        "4" + OnResumeUtils.getInstance().isAppResumeEnabled
                     )
 
                 }
@@ -707,11 +703,11 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
                 dismissLoadingDialog()
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                     Log.e(
                         "isAppResumeEnabled",
-                        "7" + AppOpenUtils.getInstance().isAppResumeEnabled
+                        "7" + OnResumeUtils.getInstance().isAppResumeEnabled
                     )
                 }
                 isInterstitialAdShowing = false
@@ -830,12 +826,12 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
 
-        if (AppOpenUtils.getInstance().isInitialized) {
-            if (!AppOpenUtils.getInstance().isAppResumeEnabled) {
+        if (OnResumeUtils.getInstance().isInitialized) {
+            if (!OnResumeUtils.getInstance().isAppResumeEnabled) {
                 return
             } else {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
             }
         }
@@ -845,8 +841,8 @@ object ApplovinUtils : LifecycleObserver {
         }
         lastTimeCallInterstitial = System.currentTimeMillis()
         if (!enableAds) {
-            if (AppOpenUtils.getInstance().isInitialized) {
-                AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = true
             }
             callback.onRewardLoadFail("\"isNetworkConnected\"")
             return
@@ -865,8 +861,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdDisplayed(p0: MaxAd) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = false
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = false
                 }
                 callback.onRewardShowSucceed()
                 lastTimeInterstitialShowed = System.currentTimeMillis()
@@ -874,8 +870,8 @@ object ApplovinUtils : LifecycleObserver {
             }
 
             override fun onAdHidden(p0: MaxAd) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
                 isInterstitialAdShowing = false
@@ -887,15 +883,15 @@ object ApplovinUtils : LifecycleObserver {
 
             override fun onAdLoadFailed(p0: String, p1: MaxError) {
                 isLoadInterstitialFailed = true
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardLoadFail(p1.toString())
             }
 
             override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
             }
@@ -933,8 +929,8 @@ object ApplovinUtils : LifecycleObserver {
             }
         } else {
             activity.lifecycleScope.launch(Dispatchers.Main) {
-                if (AppOpenUtils.getInstance().isInitialized) {
-                    AppOpenUtils.getInstance().isAppResumeEnabled = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isAppResumeEnabled = true
                 }
                 callback.onRewardClosed()
                 isInterstitialAdShowing = false
@@ -1061,7 +1057,7 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
         nativeAdLoader = MaxNativeAdLoader(adId, activity)
-        val tagView: View = if (size === AdNativeSize.MEDIUM) {
+        val tagView: View = if (size ==AdNativeSize.MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
@@ -1141,7 +1137,7 @@ object ApplovinUtils : LifecycleObserver {
         } catch (_: Exception) {
 
         }
-        val tagView: View = if (size === AdNativeSize.MEDIUM) {
+        val tagView: View = if (size ==AdNativeSize.MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
@@ -1214,7 +1210,7 @@ object ApplovinUtils : LifecycleObserver {
         } catch (_: Exception) {
 
         }
-        val tagView: View = if (size === AdNativeSize.MEDIUM) {
+        val tagView: View = if (size ==AdNativeSize.MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
@@ -1378,7 +1374,7 @@ object ApplovinUtils : LifecycleObserver {
                 callback.onAdFail("NativeAd Null")
             }
         } else {
-            val tagView: View = if (size === AdNativeSize.MEDIUM) {
+            val tagView: View = if (size ==AdNativeSize.MEDIUM) {
                 activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
             } else {
                 activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)

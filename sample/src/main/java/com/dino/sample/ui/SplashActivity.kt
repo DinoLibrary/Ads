@@ -10,12 +10,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdView
-import com.dino.ads.AdmobUtils
-import com.dino.ads.AppOpenUtils
-import com.dino.ads.ApplovinUtils
-import com.dino.ads.callback_applovin.NativeCallback
-import com.dino.ads.remote_config.RemoteUtils
-import com.dino.ads.utils.Utils
+import com.dino.ads.admob.AdmobUtils
+import com.dino.ads.admob.OnResumeUtils
+import com.dino.ads.admob.RemoteUtils
+import com.dino.ads.applovin.ApplovinUtils
+import com.dino.ads.applovin.NativeCallback
 import com.dino.ads.utils.replaceActivity
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
@@ -59,8 +58,8 @@ class SplashActivity : AppCompatActivity() {
                 AdmobUtils.initAdmob(this, isDebug = true)
 
                 //* Init Ads On Resume
-                AppOpenUtils.getInstance().init(application, getString(com.dino.ads.R.string.test_admob_on_resume_id))
-                AppOpenUtils.getInstance().disableAppResumeWithActivity(SplashActivity::class.java)
+                OnResumeUtils.getInstance().init(this)
+//                OnResumeUtils.getInstance().disableOnResume(SplashActivity::class.java)
 
                 AdsManager.loadNativeFullscreen(this@SplashActivity, RemoteConfig.NATIVE_INTRO_FULL)
                 AdsManager.loadNativeIntro(this@SplashActivity, RemoteConfig.NATIVE_INTRO)
@@ -77,8 +76,20 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun showInterOrAoa() {
-//        handler.postDelayed({ nextActivity() }, 3000)
-        handler.postDelayed({ replaceActivity<MainActivity>() }, 1)
+        AdmobUtils.loadAndShowAdSplash(this, RemoteConfig.ADS_SPLASH, object : AdmobUtils.InterCallback() {
+            override fun onInterClosed() {
+                nextActivity()
+            }
+
+            override fun onInterFailed(error: String) {
+                onInterClosed()
+            }
+        })
+    }
+
+    private fun nextActivity() {
+//        replaceActivity<IntroActivity>()
+        replaceActivity<MainActivity>()
     }
 
     private fun initApplovin() {
@@ -119,10 +130,6 @@ class SplashActivity : AppCompatActivity() {
 //                    Utils.getInstance().replaceActivity(this@SplashActivity, MainActivity::class.java)
                 }
             })
-    }
-
-    private fun nextActivity() {
-        replaceActivity<IntroActivity>()
     }
 
 }

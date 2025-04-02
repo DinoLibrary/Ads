@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.dino.ads.AdmobUtils
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.FragmentIntroBinding

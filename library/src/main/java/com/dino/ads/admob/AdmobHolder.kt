@@ -1,7 +1,7 @@
-package com.dino.ads.remote_config
+package com.dino.ads.admob
 
 import androidx.lifecycle.MutableLiveData
-import com.dino.ads.AdNativeSize
+import com.dino.ads.utils.AdNativeSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MediaAspectRatio
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -12,21 +12,34 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 open class AdmobHolder(val uid: String = "") {
     var enableLoadingDialog = true
 
+    //* Inter
     var isInterLoading = false
     val inter: MutableLiveData<InterstitialAd> = MutableLiveData()
     var interCount: Int = 0
 
+    //* Reward
     var isRewardLoading = false
     val rewardInter: MutableLiveData<RewardedInterstitialAd> = MutableLiveData()
     val reward: MutableLiveData<RewardedAd> = MutableLiveData()
 
+    //* Banner
     var anchor = "bottom"
     var bannerAdView: AdView? = null
+    var dividerColor: String = "#000000"
 
+    //* Native
     var isNativeLoading = false
     var nativeSize = AdNativeSize.MEDIUM
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+
+    /**
+     * Native is ready when it's loaded successfully
+     */
+    open fun dividerColor(color: String): AdmobHolder {
+        dividerColor = color
+        return this
+    }
 
     /**
      * Native is ready when it's loaded successfully

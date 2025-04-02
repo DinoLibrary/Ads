@@ -1,4 +1,4 @@
-package com.dino.ads;
+package com.dino.ads.admob;
 
 import android.app.Activity;
 import android.app.Application;
@@ -17,6 +17,8 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.dino.ads.R;
+import com.dino.ads.applovin.ApplovinUtils;
 import com.google.android.gms.ads.AdActivity;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -28,9 +30,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, LifecycleObserver  {
+public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
     private static final String TAG = "AppOpenUtils";
-    private static volatile AppOpenUtils INSTANCE;
+    private static volatile OnResumeUtils INSTANCE;
     private AppOpenAd appResumeAd = null;
     private AppOpenAd splashAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
@@ -43,59 +45,38 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
     public boolean isShowingAdsOnResumeBanner = false;
     private long appResumeLoadTime = 0;
     private long splashLoadTime = 0;
-    private int splashTimeout = 0;
     public long timeToBackground = 0;
-    private long waitingTime = 0;
     private boolean isInitialized = false;
     public boolean isAppResumeEnabled = true;
     private final List<Class> disabledAppOpenList;
     private Class splashActivity;
-    private boolean isTimeout = false;
-    private static final int TIMEOUT_MSG = 11;
     private Dialog dialogFullScreen;
-    private Handler timeoutHandler = new Handler(msg -> {
-        if (msg.what == TIMEOUT_MSG) {
-            isTimeout = true;
-        }
-        return false;
-    });
 
-    public void setWaitingTime(long waitingTime){
-        this.waitingTime = waitingTime;
-    }
-
-    /**
-     * Constructor
-     */
-    public AppOpenUtils() {
+    public OnResumeUtils() {
         disabledAppOpenList = new ArrayList<>();
     }
 
-    public static synchronized AppOpenUtils getInstance() {
+    public static synchronized OnResumeUtils getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new AppOpenUtils();
+            INSTANCE = new OnResumeUtils();
         }
         return INSTANCE;
     }
 
-    /**
-     * Init AppOpenManager
-     *
-     * @param application
-     */
-    public void init(Application application, String appOpenAdId) {
+    public void init(Activity activity) {
         isInitialized = true;
-        this.myApplication = application;
+        this.myApplication = activity.getApplication();
         initAdRequest();
-        if (AdmobUtils.isTesting) {
-            this.appResumeAdId = application.getString(R.string.test_admob_on_resume_id);
+        disableOnResume(activity.getClass());
 
+        if (AdmobUtils.isTesting) {
+            this.appResumeAdId = myApplication.getString(R.string.test_admob_on_resume_id);
         } else {
-            this.appResumeAdId = appOpenAdId;
+            this.appResumeAdId = RemoteUtils.INSTANCE.getAdId("on_resume");
         }
         this.myApplication.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        if (!isAdAvailable(false) && appOpenAdId != null) {
+        if (!isAdAvailable(false) && appResumeAdId != null) {
             fetchAd(false);
         }
     }
@@ -115,29 +96,26 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
 
     /**
      * Check app open ads is showing
-     *
-     * @return
      */
     public boolean isShowingAd() {
         return isShowingAd;
     }
+
     public boolean isShowingAdsOnResume() {
         return isShowingAdsOnResume;
     }
 
     /**
      * Disable app open app on specific activity
-     *
-     * @param activityClass
      */
-    public void disableAppResumeWithActivity(Class activityClass) {
+    public void disableOnResume(Class activityClass) {
         Log.d(TAG, "disableAppResumeWithActivity: " + activityClass.getName());
         disabledAppOpenList.add(activityClass);
     }
 
-    public void enableAppResumeWithActivity(Class activityClass) {
+    public void enableOnResume(Class activityClass) {
         Log.d(TAG, "enableAppResumeWithActivity: " + activityClass.getName());
-        new Handler().postDelayed(() -> disabledAppOpenList.remove(activityClass),40);
+        new Handler().postDelayed(() -> disabledAppOpenList.remove(activityClass), 40);
     }
 
 
@@ -159,45 +137,31 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
 
     public void fetchAd(final boolean isSplash) {
         Log.d(TAG, "fetchAd: isSplash = " + isSplash);
-        if (isAdAvailable(isSplash) || appResumeAdId == null || AppOpenUtils.this.appResumeAd!= null) {
+        if (isAdAvailable(isSplash) || appResumeAdId == null || OnResumeUtils.this.appResumeAd != null) {
             Log.d(TAG, "===AppOpenUtils: Ad is ready or id = null");
             return;
         }
-        if (!isLoading){
-            Log.d(TAG, "===AppOpenUtils: fetchAd");
-            isLoading = true;
-            loadCallback =
-                    new AppOpenAd.AppOpenAdLoadCallback() {
-                        /**
-                         * Called when an app open ad has loaded.
-                         *
-                         * @param ad the loaded app open ad.
-                         */
-                        @Override
-                        public void onAdLoaded(AppOpenAd ad) {
-                            Log.d(TAG, "===AppOpenUtils: Loaded");
-                            AppOpenUtils.this.appResumeAd = ad;
-                            AppOpenUtils.this.appResumeLoadTime = (new Date()).getTime();
-                        }
 
-                        /**
-                         * Called when an app open ad has failed to load.
-                         *
-                         * @param loadAdError the error.
-                         */
-                        @Override
-                        public void onAdFailedToLoad(LoadAdError loadAdError) {
-                            // Handle the error.
-                            isLoading = false;
-                            Log.d(TAG, "===AppOpenUtils: onAdFailedToLoad");
-                            String a = "fail";
-                        }
+        if (isLoading) return;
+        Log.d(TAG, "===AppOpenUtils: fetchAd");
+        isLoading = true;
+        loadCallback = new AppOpenAd.AppOpenAdLoadCallback() {
+            @Override
+            public void onAdLoaded(AppOpenAd ad) {
+                Log.d(TAG, "===AppOpenUtils: Loaded");
+                OnResumeUtils.this.appResumeAd = ad;
+                OnResumeUtils.this.appResumeLoadTime = (new Date()).getTime();
+            }
 
-                    };
-            AppOpenAd.load(
-                    myApplication, appResumeAdId, adRequest, loadCallback);
-        }
+            @Override
+            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                isLoading = false;
+                Log.d(TAG, "===AppOpenUtils: onAdFailedToLoad");
+                String a = "fail";
+            }
 
+        };
+        AppOpenAd.load(myApplication, appResumeAdId, adRequest, loadCallback);
     }
 
     private boolean wasLoadTimeLessThanNHoursAgo(long loadTime, long numHours) {
@@ -221,9 +185,9 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Log.d("===ADS", activity.getClass() + "|"+AdActivity.class);
+        Log.d("===AppOpenUtils", activity.getClass() + "|" + AdActivity.class);
         currentActivity = activity;
-        Log.d("===ADS", "Running");
+        Log.d("===AppOpenUtils", "Running");
     }
 
     @Override
@@ -256,11 +220,8 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-//        if (activity.getClass() == AdActivity.class){
-//            return;
-//        }
         currentActivity = null;
-        if (dialogFullScreen != null && dialogFullScreen.isShowing()){
+        if (dialogFullScreen != null && dialogFullScreen.isShowing()) {
             dialogFullScreen.dismiss();
         }
     }
@@ -272,7 +233,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                 try {
                     dialogFullScreen.dismiss();
                     dialogFullScreen = null;
-                }catch (Exception ignored){
+                } catch (Exception ignored) {
 
                 }
                 fullScreenContentCallback.onAdDismissedFullScreenContent();
@@ -290,13 +251,13 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                             new Handler().postDelayed(() -> {
                                 isDismiss = false;
                                 Log.d("==TestAOA==", "onResume: false");
-                            },200);
+                            }, 200);
                             isLoading = false;
                             Log.d(TAG, "onAdShowedFullScreenContent: Dismiss");
                             try {
                                 dialogFullScreen.dismiss();
                                 dialogFullScreen = null;
-                            }catch (Exception ignored){
+                            } catch (Exception ignored) {
 
                             }
                             // Set the reference to null so isAdAvailable() returns false.
@@ -316,7 +277,7 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
                             try {
                                 dialogFullScreen.dismiss();
                                 dialogFullScreen = null;
-                            }catch (Exception ignored){
+                            } catch (Exception ignored) {
 
                             }
 
@@ -346,9 +307,9 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
     private void showAdsResume(final boolean isSplash, final FullScreenContentCallback callback) {
         if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             new Handler().postDelayed(() -> {
-                if (appResumeAd != null){
+                if (appResumeAd != null) {
                     appResumeAd.setFullScreenContentCallback(callback);
-                    if (currentActivity != null){
+                    if (currentActivity != null) {
                         showDialog(currentActivity);
                         appResumeAd.show(currentActivity);
                     }
@@ -356,54 +317,52 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
             }, 100);
         }
     }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     protected void onMoveToForeground() {
         // Show the ad (if available) when the app moves to foreground.
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(() -> {
 //                Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
 
-                if (System.currentTimeMillis() - timeToBackground < 30000){
-                    return;
-                }
-
-                if (currentActivity == null) {
-                    return;
-                }
-                if (currentActivity.getClass() == AdActivity.class){
-                    return;
-                }
-                if (ApplovinUtils.INSTANCE.isClickAds()){
-                    ApplovinUtils.INSTANCE.setClickAds(false);
-                    return;
-                }
-                if(AdmobUtils.isAdShowing){
-                    return;
-                }
-                if (!AdmobUtils.isEnableAds) {
-                    return;
-                }
-
-                if (!isAppResumeEnabled) {
-                    Log.d("===OnResume", "isAppResumeEnabled");
-                    return;
-                } else {
-                    AdmobUtils.dismissAdDialog();
-                }
-
-                for (Class activity : disabledAppOpenList) {
-                    if (activity.getName().equals(currentActivity.getClass().getName())) {
-                        Log.d(TAG, "onStart: activity is disabled");
-                        return;
-                    }
-                }
-                showAppOpenAd(false);
+            if (System.currentTimeMillis() - timeToBackground < 30000) {
+                return;
             }
-        },30);
+
+            if (currentActivity == null) {
+                return;
+            }
+            if (currentActivity.getClass() == AdActivity.class) {
+                return;
+            }
+            if (ApplovinUtils.INSTANCE.isClickAds()) {
+                ApplovinUtils.INSTANCE.setClickAds(false);
+                return;
+            }
+            if (AdmobUtils.isAdShowing) {
+                return;
+            }
+            if (!AdmobUtils.isEnableAds) {
+                return;
+            }
+
+            if (!isAppResumeEnabled) {
+                Log.d("===OnResume", "isAppResumeEnabled");
+                return;
+            } else {
+                AdmobUtils.dismissAdDialog();
+            }
+
+            for (Class activity : disabledAppOpenList) {
+                if (activity.getName().equals(currentActivity.getClass().getName())) {
+                    Log.d(TAG, "onStart: activity is disabled");
+                    return;
+                }
+            }
+            showAppOpenAd(false);
+        }, 30);
     }
 
-    public void showDialog(Context context){
+    public void showDialog(Context context) {
         isShowingAdsOnResume = true;
         isShowingAdsOnResumeBanner = true;
         dialogFullScreen = new Dialog(context);
@@ -413,10 +372,10 @@ public class AppOpenUtils implements Application.ActivityLifecycleCallbacks, Lif
         dialogFullScreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogFullScreen.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         try {
-            if (!currentActivity.isFinishing() && dialogFullScreen!=null && !dialogFullScreen.isShowing()){
+            if (!currentActivity.isFinishing() && dialogFullScreen != null && !dialogFullScreen.isShowing()) {
                 dialogFullScreen.show();
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }

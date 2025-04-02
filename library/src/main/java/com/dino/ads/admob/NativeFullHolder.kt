@@ -1,4 +1,4 @@
-package com.dino.ads.remote_config
+package com.dino.ads.admob
 
 class NativeFullHolder(uid: String) : AdmobHolder(uid) {
     val remoteValue: String

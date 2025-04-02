@@ -1,4 +1,4 @@
-package com.dino.ads
+package com.dino.ads.admob
 
 import android.app.Activity
 import android.app.Dialog
@@ -12,10 +12,10 @@ import android.view.Window
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
+import com.dino.ads.R
 import com.dino.ads.adjust.AdjustUtils
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.appopen.AppOpenAd
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 class AOAUtils(
     private val activity: Activity,
-    val appOpen: String,
+    val holder: AdmobHolder,
     val timeOut: Long,
     val appOpenAdsListener: AppOpenAdsListener
 ) {
@@ -42,13 +42,14 @@ class AOAUtils(
     private val isAdAvailable: Boolean
         get() = appOpenAd != null
 
-    fun loadAOA() {
+    fun loadAndShowAoa() {
         Log.d("===Load", "id1")
-        var idAoa = appOpen
-        if (AdmobUtils.isTesting) {
-            idAoa = activity.getString(R.string.test_admob_on_resume_id)
+        val idAoa = if (AdmobUtils.isTesting) {
+            activity.getString(R.string.test_admob_on_resume_id)
+        } else {
+            RemoteUtils.getAdId("AOA_${holder.uid}")
         }
-        if (!AdmobUtils.isEnableAds) {
+        if (!AdmobUtils.isEnableAds || !AdmobUtils.isNetworkConnected(activity)) {
             appOpenAdsListener.onAdsFailed("isShowAds false")
             return
         }
@@ -89,7 +90,7 @@ class AOAUtils(
                     appOpenAdsListener.onAdsLoaded()
                     job.cancel()
                     Log.d("====Timeout", "isAdAvailable = true")
-                    if (!com.dino.ads.AppOpenUtils.getInstance().isShowingAd && !isShowingAd && isLoadAndShow) {
+                    if (!OnResumeUtils.getInstance().isShowingAd && !isShowingAd && isLoadAndShow) {
                         showAOA()
                     }
                 }
@@ -101,50 +102,48 @@ class AOAUtils(
         Log.d("====Timeout", "$isShowingAd - $isAdAvailable")
         if (!isShowingAd && isAdAvailable && isLoading) {
             isLoading = false
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = false
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = false
             }
             Log.d("====Timeout", "will show ad ")
-            val fullScreenContentCallback: FullScreenContentCallback =
-                object : FullScreenContentCallback() {
-
-                    override fun onAdDismissedFullScreenContent() {
-                        try {
-                            dialogFullScreen?.dismiss()
-                        } catch (ignored: Exception) {
-                        }
-                        appOpenAd = null
-                        isShowingAd = true
-                        Log.d("====Timeout", "Dismiss... ")
-                        if (isStart) {
-                            isStart = false
-                            appOpenAdsListener.onAdsClose()
-                        }
-                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
-                        }
+            val fullScreenContentCallback: FullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    try {
+                        dialogFullScreen?.dismiss()
+                    } catch (ignored: Exception) {
                     }
-
-                    override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                        try {
-                            dialogFullScreen?.dismiss()
-                        } catch (ignored: Exception) {
-                        }
-                        isShowingAd = true
-                        if (isStart) {
-                            isStart = false
-                            appOpenAdsListener.onAdsFailed(p0.message)
-                            Log.d("====Timeout", "Failed... $p0")
-                        }
-                        if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                            com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
-                        }
+                    appOpenAd = null
+                    isShowingAd = true
+                    Log.d("====Timeout", "Dismiss... ")
+                    if (isStart) {
+                        isStart = false
+                        appOpenAdsListener.onAdsClose()
                     }
-
-                    override fun onAdShowedFullScreenContent() {
-                        isShowingAd = true
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isAppResumeEnabled = true
                     }
                 }
+
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    try {
+                        dialogFullScreen?.dismiss()
+                    } catch (ignored: Exception) {
+                    }
+                    isShowingAd = true
+                    if (isStart) {
+                        isStart = false
+                        appOpenAdsListener.onAdsFailed(p0.message)
+                        Log.d("====Timeout", "Failed... $p0")
+                    }
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isAppResumeEnabled = true
+                    }
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    isShowingAd = true
+                }
+            }
             appOpenAd?.run {
                 this.fullScreenContentCallback = fullScreenContentCallback
                 dialogFullScreen = Dialog(activity)
@@ -165,7 +164,7 @@ class AOAUtils(
                 } catch (ignored: Exception) {
                 }
                 Handler(Looper.getMainLooper()).postDelayed({
-                    if (!com.dino.ads.AppOpenUtils.getInstance().isShowingAd && !isShowingAd) {
+                    if (!OnResumeUtils.getInstance().isShowingAd && !isShowingAd) {
                         Log.d("===AOA", "Show")
                         try {
                             val txt = dialogFullScreen?.findViewById<TextView>(R.id.txtLoading)
@@ -174,7 +173,6 @@ class AOAUtils(
                         } catch (ignored: Exception) {
                         }
                         setOnPaidEventListener {
-                            appOpenAdsListener.onAdPaid(it, adUnitId)
                             AdjustUtils.postRevenueAdjust(it, adUnitId)
                         }
                         show(activity)
@@ -208,7 +206,6 @@ class AOAUtils(
         fun onAdsClose()
         fun onAdsLoaded()
         fun onAdsFailed(message: String)
-        fun onAdPaid(adValue: AdValue, adUnitAds: String)
     }
 
 }

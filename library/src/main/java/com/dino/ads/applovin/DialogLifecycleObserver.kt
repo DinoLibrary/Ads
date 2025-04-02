@@ -1,9 +1,10 @@
-package com.dino.ads
+package com.dino.ads.applovin
 
 import android.app.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.dino.ads.admob.OnResumeUtils
 
 class DialogLifecycleObserver(val dialog: Dialog) : LifecycleObserver {
 
@@ -11,8 +12,8 @@ class DialogLifecycleObserver(val dialog: Dialog) : LifecycleObserver {
     fun onDestroy(){
         if(dialog.isShowing){
             dialog.dismiss()
-            if (com.dino.ads.AppOpenUtils.getInstance().isInitialized) {
-                com.dino.ads.AppOpenUtils.getInstance().isAppResumeEnabled = true
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isAppResumeEnabled = true
             }
         }
     }

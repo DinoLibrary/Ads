@@ -1,17 +1,16 @@
-package com.dino.ads.utils.admod.remote
+package com.dino.ads.admob
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import com.dino.ads.AdmobUtils
 import com.dino.ads.R
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_ADAPTIVE
-import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_BOTTOM
-import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_TOP
-import com.dino.ads.utils.admod.remote.BannerPlugin.BannerConfig.Companion.TYPE_STANDARD
+import com.dino.ads.admob.BannerPlugin.BannerConfig.Companion.TYPE_ADAPTIVE
+import com.dino.ads.admob.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_BOTTOM
+import com.dino.ads.admob.BannerPlugin.BannerConfig.Companion.TYPE_COLLAPSIBLE_TOP
+import com.dino.ads.admob.BannerPlugin.BannerConfig.Companion.TYPE_STANDARD
 import com.google.gson.annotations.SerializedName
 
 @SuppressLint("ViewConstructor")
@@ -111,7 +110,7 @@ class BannerPlugin(
         log("\n adUnitId = $adUnitId \n bannerType = $bannerType \n refreshRateSec = $refreshRateSec \n cbFetchIntervalSec = $cbFetchIntervalSec")
 
         adView = BaseAdView.Factory.getAdView(
-                                           activity,
+            activity,
             adUnitId,
             bannerType,
             refreshRateSec,

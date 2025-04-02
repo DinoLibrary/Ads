@@ -34,6 +34,10 @@ fun View.invisible() {
     visibility = View.INVISIBLE
 }
 
+fun Int.dpToPx(context: Context): Int {
+    val density = context.resources.displayMetrics.density
+    return (this * density).toInt()
+}
 fun Context.prefs(): SharedPreferences {
     return getSharedPreferences("APP_PREFS", MODE_PRIVATE)
 }

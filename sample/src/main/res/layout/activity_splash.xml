@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/white">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +11,7 @@
         android:lineSpacingExtra="8dp"
         android:text="Welcome to\nDINO ADS LIBRARY"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/progress_bar"

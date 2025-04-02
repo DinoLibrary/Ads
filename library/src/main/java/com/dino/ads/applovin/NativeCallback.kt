@@ -1,4 +1,4 @@
-package com.dino.ads.callback_applovin
+package com.dino.ads.applovin
 
 import com.applovin.mediation.MaxAd
 import com.applovin.mediation.nativeAds.MaxNativeAdView

@@ -1,4 +1,4 @@
-package com.dino.ads.utils
+package com.dino.ads.applovin
 
 import androidx.lifecycle.MutableLiveData
 import com.applovin.mediation.MaxAd

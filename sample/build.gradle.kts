@@ -72,8 +72,8 @@ val generateRemoteConfig = tasks.register("generateRemoteConfig") {
             val entry = entries.item(i)
             val key = entry.childNodes.item(1).textContent
             val value = entry.childNodes.item(3).textContent
-            if (key == "check_test_ad" || key == "enable_ads" || key.takeLast(3) == "_id") {
-
+            if (key == "check_test_ad" || key == "enable_ads" || key.takeLast(3) == "_ID") {
+                //* Do nothing
             } else if (key.endsWith("_full")) {
                 configVars.add("        \"$key\" to \"$value\"")
                 delegatedVars.add("    var ${key.uppercase()} = NativeFullHolder(\"${key.removeSuffix("_full").substringAfterLast("_")}\")")
@@ -88,15 +88,9 @@ val generateRemoteConfig = tasks.register("generateRemoteConfig") {
 
         val remoteConfigCode = StringBuilder()
             .append("package $packageName\n\n")
-            .append("import com.dino.ads.remote_config.*\n\n")
+            .append("import com.dino.ads.admob.*\n\n")
             .append("object RemoteConfig {\n")
-//            .append("    val configMap: MutableMap<String, String> = mutableMapOf(\n")
-//            .append(configVars.joinToString(",\n"))
-//            .append("\n")
             .append(delegatedVars.joinToString("\n"))
-//            .append("\n\n    fun updateAll(newConfig: Map<String, String>) {\n")
-//            .append("        configMap.putAll(newConfig)\n")
-//            .append("    }\n")
             .append("\n}\n")
             .toString()
         outputFile.writeText(remoteConfigCode)

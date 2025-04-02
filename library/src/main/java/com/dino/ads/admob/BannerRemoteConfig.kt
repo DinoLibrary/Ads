@@ -1,4 +1,4 @@
-package com.dino.ads.utils.admod.remote
+package com.dino.ads.admob
 
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdValue

@@ -1,10 +1,9 @@
-package com.dino.ads.remote_config
+package com.dino.ads.admob
 
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.XmlRes
-import com.dino.ads.AdmobUtils
 import com.dino.ads.utils.log
 import com.google.firebase.remoteconfig.ConfigUpdate
 import com.google.firebase.remoteconfig.ConfigUpdateListener
@@ -50,6 +49,11 @@ object RemoteUtils {
     fun getValue(key: String): String {
         if (enableLog) log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
         return FirebaseRemoteConfig.getInstance().getString(key)
+    }
+
+    fun getAdId(key: String): String {
+        if (enableLog) log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
+        return FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
     }
 
     fun checkTestAd() = getValue("check_test_ad") != "0" && AdmobUtils.isTesting

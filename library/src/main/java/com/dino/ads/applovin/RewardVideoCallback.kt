@@ -1,4 +1,4 @@
-package com.dino.ads.callback_applovin
+package com.dino.ads.applovin
 
 interface RewardVideoCallback {
     fun onRewardClosed()
