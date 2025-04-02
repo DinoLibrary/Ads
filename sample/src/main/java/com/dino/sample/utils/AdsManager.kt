@@ -31,7 +31,7 @@ object AdsManager {
     }
 
     fun loadAndShowBannerNative(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
-        AdmobUtils.loadAndShowBannerNative(
+        AdmobUtils.loadAndShowBanner(
             activity, holder, viewGroup, R.layout.ad_template_medium, object : AdmobUtils.BannerCallback {
                 override fun onBannerClicked() {
                 }
