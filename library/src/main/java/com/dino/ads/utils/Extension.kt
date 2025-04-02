@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 
 
@@ -19,6 +20,18 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
 
 fun log(msg: String) {
     Log.d("===", msg)
+}
+
+fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+fun View.gone() {
+    visibility = View.GONE
+}
+
+fun View.invisible() {
+    visibility = View.INVISIBLE
 }
 
 fun Context.prefs(): SharedPreferences {
