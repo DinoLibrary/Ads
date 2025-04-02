@@ -1,9 +1,10 @@
-package com.dino.sample
+package com.dino.sample.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.AdmobUtils
 import com.dino.ads.utils.addActivity
+import com.dino.sample.R
 import com.dino.sample.databinding.ActivityMainBinding
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.nativead.NativeAd

@@ -1,4 +1,4 @@
-package com.dino.sample
+package com.dino.sample.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1257,7 +1257,7 @@ object AdmobUtils {
             }
         }
         val extras = Bundle()
-        extras.putString("collapsible", holder.anchor)
+        extras.putString("collapsible", holder.anchor)˜
         val adRequestCollap =
             AdRequest.Builder().addNetworkExtrasBundle(AdMobAdapter::class.java, extras).build()
         holder.bannerAdView?.loadAd(adRequestCollap)

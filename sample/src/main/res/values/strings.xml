@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Dino Ads</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="next">Next</string>
+    <string name="intro1">All in one</string>
+    <string name="intro2">Weather forecast</string>
+    <string name="intro3">Indoor &amp; Outdoor Temperature</string>
+    <string name="intro1_content">Weather forecast, Air quality, rainfall, wind…</string>
+    <string name="intro2_content">Always update accurate weather information</string>
+    <string name="intro3_content">Measure temperature with a smart thermometer</string>
 </resources>

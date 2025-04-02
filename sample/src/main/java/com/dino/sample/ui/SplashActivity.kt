@@ -1,4 +1,4 @@
-package com.dino.sample
+package com.dino.sample.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,7 @@ import com.dino.ads.callback_applovin.NativeCallback
 import com.dino.ads.remote_config.RemoteUtils
 import com.dino.ads.utils.Utils
 import com.dino.ads.utils.replaceActivity
+import com.dino.sample.R
 import com.dino.sample.databinding.ActivitySplashBinding
 import com.dino.sample.utils.ApplovinManager
 

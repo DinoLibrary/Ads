@@ -29,7 +29,7 @@ object RemoteUtils {
             override fun onUpdate(configUpdate: ConfigUpdate) {
                 remoteConfig.activate().addOnCompleteListener {
                     AdmobUtils.isEnableAds = enableAds()
-                    onCompleted()
+//                    onCompleted()
                 }
             }
 
