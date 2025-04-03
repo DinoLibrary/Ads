@@ -210,7 +210,7 @@ object AdmobUtils {
     fun loadAndShowBanner(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback) {
         val remoteValue = RemoteUtils.getValue("banner_${holder.uid}")
         if (remoteValue == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             callback.onBannerFailed("Not show banner")
         } else if (remoteValue == "2") {
             performLoadAndShowBannerCollap(activity, holder, viewGroup, callback)
@@ -230,7 +230,7 @@ object AdmobUtils {
     ) {
         when (val remoteValue = RemoteUtils.getValue("banner_${holder.uid}")) {
             "0" -> {
-                viewGroup.visibility = View.GONE
+                viewGroup.gone()
                 callback.onBannerFailed("Not show banner")
             }
 
@@ -251,7 +251,7 @@ object AdmobUtils {
             }
 
             else -> {
-                viewGroup.visibility = View.GONE
+                viewGroup.gone()
                 callback.onBannerFailed("banner_${holder.uid}: remoteValue = $remoteValue???")
             }
         }
@@ -778,7 +778,7 @@ object AdmobUtils {
     fun showNative(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallbackSimple) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
         if (remoteValue == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
         } else {
             performShowNative(activity, viewGroup, holder, layout, callback)
         }
@@ -788,7 +788,7 @@ object AdmobUtils {
     fun loadAndShowNative(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
         if (remoteValue == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
         } else {
             performLoadAndShowNative(activity, viewGroup, holder, layout, callback)
         }
@@ -799,7 +799,7 @@ object AdmobUtils {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
         when (remoteValue) {
             "0" -> {
-                viewGroup.visibility = View.GONE
+                viewGroup.gone()
             }
 
             "1" -> {
@@ -816,7 +816,7 @@ object AdmobUtils {
     fun loadAndShowNativeCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
         val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
         if (remoteEntry == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             return
         } else {
             performLoadAndShowNativeCollap(activity, holder, viewGroup, layout, callback)
@@ -837,7 +837,7 @@ object AdmobUtils {
     fun showNativeFull(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallbackSimple) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full")
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
         } else {
             performShowNativeFull(activity, viewGroup, holder, layout, callback)
         }
@@ -847,7 +847,7 @@ object AdmobUtils {
     fun loadAndShowNativeFull(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full")
         if (remoteValue == "0") {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             callback.onNativeFailed()
         } else {
             performLoadAndShowNativeFull(activity, viewGroup, holder, layout, callback)
@@ -1758,7 +1758,7 @@ object AdmobUtils {
 
     private fun performShowNative(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeCallbackSimple) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             return
         }
         shimmerFrameLayout?.stopShimmer()
@@ -1783,6 +1783,7 @@ object AdmobUtils {
                 callback.onNativeLoaded()
             } else {
                 shimmerFrameLayout?.stopShimmer()
+                viewGroup.gone()
                 holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 callback.onNativeFailed("None Show")
             }
@@ -1823,6 +1824,7 @@ object AdmobUtils {
                     holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 } else {
                     shimmerFrameLayout?.stopShimmer()
+                    viewGroup.gone()
                     callback.onNativeFailed("None Show")
                     holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 }
@@ -1833,7 +1835,7 @@ object AdmobUtils {
     private fun performLoadAndShowNative(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, adCallback: NativeCallback) {
         Log.d("===AdmobNative", "loadAndShowNative")
         if (!isEnableAds || !isNetworkConnected(activity)) {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             return
         }
 //        VideoOptions.Builder().setStartMuted(false).build()
@@ -1846,8 +1848,6 @@ object AdmobUtils {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
-//        } else {
-//            activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
         }
 
         try {
@@ -1886,6 +1886,7 @@ object AdmobUtils {
                 shimmerFrameLayout.stopShimmer()
                 try {
                     viewGroup.removeAllViews()
+                    viewGroup.gone()
                 } catch (_: Exception) {
 
                 }
@@ -1910,7 +1911,7 @@ object AdmobUtils {
     ) {
         Log.d("===AdmobNative", "loadAndShowNativeCollap")
         if (!isEnableAds || !isNetworkConnected(activity)) {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             return
         }
 //        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
@@ -1960,6 +1961,7 @@ object AdmobUtils {
                 shimmerFrameLayout.stopShimmer()
                 try {
                     viewGroup.removeAllViews()
+                    viewGroup.gone()
                 } catch (_: Exception) {
 
                 }
@@ -1984,7 +1986,7 @@ object AdmobUtils {
 //                activity
 //            )
 //        ) {
-//            viewGroup.visibility = View.GONE
+//            viewGroup.gone()
 //            return
 //        }
 //        var s = nativeHolder.ads
@@ -2033,7 +2035,7 @@ object AdmobUtils {
         activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback
     ) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             callback.onNativeFailed()
             return
         }
@@ -2075,6 +2077,7 @@ object AdmobUtils {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                 Log.d("===Admob", loadAdError.toString())
                 shimmerFrameLayout?.stopShimmer()
+                viewGroup.gone()
                 callback.onNativeFailed()
             }
         })
@@ -2137,7 +2140,7 @@ object AdmobUtils {
     @JvmStatic
     fun performShowNativeFull(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeCallbackSimple) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
-            viewGroup.visibility = View.GONE
+            viewGroup.gone()
             return
         }
         shimmerFrameLayout?.stopShimmer()
@@ -2154,6 +2157,7 @@ object AdmobUtils {
                 callback.onNativeLoaded()
             } else {
                 shimmerFrameLayout?.stopShimmer()
+                viewGroup.gone()
                 holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 callback.onNativeFailed("None Show")
             }
@@ -2185,6 +2189,7 @@ object AdmobUtils {
                     holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 } else {
                     shimmerFrameLayout?.stopShimmer()
+                    viewGroup.gone()
                     callback.onNativeFailed("None Show")
                     holder.nativeAd.removeObservers((activity as LifecycleOwner))
                 }
@@ -2204,7 +2209,7 @@ object AdmobUtils {
 //                activity
 //            )
 //        ) {
-//            viewGroup.visibility = View.GONE
+//            viewGroup.gone()
 //            return
 //        }
 //        var adMobId: String = id
@@ -2261,7 +2266,7 @@ object AdmobUtils {
 //                activity
 //            )
 //        ) {
-//            viewGroup.visibility = View.GONE
+//            viewGroup.gone()
 //            return
 //        }
 ////        val videoOptions =
@@ -2344,7 +2349,7 @@ object AdmobUtils {
 //                activity
 //            )
 //        ) {
-//            viewGroup.visibility = View.GONE
+//            viewGroup.gone()
 //            return
 //        }
 //        if (shimmerFrameLayout != null) {

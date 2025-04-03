@@ -11,7 +11,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 object RemoteUtils {
 
-    var enableLog = false
+    private var enableLog = false
 
     @JvmStatic
     fun init(@XmlRes xmlFile: Int, onCompleted: () -> Unit) {
@@ -44,16 +44,22 @@ object RemoteUtils {
     }
 
     fun getValue(key: String): String {
-        if (enableLog) log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
-        return FirebaseRemoteConfig.getInstance().getString(key)
+        val value = FirebaseRemoteConfig.getInstance().getString(key)
+        if (enableLog) log("getValue: $key = $value")
+        return value
     }
 
     fun getAdId(key: String): String {
-        if (enableLog) log("getValue: $key - ${FirebaseRemoteConfig.getInstance().getString(key)}")
-        return FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
+        val adId = FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
+        if (enableLog) log("getAdId: ${key.uppercase()}_ID: $adId")
+        return adId
     }
 
     fun checkTestAd() = getValue("check_test_ad") != "0" && AdmobUtils.isTesting
 
     fun enableAds() = getValue("enable_ads") == "1"
+
+    fun enableLog() {
+        enableLog = true
+    }
 }

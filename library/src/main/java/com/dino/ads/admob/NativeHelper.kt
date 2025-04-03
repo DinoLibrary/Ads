@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.dino.ads.R
 import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.utils.gone
+import com.dino.ads.utils.visible
 import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -42,7 +44,10 @@ class NativeHelper {
             }
             if (nativeAd.mediaContent != null) {
                 if (size == AdNativeSize.MEDIUM) {
-                    adView.mediaView!!.setMediaContent(nativeAd.mediaContent!!)
+                    adView.mediaView!!.visible()
+                    adView.mediaView!!.mediaContent = nativeAd.mediaContent!!
+                } else {
+                    adView.mediaView?.gone()
                 }
             }
 
