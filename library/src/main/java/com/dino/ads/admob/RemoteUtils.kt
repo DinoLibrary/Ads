@@ -1,7 +1,5 @@
 package com.dino.ads.admob
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.annotation.XmlRes
 import com.dino.ads.utils.log
@@ -16,7 +14,7 @@ object RemoteUtils {
     var enableLog = false
 
     @JvmStatic
-    fun init(@XmlRes xmlFile: Int, isDebug: Boolean, onCompleted: () -> Unit) {
+    fun init(@XmlRes xmlFile: Int, onCompleted: () -> Unit) {
         val remoteConfig = FirebaseRemoteConfig.getInstance()
         val configSettings = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(3600)
@@ -37,12 +35,12 @@ object RemoteUtils {
         })
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                AdmobUtils.isEnableAds = enableAds()
-                onCompleted()
-            }
+            task.exception?.let { Log.e("===RemoteConfig", "onComplete: $it") }
+//            if (task.isSuccessful) {
+            AdmobUtils.isEnableAds = enableAds()
+            onCompleted()
+//            }
         }
-        if (isDebug) Handler(Looper.getMainLooper()).postDelayed({ onCompleted() }, 1000)
     }
 
     fun getValue(key: String): String {
@@ -56,5 +54,6 @@ object RemoteUtils {
     }
 
     fun checkTestAd() = getValue("check_test_ad") != "0" && AdmobUtils.isTesting
+
     fun enableAds() = getValue("enable_ads") == "1"
 }

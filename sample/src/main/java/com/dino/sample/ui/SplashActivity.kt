@@ -51,7 +51,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         //* Fetch RemoteConfig values
-        RemoteUtils.init(R.xml.remote_config_defaults, isDebug = true) {
+        RemoteUtils.init(R.xml.remote_config_defaults) {
             //* Gather consent
             AdmobUtils.setupCMP(this) {
                 //* Init Admob
