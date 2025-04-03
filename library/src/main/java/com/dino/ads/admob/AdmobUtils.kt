@@ -229,24 +229,24 @@ object AdmobUtils {
         nativeCallBack: NativeCallback
     ) {
         when (val remoteValue = RemoteUtils.getValue("banner_${holder.uid}")) {
-            "0" -> {
+            "0" -> { //* Hide banner
                 viewGroup.gone()
                 callback.onBannerFailed("Not show banner")
             }
 
-            "1" -> {
+            "1" -> { //* Show Banner
                 performLoadAndShowBanner(activity, holder, viewGroup, callback)
             }
 
-            "2" -> {
+            "2" -> {//* Show Banner Collap
                 performLoadAndShowBannerCollap(activity, holder, viewGroup, callback)
             }
 
-            "3" -> {
-                performLoadAndShowNative(activity, viewGroup, holder, layout, nativeCallBack)
+            "3" -> {//* Show Native Small
+                performLoadAndShowNative(activity, viewGroup, holder.nativeSmall(), layout, nativeCallBack)
             }
 
-            "4" -> {
+            "4" -> {//* Show Native Collap
                 performLoadAndShowNativeCollap(activity, holder, viewGroup, layout, nativeCallBack)
             }
 
@@ -918,7 +918,7 @@ object AdmobUtils {
         when (remoteValue.take(1)) {
             "1" -> {
                 holder.interCount++
-                val remoteCount = if (remoteValue.length == 2) remoteValue.takeLast(1).toInt() else 1
+                val remoteCount = if (remoteValue.length == 2) remoteValue.drop(1).toInt() else 1
                 if (holder.interCount % remoteCount != 0) {
                     onFinished()
                     return

@@ -65,7 +65,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
 
     public void init(Activity activity) {
         String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume");
-        if (remoteValue.equals("0")) return;
+        if (!remoteValue.equals("1")) return;
         isInitialized = true;
         this.myApplication = activity.getApplication();
         initAdRequest();

@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.dino.ads.admob.AdmobUtils
 
 
 fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
@@ -19,7 +20,7 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun log(msg: String) {
-    Log.d("===", msg)
+    if (AdmobUtils.isTesting) Log.d("===", msg)
 }
 
 fun View.visible() {
@@ -38,6 +39,7 @@ fun Int.dpToPx(context: Context): Int {
     val density = context.resources.displayMetrics.density
     return (this * density).toInt()
 }
+
 fun Context.prefs(): SharedPreferences {
     return getSharedPreferences("APP_PREFS", MODE_PRIVATE)
 }

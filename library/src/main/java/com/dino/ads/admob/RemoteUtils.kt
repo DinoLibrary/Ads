@@ -11,8 +11,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 object RemoteUtils {
 
-    private var enableLog = false
-
     @JvmStatic
     fun init(@XmlRes xmlFile: Int, onCompleted: () -> Unit) {
         val remoteConfig = FirebaseRemoteConfig.getInstance()
@@ -45,13 +43,13 @@ object RemoteUtils {
 
     fun getValue(key: String): String {
         val value = FirebaseRemoteConfig.getInstance().getString(key)
-        if (enableLog) log("getValue: $key = $value")
+        log("getValue: $key = $value")
         return value
     }
 
     fun getAdId(key: String): String {
         val adId = FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
-        if (enableLog) log("getAdId: ${key.uppercase()}_ID: $adId")
+        log("getAdId: ${key.uppercase()}_ID: $adId")
         return adId
     }
 
@@ -59,7 +57,8 @@ object RemoteUtils {
 
     fun enableAds() = getValue("enable_ads") == "1"
 
+    @Deprecated("Không sử dụng. Mặc định isDebug = true sẽ hiện log")
     fun enableLog() {
-        enableLog = true
+//        enableLog = true
     }
 }
