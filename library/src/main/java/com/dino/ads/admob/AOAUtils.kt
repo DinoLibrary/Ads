@@ -24,17 +24,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AOAUtils(
-    private val activity: Activity,
-    val holder: AdmobHolder,
-    val timeOut: Long,
-    val appOpenAdsListener: AppOpenAdsListener
-) {
+class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val timeOut: Long, val callback: AoaCallback) {
     private var appOpenAd: AppOpenAd? = null
     var isShowingAd = true
     var isLoading = true
     var dialogFullScreen: Dialog? = null
     var isStart = true
+
     private var isLoadAndShow = true
     private val adRequest: AdRequest
         get() = AdRequest.Builder().build()
@@ -43,14 +39,9 @@ class AOAUtils(
         get() = appOpenAd != null
 
     fun loadAndShowAoa() {
-        Log.d("===Load", "id1")
-        val idAoa = if (AdmobUtils.isTesting) {
-            activity.getString(R.string.test_admob_on_resume_id)
-        } else {
-            RemoteUtils.getAdId("AOA_${holder.uid}")
-        }
+//        Log.d("===Load", "id1")
         if (!AdmobUtils.isEnableAds || !AdmobUtils.isNetworkConnected(activity)) {
-            appOpenAdsListener.onAdsFailed("isShowAds false")
+            callback.onAdsFailed("isShowAds false")
             return
         }
         //Check timeout show inter
@@ -60,25 +51,30 @@ class AOAUtils(
                 isStart = false
                 isLoading = false
                 onAOADestroyed()
-                appOpenAdsListener.onAdsFailed("Time out")
+                callback.onAdsFailed("Time out")
                 Log.d("====Timeout", "TimeOut")
             }
         }
         if (isAdAvailable) {
             job.cancel()
-            appOpenAdsListener.onAdsFailed("isAdAvailable true")
+            callback.onAdsFailed("isAdAvailable true")
             return
         } else {
             Log.d("====Timeout", "fetching... ")
+            val adId = if (AdmobUtils.isTesting) {
+                activity.getString(R.string.test_admob_on_resume_id)
+            } else {
+                RemoteUtils.getAdId("AOA_${holder.uid}")
+            }
             isShowingAd = false
             val request = adRequest
-            AppOpenAd.load(activity, idAoa, request, object : AppOpenAd.AppOpenAdLoadCallback() {
+            AppOpenAd.load(activity, adId, request, object : AppOpenAd.AppOpenAdLoadCallback() {
                 override fun onAdFailedToLoad(p0: LoadAdError) {
                     isLoading = false
                     super.onAdFailedToLoad(p0)
                     if (isStart) {
                         isStart = false
-                        appOpenAdsListener.onAdsFailed(p0.message)
+                        callback.onAdsFailed(p0.message)
                     }
                     job.cancel()
                     Log.d("====Timeout", "onAppOpenAdFailedToLoad: $p0")
@@ -87,7 +83,7 @@ class AOAUtils(
                 override fun onAdLoaded(ad: AppOpenAd) {
                     super.onAdLoaded(ad)
                     appOpenAd = ad
-                    appOpenAdsListener.onAdsLoaded()
+                    callback.onAdsLoaded()
                     job.cancel()
                     Log.d("====Timeout", "isAdAvailable = true")
                     if (!OnResumeUtils.getInstance().isShowingAd && !isShowingAd && isLoadAndShow) {
@@ -117,7 +113,7 @@ class AOAUtils(
                     Log.d("====Timeout", "Dismiss... ")
                     if (isStart) {
                         isStart = false
-                        appOpenAdsListener.onAdsClose()
+                        callback.onAdsClose()
                     }
                     if (OnResumeUtils.getInstance().isInitialized) {
                         OnResumeUtils.getInstance().isAppResumeEnabled = true
@@ -132,7 +128,7 @@ class AOAUtils(
                     isShowingAd = true
                     if (isStart) {
                         isStart = false
-                        appOpenAdsListener.onAdsFailed(p0.message)
+                        callback.onAdsFailed(p0.message)
                         Log.d("====Timeout", "Failed... $p0")
                     }
                     if (OnResumeUtils.getInstance().isInitialized) {
@@ -177,12 +173,12 @@ class AOAUtils(
                         }
                         show(activity)
                     } else {
-                        appOpenAdsListener.onAdsFailed("AOA can't show")
+                        callback.onAdsFailed("AOA can't show")
                     }
                 }, 800)
             }
         } else {
-            appOpenAdsListener.onAdsFailed("AOA can't show in background!")
+            callback.onAdsFailed("AOA can't show in background!")
         }
     }
 
@@ -202,7 +198,7 @@ class AOAUtils(
         isLoadAndShow = loadAndShow
     }
 
-    interface AppOpenAdsListener {
+    interface AoaCallback {
         fun onAdsClose()
         fun onAdsLoaded()
         fun onAdsFailed(message: String)

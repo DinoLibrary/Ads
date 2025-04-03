@@ -177,25 +177,31 @@ object AdmobUtils {
     @JvmStatic
     fun loadAndShowAdSplash(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
         val remoteValue = RemoteUtils.getValue("ads_${holder.uid}")
-        if (remoteValue == "0") {
-            callback.onInterFailed("Not show ads ${holder.uid}: remoteValue = 0")
-        } else if (remoteValue == "1") {
-            AOAUtils(activity, holder, 20000, object : AOAUtils.AppOpenAdsListener {
-                override fun onAdsClose() {
-                    callback.onInterClosed()
-                }
+        when (remoteValue) {
+            "0" -> {
+                callback.onInterFailed("Not show ads ${holder.uid}: remoteValue = 0")
+            }
 
-                override fun onAdsFailed(message: String) {
-                    callback.onInterFailed(message)
-                }
+            "1" -> {
+                AOAUtils(activity, holder, 20000, object : AOAUtils.AoaCallback {
+                    override fun onAdsClose() {
+                        callback.onInterClosed()
+                    }
 
-                override fun onAdsLoaded() {
-                    callback.onInterLoaded()
-                }
+                    override fun onAdsFailed(message: String) {
+                        callback.onInterFailed(message)
+                    }
 
-            }).loadAndShowAoa()
-        } else if (remoteValue == "2") {
-            performLoadAndShowInterstitial(activity, holder, callback)
+                    override fun onAdsLoaded() {
+                        callback.onInterLoaded()
+                    }
+
+                }).loadAndShowAoa()
+            }
+
+            "2" -> {
+                performLoadAndShowInterstitial(activity, holder, callback)
+            }
         }
     }
 
@@ -909,7 +915,6 @@ object AdmobUtils {
         onFinished: () -> Unit,
     ) {
         val remoteValue = RemoteUtils.getValue("inter_native_${holder.uid}")
-
         when (remoteValue.take(1)) {
             "1" -> {
                 holder.interCount++

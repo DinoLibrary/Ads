@@ -67,7 +67,9 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
         isInitialized = true;
         this.myApplication = activity.getApplication();
         initAdRequest();
-        disableOnResume(activity.getClass());
+        if (activity.getClass().getSimpleName().equals("SplashActivity")) {
+            disableOnResume(activity.getClass());
+        }
 
         if (AdmobUtils.isTesting) {
             this.appResumeAdId = myApplication.getString(R.string.test_admob_on_resume_id);
@@ -109,12 +111,12 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
      * Disable app open app on specific activity
      */
     public void disableOnResume(Class activityClass) {
-        Log.d(TAG, "disableAppResumeWithActivity: " + activityClass.getName());
+        Log.d(TAG, "disableOnResume: " + activityClass.getName());
         disabledAppOpenList.add(activityClass);
     }
 
     public void enableOnResume(Class activityClass) {
-        Log.d(TAG, "enableAppResumeWithActivity: " + activityClass.getName());
+        Log.d(TAG, "enableOnResume: " + activityClass.getName());
         new Handler().postDelayed(() -> disabledAppOpenList.remove(activityClass), 40);
     }
 
