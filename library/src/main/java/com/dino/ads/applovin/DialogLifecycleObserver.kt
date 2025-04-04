@@ -13,7 +13,7 @@ class DialogLifecycleObserver(val dialog: Dialog) : LifecycleObserver {
         if(dialog.isShowing){
             dialog.dismiss()
             if (OnResumeUtils.getInstance().isInitialized) {
-                OnResumeUtils.getInstance().isAppResumeEnabled = true
+                OnResumeUtils.getInstance().isOnResumeEnable = true
             }
         }
     }

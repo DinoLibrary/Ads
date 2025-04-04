@@ -51,7 +51,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         //* Fetch RemoteConfig values
-        RemoteUtils.enableLog()
+        RemoteUtils.enableLogId = true
         RemoteUtils.init(R.xml.remote_config_defaults) {
             //* Gather consent
             AdmobUtils.setupCMP(this) {
@@ -83,14 +83,14 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterFailed(error: String) {
-                onInterClosed()
+                handler.postDelayed({ nextActivity() }, 10000)
             }
         })
     }
 
     private fun nextActivity() {
-//        replaceActivity<IntroActivity>()
-        replaceActivity<MainActivity>()
+        replaceActivity<IntroActivity>()
+//        replaceActivity<MainActivity>()
     }
 
     private fun initApplovin() {

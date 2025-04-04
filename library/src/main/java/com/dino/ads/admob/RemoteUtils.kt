@@ -1,8 +1,10 @@
 package com.dino.ads.admob
 
+import android.content.Context
 import android.util.Log
 import androidx.annotation.XmlRes
 import com.dino.ads.utils.log
+import com.dino.ads.utils.toast
 import com.google.firebase.remoteconfig.ConfigUpdate
 import com.google.firebase.remoteconfig.ConfigUpdateListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -10,6 +12,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 object RemoteUtils {
+    var enableLogId = false
 
     @JvmStatic
     fun init(@XmlRes xmlFile: Int, onCompleted: () -> Unit) {
@@ -53,12 +56,19 @@ object RemoteUtils {
         return adId
     }
 
-    fun checkTestAd() = getValue("check_test_ad") != "0" && AdmobUtils.isTesting
+    fun checkTestAd() = getValue("check_test_ad") == "1" && !AdmobUtils.isTesting && !AdmobUtils.isPremium
 
-    fun enableAds() = getValue("enable_ads") == "1"
+    fun enableAds() = getValue("enable_ads") == "1" && !AdmobUtils.isPremium
 
     @Deprecated("Không sử dụng. Mặc định isDebug = true sẽ hiện log")
     fun enableLog() {
 //        enableLog = true
+    }
+
+    fun Context.logId(key: String) {
+        if (!enableLogId) return
+        val adId = FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
+        log("LogId ${key.uppercase()}_ID: $adId")
+        toast("${key.uppercase()}_ID: $adId")
     }
 }

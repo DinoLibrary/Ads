@@ -10,7 +10,7 @@
         android:layout_height="0dp"
         android:paddingBottom="@dimen/_10sdp"
         app:layout_constraintBottom_toTopOf="@id/flNative"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/flBannerTop">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,6 +32,12 @@
                 android:text="load and show Banner Collap" />
 
             <Button
+                android:id="@+id/btnLoadShowBannerCollapTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Banner Collap TOP" />
+
+            <Button
                 android:id="@+id/btnLoadShowBannerNative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,11 +48,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="load and show Native" />
+
             <Button
                 android:id="@+id/btnLoadShowNativeCollap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="load and show Native Collap" />
+
+            <Button
+                android:id="@+id/btnLoadShowNativeCollapTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Native Collap TOP" />
 
             <Button
                 android:id="@+id/btnLoadShowInter"
@@ -76,6 +89,12 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <FrameLayout
+        android:id="@+id/flBannerTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clNativeFull"
         android:layout_width="match_parent"
@@ -95,8 +114,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="32dp"
-            android:visibility="invisible"
             android:src="@drawable/ic_close"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />

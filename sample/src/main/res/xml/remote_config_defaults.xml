@@ -17,6 +17,14 @@
         <value>4</value>
     </entry>
     <entry>
+        <key>banner_home4</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>banner_home5</key>
+        <value>4</value>
+    </entry>
+    <entry>
         <key>native_home</key>
         <value>1</value>
     </entry>
@@ -38,11 +46,15 @@
     </entry>
     <entry>
         <key>native_intro_full</key>
-        <value>0</value>
+        <value>1</value>
     </entry>
     <entry>
         <key>check_test_ad</key>
         <value>0</value>
+    </entry>
+    <entry>
+        <key>on_resume</key>
+        <value>1</value>
     </entry>
     <entry>
         <key>enable_ads</key>

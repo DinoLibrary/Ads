@@ -99,7 +99,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
         if (!isShowingAd && isAdAvailable && isLoading) {
             isLoading = false
             if (OnResumeUtils.getInstance().isInitialized) {
-                OnResumeUtils.getInstance().isAppResumeEnabled = false
+                OnResumeUtils.getInstance().isOnResumeEnable = false
             }
             Log.d("====Timeout", "will show ad ")
             val fullScreenContentCallback: FullScreenContentCallback = object : FullScreenContentCallback() {
@@ -116,7 +116,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                         callback.onAdsClose()
                     }
                     if (OnResumeUtils.getInstance().isInitialized) {
-                        OnResumeUtils.getInstance().isAppResumeEnabled = true
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
                     }
                 }
 
@@ -132,7 +132,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                         Log.d("====Timeout", "Failed... $p0")
                     }
                     if (OnResumeUtils.getInstance().isInitialized) {
-                        OnResumeUtils.getInstance().isAppResumeEnabled = true
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
                     }
                 }
 

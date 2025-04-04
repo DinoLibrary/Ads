@@ -230,7 +230,7 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewClose(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
+        fun populateNativeAdViewClose(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, anchor: String, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -289,6 +289,7 @@ class NativeHelper {
             }
             adView.findViewById<ImageView>(R.id.ad_close)?.let { ivClose ->
                 ivClose.isVisible = true
+                if (anchor == "top") ivClose.rotation = 180f
                 ivClose.setOnClickListener {
                     nativeAdCallbackNew.onNativeClicked()
                     it.visibility = View.GONE

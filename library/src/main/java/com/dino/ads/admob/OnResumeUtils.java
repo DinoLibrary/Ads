@@ -47,7 +47,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
     private long splashLoadTime = 0;
     public long timeToBackground = 0;
     private boolean isInitialized = false;
-    public boolean isAppResumeEnabled = true;
+    public boolean isOnResumeEnable = true;
     private final List<Class> disabledAppOpenList;
     private Class splashActivity;
     private Dialog dialogFullScreen;
@@ -353,10 +353,11 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
                 return;
             }
 
-            if (!isAppResumeEnabled) {
-                Log.d("===OnResume", "isAppResumeEnabled");
+            if (!isOnResumeEnable) {
+                Log.d("===OnResume", "enableOnResume: false");
                 return;
             } else {
+                Log.d("===OnResume", "enableOnResume: true");
                 AdmobUtils.dismissAdDialog();
             }
 

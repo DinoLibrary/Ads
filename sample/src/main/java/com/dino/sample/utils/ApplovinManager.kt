@@ -117,7 +117,7 @@ object ApplovinManager {
         ApplovinUtils.loadAndShowInterstitial(activity as AppCompatActivity, idAd, object :
             InterstitialCallback {
             override fun onInterstitialReady() {
-                OnResumeUtils.getInstance().isAppResumeEnabled = false
+                OnResumeUtils.getInstance().isOnResumeEnable = false
             }
 
             override fun onInterstitialClosed() {
@@ -130,7 +130,7 @@ object ApplovinManager {
             }
 
             override fun onInterstitialShowSucceed() {
-                OnResumeUtils.getInstance().isAppResumeEnabled = false
+                OnResumeUtils.getInstance().isOnResumeEnable = false
             }
 
             override fun onAdRevenuePaid(ad: MaxAd) {

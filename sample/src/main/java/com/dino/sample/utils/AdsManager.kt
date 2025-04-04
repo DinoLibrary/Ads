@@ -13,11 +13,6 @@ object AdsManager {
 
     fun loadAndShowBanner(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
         AdmobUtils.loadAndShowBanner(
-            activity, holder, viewGroup, object : AdmobUtils.BannerCallback() {})
-    }
-
-    fun loadAndShowBannerNative(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
-        AdmobUtils.loadAndShowBanner(
             activity, holder, viewGroup, R.layout.ad_template_medium, object : AdmobUtils.BannerCallback() {}, object : AdmobUtils.NativeCallback() {})
     }
 

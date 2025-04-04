@@ -24,8 +24,12 @@ class MainActivity : AppCompatActivity() {
             AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME2, binding.flBanner)
         }
 
+        binding.btnLoadShowBannerCollapTop.setOnClickListener {
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME4.anchorTop(), binding.flBannerTop)
+        }
+
         binding.btnLoadShowBannerNative.setOnClickListener {
-            AdsManager.loadAndShowBannerNative(this, RemoteConfig.BANNER_HOME3, binding.flBanner)
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME3, binding.flBanner)
         }
 
         binding.btnLoadShowNative.setOnClickListener {
@@ -34,6 +38,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnLoadShowNativeCollap.setOnClickListener {
             AdsManager.loadAndShowNativeCollap(this, RemoteConfig.NATIVE_HOME, binding.flBanner)
+        }
+
+        binding.btnLoadShowNativeCollapTop.setOnClickListener {
+            AdsManager.loadAndShowNativeCollap(this, RemoteConfig.BANNER_HOME5.anchorTop(), binding.flBannerTop)
         }
 
         binding.btnLoadShowInter.setOnClickListener {
