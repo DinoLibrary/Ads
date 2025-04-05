@@ -893,11 +893,11 @@ object AdmobUtils {
 
     @JvmStatic
     fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_language")
         if (remoteValue == "0") {
             viewGroup.gone()
         } else {
-            performShowNative(activity, viewGroup, if (index == 0) holder.intros.first() else holder.intros.last(), layout, callback)
+            performShowNative(activity, viewGroup, if (index == 0) holder.intros[0] else holder.intros[1], layout, callback)
         }
     }
 

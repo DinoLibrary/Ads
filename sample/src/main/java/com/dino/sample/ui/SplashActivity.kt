@@ -79,7 +79,7 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterFailed(error: String) {
-                handler.postDelayed({ nextActivity() }, 3000)
+                handler.postDelayed({ nextActivity() }, 5000)
             }
         })
     }

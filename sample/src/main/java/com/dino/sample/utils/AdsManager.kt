@@ -7,13 +7,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.admob.AdmobHolder
 import com.dino.ads.admob.AdmobUtils
 import com.dino.ads.admob.NativeIntroHolder
+import com.dino.ads.utils.log
 import com.dino.sample.R
+import com.google.android.gms.ads.nativead.NativeAd
 
 object AdsManager {
 
     fun loadAndShowBanner(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
         AdmobUtils.loadAndShowBanner(
-            activity, holder, viewGroup, R.layout.ad_template_medium, object : AdmobUtils.BannerCallback() {}, object : AdmobUtils.NativeCallback() {})
+            activity,
+            holder,
+            viewGroup,
+            R.layout.ad_template_medium,
+            object : AdmobUtils.BannerCallback() {},
+            object : AdmobUtils.NativeCallback() {})
     }
 
     fun loadAndShowNative(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
@@ -33,7 +40,12 @@ object AdsManager {
     }
 
     fun loadNativeLanguage(context: Context, holder: NativeIntroHolder) {
-        AdmobUtils.loadNativeLanguage(context, holder, object : AdmobUtils.NativeCallback() {})
+        AdmobUtils.loadNativeLanguage(context, holder, object : AdmobUtils.NativeCallback() {
+            override fun onNativeReady(ad: NativeAd?) {
+                super.onNativeReady(ad)
+                log("Native Language Ready: ${holder.intros.first().nativeAd}")
+            }
+        })
     }
 
     fun loadNativeIntro(context: Context, holder: NativeIntroHolder) {
@@ -50,13 +62,8 @@ object AdsManager {
     }
 
     fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, position: Int) {
-        if (position == 0){
-            AdmobUtils.showNative(
-                activity, holder.intros.first(), viewGroup, R.layout.ad_template_medium, object : AdmobUtils.NativeCallbackSimple() {})
-        } else {
-            AdmobUtils.showNative(
-                activity, holder.intros.last(), viewGroup, R.layout.ad_template_medium_language, object : AdmobUtils.NativeCallbackSimple() {})
-        }
+        val layout = if (position == 0) R.layout.ad_template_medium else R.layout.ad_template_medium_language
+        AdmobUtils.showNativeLanguage(activity, holder, viewGroup, layout, position, object : AdmobUtils.NativeCallbackSimple() {})
     }
 
     fun showNativeFullScreen(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup) {
