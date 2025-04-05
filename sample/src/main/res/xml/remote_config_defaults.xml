@@ -5,6 +5,26 @@
         <value>0</value>
     </entry>
     <entry>
+        <key>inter_language</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>native_language</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>inter_intro</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>native_intro</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>native_intro_full</key>
+        <value>1</value>
+    </entry>
+    <entry>
         <key>banner_home</key>
         <value>1</value>
     </entry>
@@ -17,7 +37,7 @@
         <value>4</value>
     </entry>
     <entry>
-        <key>banner_home4</key>
+        <key>banner_home_4</key>
         <value>2</value>
     </entry>
     <entry>
@@ -34,19 +54,7 @@
     </entry>
     <entry>
         <key>inter_native_home</key>
-        <value>2</value>
-    </entry>
-    <entry>
-        <key>inter_intro</key>
-        <value>0</value>
-    </entry>
-    <entry>
-        <key>native_intro</key>
-        <value>0</value>
-    </entry>
-    <entry>
-        <key>native_intro_full</key>
-        <value>1</value>
+        <value>3</value>
     </entry>
     <entry>
         <key>check_test_ad</key>

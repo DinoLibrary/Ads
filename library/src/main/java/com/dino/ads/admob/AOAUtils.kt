@@ -14,6 +14,7 @@ import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.dino.ads.R
 import com.dino.ads.adjust.AdjustUtils
+import com.dino.ads.admob.RemoteUtils.logId
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -62,6 +63,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
         } else {
             Log.d("====Timeout", "fetching... ")
             val adId = if (AdmobUtils.isTesting) {
+                activity.logId("AOA_${holder.uid}")
                 activity.getString(R.string.test_admob_on_resume_id)
             } else {
                 RemoteUtils.getAdId("AOA_${holder.uid}")

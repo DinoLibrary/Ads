@@ -26,6 +26,9 @@
             android:name=".ui.NativeFullScreenActivity"
             android:exported="true" />
         <activity
+            android:name=".ui.LanguageActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.IntroActivity"
             android:exported="true" />
         <activity

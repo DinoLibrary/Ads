@@ -32,6 +32,10 @@ object AdsManager {
         AdmobUtils.loadNative(context, holder, object : AdmobUtils.NativeCallback() {})
     }
 
+    fun loadNativeLanguage(context: Context, holder: NativeIntroHolder) {
+        AdmobUtils.loadNativeLanguage(context, holder, object : AdmobUtils.NativeCallback() {})
+    }
+
     fun loadNativeIntro(context: Context, holder: NativeIntroHolder) {
         AdmobUtils.loadNativeIntro(context, holder, object : AdmobUtils.NativeCallback() {})
     }
@@ -43,6 +47,16 @@ object AdsManager {
     fun showNativeIntro(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, position: Int) {
         AdmobUtils.showNativeIntro(
             activity, holder, viewGroup, R.layout.ad_template_medium, position, object : AdmobUtils.NativeCallbackSimple() {})
+    }
+
+    fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, position: Int) {
+        if (position == 0){
+            AdmobUtils.showNative(
+                activity, holder.intros.first(), viewGroup, R.layout.ad_template_medium, object : AdmobUtils.NativeCallbackSimple() {})
+        } else {
+            AdmobUtils.showNative(
+                activity, holder.intros.last(), viewGroup, R.layout.ad_template_medium_language, object : AdmobUtils.NativeCallbackSimple() {})
+        }
     }
 
     fun showNativeFullScreen(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup) {

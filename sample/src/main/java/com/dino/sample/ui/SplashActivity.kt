@@ -1,5 +1,6 @@
 package com.dino.sample.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -23,13 +24,14 @@ import com.dino.sample.utils.AdsManager
 import com.dino.sample.utils.ApplovinManager
 
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
+    private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (!isTaskRoot
             && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
@@ -60,18 +62,12 @@ class SplashActivity : AppCompatActivity() {
 
                 //* Init Ads On Resume
                 OnResumeUtils.getInstance().init(this)
-//                OnResumeUtils.getInstance().disableOnResume(SplashActivity::class.java)
 
-                AdsManager.loadNativeFullscreen(this@SplashActivity, RemoteConfig.NATIVE_INTRO_FULL)
-                AdsManager.loadNativeIntro(this@SplashActivity, RemoteConfig.NATIVE_INTRO)
+                //* Load Native Language
+                AdsManager.loadNativeLanguage(this, RemoteConfig.NATIVE_LANGUAGE)
 
                 //* Show Interstitial or AOA based on Remote Config value
                 showInterOrAoa()
-
-                //* Init Applovin
-//                if (ApplovinUtils.isNetworkConnected(this)) {
-//                    initApplovin()
-//                }
             }
         }
     }
@@ -83,13 +79,13 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onInterFailed(error: String) {
-                handler.postDelayed({ nextActivity() }, 10000)
+                handler.postDelayed({ nextActivity() }, 3000)
             }
         })
     }
 
     private fun nextActivity() {
-        replaceActivity<IntroActivity>()
+        replaceActivity<LanguageActivity>()
 //        replaceActivity<MainActivity>()
     }
 

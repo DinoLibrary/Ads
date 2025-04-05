@@ -225,9 +225,11 @@ object AdmobUtils {
             "1" -> {
                 performLoadAndShowBanner(activity, holder, viewGroup, callback)
             }
+
             "2" -> {
                 performLoadAndShowBannerCollap(activity, holder, viewGroup, callback)
             }
+
             else -> {
                 viewGroup.gone()
                 callback.onBannerFailed("Not show banner")
@@ -440,7 +442,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadRewardInter(context: Context, holder: AdmobHolder, callback: LoadRewardCallback) {
-        val remoteValue = RemoteUtils.getValue("rewardInter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}")
         if (!isEnableAds || !isNetworkConnected(context) || remoteValue == "0") {
             return
         }
@@ -479,7 +481,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showRewardInter(activity: Activity, holder: AdmobHolder, callback: RewardCallback) {
-        val remoteValue = RemoteUtils.getValue("rewardInter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}")
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
             if (OnResumeUtils.getInstance().isInitialized) {
                 OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -874,15 +876,41 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun loadNativeIntro(context: Context, holder: NativeIntroHolder, callback: NativeCallback) {
+    fun loadNativeLanguage(context: Context, holder: NativeIntroHolder, callback: NativeCallback) {
         val uid = holder.uid
-        holder.intros.add(AdmobHolder("${uid}1"))
-        holder.intros.add(AdmobHolder("${uid}2"))
-        holder.intros.add(AdmobHolder("${uid}3"))
+        holder.intros.add(AdmobHolder(uid))
+        holder.intros.add(AdmobHolder("${uid}_2"))
 
         val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
         if (remoteEntry == "0") {
-            log("loadNativeIntros: Not load native")
+            log("loadNativeIntros: Not load native language")
+            return
+        } else {
+            performLoadNative(context, holder.intros[0], callback)
+            performLoadNative(context, holder.intros[1], callback)
+        }
+    }
+
+    @JvmStatic
+    fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        if (remoteValue == "0") {
+            viewGroup.gone()
+        } else {
+            performShowNative(activity, viewGroup, if (index == 0) holder.intros.first() else holder.intros.last(), layout, callback)
+        }
+    }
+
+    @JvmStatic
+    fun loadNativeIntro(context: Context, holder: NativeIntroHolder, callback: NativeCallback) {
+        val uid = holder.uid
+        holder.intros.add(AdmobHolder("${uid}_1"))
+        holder.intros.add(AdmobHolder("${uid}_2"))
+        holder.intros.add(AdmobHolder("${uid}_3"))
+
+        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
+        if (remoteEntry == "0") {
+            log("loadNativeIntros: Not load native intro")
             return
         }
         if (remoteEntry.contains("1")) {
@@ -998,7 +1026,7 @@ object AdmobUtils {
                 val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
                 val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
                 viewGroup.visible()
-                OnResumeUtils.getInstance().isOnResumeEnable = false
+//                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
                 btnClose.gone()
                 btnClose.setOnClickListener {
@@ -1063,7 +1091,7 @@ object AdmobUtils {
                 val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
                 val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
                 viewGroup.visible()
-                OnResumeUtils.getInstance().isOnResumeEnable = false
+//                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
                 btnClose.isInvisible = true
                 btnClose.setOnClickListener {
@@ -1359,7 +1387,7 @@ object AdmobUtils {
         }
         if (OnResumeUtils.getInstance().isInitialized) {
             if (!OnResumeUtils.getInstance().isOnResumeEnable) {
-                callback.onInterFailed("isAppResumeEnabled = false")
+                callback.onInterFailed("isOnResumeEnable = false")
                 return
             } else {
                 isAdShowing = false
@@ -2186,7 +2214,7 @@ object AdmobUtils {
         }
         shimmerFrameLayout?.stopShimmer()
         viewGroup.visible()
-        OnResumeUtils.getInstance().isOnResumeEnable = false
+//        OnResumeUtils.getInstance().isOnResumeEnable = false
         viewGroup.removeAllViews()
         val inflater = LayoutInflater.from(context)
         if (!holder.isNativeLoading) {
@@ -2203,7 +2231,7 @@ object AdmobUtils {
                 viewGroup.gone()
                 holder.nativeAd.removeObservers((context as LifecycleOwner))
                 callback.onNativeFailed("None Show")
-                OnResumeUtils.getInstance().isOnResumeEnable = true
+//                OnResumeUtils.getInstance().isOnResumeEnable = true
             }
         } else {
             val tagView = inflater.inflate(R.layout.layout_native_loading_fullscreen, null, false)
@@ -2236,7 +2264,7 @@ object AdmobUtils {
                     shimmerFrameLayout?.stopShimmer()
                     viewGroup.gone()
                     callback.onNativeFailed("None Show")
-                    OnResumeUtils.getInstance().isOnResumeEnable = true
+//                    OnResumeUtils.getInstance().isOnResumeEnable = true
                     holder.nativeAd.removeObservers((context as LifecycleOwner))
                 }
             }
@@ -2471,7 +2499,27 @@ object AdmobUtils {
 //            }
 //        }
 //    }
-
+//    @JvmStatic
+//    fun loadNativeGroup(context: Context, holders: List<AdmobHolder>, callback: NativeCallback) {
+//        val key = holders.first()
+//        val remoteValue = RemoteUtils.getValue("native_${key.uid}")
+//        if (remoteValue == "0") {
+//            callback.onNativeFailed("Not load native")
+//        } else {
+//            holders.forEach { performLoadNative(context, it, callback) }
+//        }
+//    }
+//
+//    @JvmStatic
+//    fun showNativeGroup(activity: Activity, holders: List<AdmobHolder>, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
+//        val key = holders.first()
+//        val remoteValue = RemoteUtils.getValue("native_${key.uid}")
+//        if (remoteValue == "0") {
+//            viewGroup.gone()
+//        } else {
+//            performShowNative(activity, viewGroup, holders[index - 1], layout, callback)
+//        }
+//    }
     abstract class InterCallback {
         open fun onStartAction() {}
         abstract fun onInterClosed()

@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoadShowBannerCollapTop.setOnClickListener {
-            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME4.anchorTop(), binding.flBannerTop)
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME_4.anchorTop(), binding.flBannerTop)
         }
 
         binding.btnLoadShowBannerNative.setOnClickListener {
