@@ -1033,6 +1033,8 @@ object AdmobUtils {
                     flNativeFull.removeAllViews()
                     viewGroup.gone()
                     OnResumeUtils.getInstance().isOnResumeEnable = true
+                    holder.nativeAd.removeObservers(activity)
+                    holder.nativeAd.value = null
                     onFinished()
                 }
 
@@ -1061,6 +1063,8 @@ object AdmobUtils {
                                 override fun onNativeFailed(error: String) {
                                     viewGroup.gone()
                                     OnResumeUtils.getInstance().isOnResumeEnable = true
+                                    holder.nativeAd.removeObservers(activity)
+                                    holder.nativeAd.value = null
                                     onFinished()
                                 }
 
@@ -1068,6 +1072,8 @@ object AdmobUtils {
                         } else {
                             viewGroup.gone()
                             OnResumeUtils.getInstance().isOnResumeEnable = true
+                            holder.nativeAd.removeObservers(activity)
+                            holder.nativeAd.value = null
                             onFinished()
                         }
                     }
@@ -1375,7 +1381,7 @@ object AdmobUtils {
         }
     }
 
-    private fun performLoadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
+    private fun performLoadAndShowInterstitial(activity: Activity, holder: AdmobHolder, callback: InterCallback) {
         mInterstitialAd = null
         if (!isEnableAds || !isNetworkConnected(activity)) {
             callback.onInterFailed("Not show inter")
@@ -1455,7 +1461,7 @@ object AdmobUtils {
                                     }, 800)
                                 }
                             }
-                        if (activity.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && mInterstitialAd != null) {
+                        if (ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && mInterstitialAd != null) {
                             callback.onStartAction()
                             mInterstitialAd!!.show(activity)
                             isAdShowing = true

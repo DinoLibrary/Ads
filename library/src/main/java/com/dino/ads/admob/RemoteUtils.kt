@@ -13,6 +13,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 object RemoteUtils {
     var enableLogId = false
+    var enableToast = false
 
     @JvmStatic
     fun init(@XmlRes xmlFile: Int, onCompleted: () -> Unit) {
@@ -60,15 +61,10 @@ object RemoteUtils {
 
     fun enableAds() = getValue("enable_ads") == "1" && !AdmobUtils.isPremium
 
-    @Deprecated("Không sử dụng. Mặc định isDebug = true sẽ hiện log")
-    fun enableLog() {
-//        enableLog = true
-    }
-
     fun Context.logId(key: String) {
         if (!enableLogId) return
         val adId = FirebaseRemoteConfig.getInstance().getString("${key.uppercase()}_ID")
         log("LogId ${key.uppercase()}_ID: $adId")
-        toast("${key.uppercase()}_ID: $adId")
+        if (enableToast) toast("${key.uppercase()}_ID: $adId")
     }
 }
