@@ -68,10 +68,10 @@
                 android:text="load and show Inter" />
 
             <Button
-                android:id="@+id/btnLoadShowInterNative"
+                android:id="@+id/btnLoadShowInterWithNative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="load and show Inter Native" />
+                android:text="load and show Inter with Native" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

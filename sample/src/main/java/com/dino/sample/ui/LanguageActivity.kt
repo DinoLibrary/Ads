@@ -47,9 +47,7 @@ class LanguageActivity : AppCompatActivity() {
             if (Common.currentLang == null) {
                 toast("Please select a language before continue!")
             } else {
-                AdsManager.loadAndShowInter(this, RemoteConfig.INTER_LANGUAGE) {
-                    nextActivity()
-                }
+                nextActivity()
             }
         }
     }

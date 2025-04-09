@@ -64,7 +64,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
     }
 
     public void init(Activity activity) {
-        String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume");
+        String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume", null);
         if (!remoteValue.equals("1")) return;
         isInitialized = true;
         this.myApplication = activity.getApplication();
@@ -141,7 +141,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
 
     public void fetchAd(final boolean isSplash) {
         Log.d(TAG, "fetchAd: isSplash = " + isSplash);
-        String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume");
+        String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume", null);
         if (remoteValue.equals("0") || !AdmobUtils.isEnableAds || !AdmobUtils.isNetworkConnected(myApplication)) {
             return;
         }

@@ -9,7 +9,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.dino.ads.utils.replaceActivity
 import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivityIntroBinding
-import com.dino.sample.utils.AdsManager
 import kotlin.system.exitProcess
 
 class IntroActivity : AppCompatActivity() {
@@ -48,9 +47,7 @@ class IntroActivity : AppCompatActivity() {
 
     fun onNext() {
         if (binding.viewPager.currentItem == fragments.size - 1) {
-            AdsManager.loadAndShowInter(this, RemoteConfig.INTER_INTRO) {
-                startActivity()
-            }
+            startActivity()
         } else {
             val current = binding.viewPager.currentItem
             binding.viewPager.setCurrentItem(current + 1, true)

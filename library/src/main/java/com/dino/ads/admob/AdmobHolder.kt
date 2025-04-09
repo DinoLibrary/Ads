@@ -9,8 +9,9 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 
-open class AdmobHolder(val uid: String = "") {
+open class AdmobHolder(var uid: String = "") {
     var enableLoadingDialog = true
+    var versionCode: Int? = null
 
     //* Inter
     var isInterLoading = false
@@ -32,6 +33,11 @@ open class AdmobHolder(val uid: String = "") {
     var nativeSize = AdNativeSize.MEDIUM
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+
+    fun version(versionCode: Int): AdmobHolder {
+        this.versionCode = versionCode
+        return this
+    }
 
     /**
      * Native is ready when it's loaded successfully

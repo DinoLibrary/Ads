@@ -16,8 +16,8 @@ android {
         applicationId = packageName
         minSdk = 27
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 100
+        versionName = "1.0.0"
     }
 
     buildTypes {
@@ -83,7 +83,6 @@ val generateRemoteConfig = tasks.register("generateRemoteConfig") {
             } else {
                 configVars.add("        \"$key\" to \"$value\"")
                 val uid = when {
-                    key.startsWith("inter_native") -> key.substringAfter("inter_native_")
                     key.startsWith("reward_inter") -> "reward_inter_"
                     else -> key.substringAfter("_")
                 }

@@ -45,9 +45,10 @@ object RemoteUtils {
         }
     }
 
-    fun getValue(key: String): String {
-        val value = FirebaseRemoteConfig.getInstance().getString(key)
-        log("getValue: $key = $value")
+    fun getValue(key: String, version: Int? = null): String {
+        val remoteKey = if(version == null) key else "${key}_v$version"
+        val value = FirebaseRemoteConfig.getInstance().getString(remoteKey)
+        log("getValue: $remoteKey = $value")
         return value
     }
 

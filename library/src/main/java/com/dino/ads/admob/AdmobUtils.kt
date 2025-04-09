@@ -22,7 +22,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -39,7 +38,6 @@ import com.dino.ads.utils.SweetAlert.SweetAlertDialog
 import com.dino.ads.utils.dpToPx
 import com.dino.ads.utils.gone
 import com.dino.ads.utils.log
-import com.dino.ads.utils.toast
 import com.dino.ads.utils.visible
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.ads.mediation.admob.AdMobAdapter
@@ -185,7 +183,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowAdSplash(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
-        val remoteValue = RemoteUtils.getValue("ads_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("ads_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity)) {
             callback.onInterFailed("Not show ads ${holder.uid}: remoteValue = 0")
         }
@@ -220,7 +218,7 @@ object AdmobUtils {
     @JvmStatic
     @Deprecated("This function only allow Banner & Banner Collap")
     fun loadAndShowBanner(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback) {
-        val remoteValue = RemoteUtils.getValue("banner_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("banner_${holder.uid}", holder.versionCode)
         when (remoteValue) {
             "1" -> {
                 performLoadAndShowBanner(activity, holder, viewGroup, callback)
@@ -246,7 +244,7 @@ object AdmobUtils {
         callback: BannerCallback,
         nativeCallBack: NativeCallback
     ) {
-        when (val remoteValue = RemoteUtils.getValue("banner_${holder.uid}")) {
+        when (val remoteValue = RemoteUtils.getValue("banner_${holder.uid}", holder.versionCode)) {
             "0" -> { //* Hide banner
                 viewGroup.gone()
                 callback.onBannerFailed("Not show banner")
@@ -278,7 +276,7 @@ object AdmobUtils {
     @JvmStatic
     fun loadInterstitial(context: Context, holder: AdmobHolder, callback: LoadInterCallback) {
         isAdShowing = false
-        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             callback.onInterFailed("Not show inter")
         } else {
@@ -289,7 +287,7 @@ object AdmobUtils {
     @JvmStatic
     fun showInterstitial(activity: Activity, holder: AdmobHolder, callback: InterCallback) {
         isAdShowing = false
-        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             if (OnResumeUtils.getInstance().isInitialized) {
                 OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -305,27 +303,27 @@ object AdmobUtils {
         }
     }
 
-    @JvmStatic
-    fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
-        isAdShowing = false
-        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}")
-        if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
-            callback.onInterFailed("Not show inter")
-        } else {
-            holder.interCount++
-            if (holder.interCount % remoteValue.toInt() != 0) {
-                callback.onInterFailed("Not show Inter: count=${holder.interCount}")
-            } else {
-                performLoadAndShowInterstitial(activity, holder, callback)
-            }
-        }
-    }
+//    @JvmStatic
+//    fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
+//        isAdShowing = false
+//        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}")
+//        if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
+//            callback.onInterFailed("Not show inter")
+//        } else {
+//            holder.interCount++
+//            if (holder.interCount % remoteValue.toInt() != 0) {
+//                callback.onInterFailed("Not show Inter: count=${holder.interCount}")
+//            } else {
+//                performLoadAndShowInterstitial(activity, holder, callback)
+//            }
+//        }
+//    }
 
     @JvmStatic
     fun loadAndShowReward(activity: Activity, holder: AdmobHolder, callback: RewardCallback) {
         mRewardedAd = null
         isAdShowing = false
-        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             callback.onRewardClosed()
         } else {
@@ -337,7 +335,7 @@ object AdmobUtils {
     fun loadAndShowRewardInter(activity: Activity, holder: AdmobHolder, callback: RewardCallback) {
         mRewardedInterstitialAd = null
         isAdShowing = false
-        val remoteValue = RemoteUtils.getValue("reward_inter${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_inter${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
             callback.onRewardClosed()
             return
@@ -346,10 +344,10 @@ object AdmobUtils {
             initAdRequest(timeOut)
         }
         val adId = if (isTesting) {
-            activity.logId("REWARD_INTER_${holder.uid}")
+            activity.logId("reward_inter_${holder.uid}")
             activity.getString(R.string.test_admob_reward_inter_id)
         } else {
-            RemoteUtils.getAdId("REWARD_INTER_${holder.uid}")
+            RemoteUtils.getAdId("reward_inter_${holder.uid}")
         }
         if (holder.enableLoadingDialog) {
             dialogLoading(activity)
@@ -442,7 +440,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadRewardInter(context: Context, holder: AdmobHolder, callback: LoadRewardCallback) {
-        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(context) || remoteValue == "0") {
             return
         }
@@ -455,10 +453,10 @@ object AdmobUtils {
         }
         holder.isRewardLoading = true
         val adId = if (isTesting) {
-            context.logId("REWARD_INTER_${holder.uid}")
+            context.logId("reward_inter_${holder.uid}")
             context.getString(R.string.test_admob_reward_inter_id)
         } else {
-            RemoteUtils.getAdId("REWARD_INTER_${holder.uid}")
+            RemoteUtils.getAdId("reward_inter_${holder.uid}")
         }
         RewardedInterstitialAd.load(
             context, adId, adRequest!!, object : RewardedInterstitialAdLoadCallback() {
@@ -481,7 +479,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showRewardInter(activity: Activity, holder: AdmobHolder, callback: RewardCallback) {
-        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_inter_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
             if (OnResumeUtils.getInstance().isInitialized) {
                 OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -616,7 +614,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadReward(context: Context, holder: AdmobHolder, callback: LoadRewardCallback) {
-        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(context) || remoteValue == "0") {
             return
         }
@@ -654,7 +652,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showReward(activity: Activity, holder: AdmobHolder, callback: RewardCallback) {
-        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("reward_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
             if (OnResumeUtils.getInstance().isInitialized) {
                 OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -787,7 +785,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadNative(context: Context, holder: AdmobHolder, callback: NativeCallback) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             callback.onNativeFailed("Not load native")
         } else {
@@ -797,7 +795,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showNative(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallbackSimple) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
         } else {
@@ -807,7 +805,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowNative(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
         } else {
@@ -817,7 +815,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowNativeDual(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         when (remoteValue) {
             "0" -> {
                 viewGroup.gone()
@@ -835,7 +833,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowNativeCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
-        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteEntry == "0") {
             viewGroup.gone()
             return
@@ -846,7 +844,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadNativeFull(context: Context, holder: AdmobHolder, callback: NativeCallback) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full", holder.versionCode)
         if (remoteValue == "0") {
             callback.onNativeFailed("Not show native")
         } else {
@@ -856,7 +854,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showNativeFull(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallbackSimple) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity) || remoteValue == "0") {
             viewGroup.gone()
         } else {
@@ -866,7 +864,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowNativeFull(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}_full", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
             callback.onNativeFailed()
@@ -881,7 +879,7 @@ object AdmobUtils {
         holder.intros.add(AdmobHolder(uid))
         holder.intros.add(AdmobHolder("${uid}_2"))
 
-        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteEntry == "0") {
             log("loadNativeIntros: Not load native language")
             return
@@ -893,7 +891,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
-        val remoteValue = RemoteUtils.getValue("native_language")
+        val remoteValue = RemoteUtils.getValue("native_language", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
         } else {
@@ -908,7 +906,7 @@ object AdmobUtils {
         holder.intros.add(AdmobHolder("${uid}_2"))
         holder.intros.add(AdmobHolder("${uid}_3"))
 
-        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteEntry = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteEntry == "0") {
             log("loadNativeIntros: Not load native intro")
             return
@@ -933,7 +931,7 @@ object AdmobUtils {
         position: Int,
         callback: NativeCallbackSimple
     ) {
-        val remoteValue = RemoteUtils.getValue("native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             log("showNativeIntros: Not show native")
             return
@@ -954,7 +952,7 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun loadAndShowInterNative(
+    fun loadAndShowInterstitial(
         activity: AppCompatActivity,
         holder: AdmobHolder,
         viewGroup: ViewGroup,
@@ -965,15 +963,17 @@ object AdmobUtils {
             onFinished()
             return
         }
-        val remoteValue = RemoteUtils.getValue("inter_native_${holder.uid}")
+        val remoteValue = RemoteUtils.getValue("inter_${holder.uid}", holder.versionCode)
+        holder.interCount++
+        val remoteCount = if (remoteValue.length == 2) remoteValue.drop(1).toInt() else 1
+        if (remoteCount <= 0 || holder.interCount % remoteCount != 0) {
+            log("inter % remoteCount = 0")
+            onFinished()
+            return
+        }
+
         when (remoteValue.take(1)) {
             "1" -> {
-                holder.interCount++
-                val remoteCount = if (remoteValue.length == 2) remoteValue.drop(1).toInt() else 1
-                if (holder.interCount % remoteCount != 0) {
-                    onFinished()
-                    return
-                }
                 performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
                     override fun onInterClosed() {
                         onFinished()
@@ -1016,12 +1016,6 @@ object AdmobUtils {
             }
 
             "3" -> {
-                holder.interCount++
-                val remoteCount = if (remoteValue.length == 2) remoteValue.takeLast(1).toInt() else 1
-                if (holder.interCount % remoteCount != 0) {
-                    onFinished()
-                    return
-                }
                 val flNativeFull = viewGroup.findViewById<FrameLayout>(R.id.flNativeFull)
                 val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
                 val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
@@ -1087,12 +1081,6 @@ object AdmobUtils {
             }
 
             "4" -> {
-                holder.interCount++
-                val remoteCount = if (remoteValue.length == 2) remoteValue.takeLast(1).toInt() else 1
-                if (holder.interCount % remoteCount != 0) {
-                    onFinished()
-                    return
-                }
                 val flNativeFull = viewGroup.findViewById<FrameLayout>(R.id.flNativeFull)
                 val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
                 val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
@@ -1160,10 +1148,9 @@ object AdmobUtils {
             }
 
             else -> {
-                log("loadAndShowInterNative: remoteValue = $remoteValue")
+                log("loadAndShowInter: remoteValue = $remoteValue")
                 onFinished()
             }
-
         }
     }
 
@@ -1617,6 +1604,7 @@ object AdmobUtils {
 
         }
 
+        viewGroup.visible()
         val adSize = getBannerSize(activity)
         holder.bannerAdView?.setAdSize(adSize)
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
@@ -2416,7 +2404,7 @@ object AdmobUtils {
 //        Log.e("Admob", "loadAdNativeAds")
 //    }
 
-//    @JvmStatic
+    //    @JvmStatic
 //    fun showNativeNoButton(
 //        activity: Activity,
 //        nativeHolder: NativeAdmob,

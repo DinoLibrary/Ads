@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.admob.AdmobUtils
 import com.dino.ads.utils.addActivity
+import com.dino.sample.BuildConfig
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivityMainBinding
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnLoadShowBanner.setOnClickListener {
-            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME, binding.flBanner)
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME.version(BuildConfig.VERSION_CODE), binding.flBanner)
         }
 
         binding.btnLoadShowBannerCollap.setOnClickListener {
@@ -45,12 +46,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoadShowInter.setOnClickListener {
-            AdsManager.loadAndShowInter(this, RemoteConfig.INTER_HOME) {
+            AdmobUtils.loadAndShowInterstitial(this, RemoteConfig.INTER_HOME, binding.clNativeFull, R.layout.ad_template_fullscreen) {
                 addActivity<InterDummyActivity>()
             }
         }
-        binding.btnLoadShowInterNative.setOnClickListener {
-            AdmobUtils.loadAndShowInterNative(this, RemoteConfig.INTER_NATIVE_HOME, binding.clNativeFull, R.layout.ad_template_fullscreen){
+        binding.btnLoadShowInterWithNative.setOnClickListener {
+            AdmobUtils.loadAndShowInterstitial(this, RemoteConfig.INTER_HOME_2, binding.clNativeFull, R.layout.ad_template_fullscreen){
                 addActivity<InterDummyActivity>()
             }
         }

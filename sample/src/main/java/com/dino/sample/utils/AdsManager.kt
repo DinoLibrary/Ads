@@ -77,17 +77,4 @@ object AdsManager {
             object : AdmobUtils.NativeCallbackSimple() {})
     }
 
-    fun loadAndShowInter(activity: AppCompatActivity, holder: AdmobHolder, onFinished: () -> Unit) {
-        AdmobUtils.loadAndShowInterstitial(
-            activity, holder, object : AdmobUtils.InterCallback() {
-                override fun onInterClosed() {
-                    onFinished()
-                }
-
-                override fun onInterFailed(error: String) {
-                    onFinished()
-                }
-            })
-    }
-
 }
