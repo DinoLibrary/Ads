@@ -82,7 +82,7 @@ object AdmobUtils {
     //Check quảng cáo đang show hay không
     @JvmField
     var isAdShowing = false
-    var isClick = false
+    var isShowingInter = false
 
     //Ẩn hiện quảng cáo
     @JvmField
@@ -1188,9 +1188,9 @@ object AdmobUtils {
         }
         InterstitialAd.load(context, adId, adRequest!!, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
-//                if (isClick) {
+                if (isShowingInter) {
                 holder.inter.value = interstitialAd
-//                }
+                }
 //                holder.inter = interstitialAd
                 holder.isInterLoading = false
                 interstitialAd.setOnPaidEventListener { adValue ->
@@ -1206,16 +1206,16 @@ object AdmobUtils {
                     mInterstitialAd = null
                 }
                 holder.isInterLoading = false
-//                if (isClick) {
+                if (isShowingInter) {
                 holder.inter.value = null
-//                }
+                }
                 callback.onInterFailed(loadAdError.message)
             }
         })
     }
 
     private fun performShowInterstitial(activity: Activity, holder: AdmobHolder, callback: InterCallback) {
-        isClick = true
+        isShowingInter = true
         if (!isEnableAds || !isNetworkConnected(activity)) {
             callback.onInterFailed("Not show inter")
             return
@@ -1228,7 +1228,7 @@ object AdmobUtils {
                 if (OnResumeUtils.getInstance().isInitialized) {
                     OnResumeUtils.getInstance().isOnResumeEnable = true
                 }
-                isClick = false
+                isShowingInter = false
                 holder.inter.removeObservers((activity as LifecycleOwner))
                 isAdShowing = false
                 dismissAdDialog()
@@ -1244,7 +1244,7 @@ object AdmobUtils {
             holder.inter.observe((activity as LifecycleOwner)) { interstitialAd: InterstitialAd? ->
                 if (interstitialAd != null) {
                     holder.inter.removeObservers((activity as LifecycleOwner))
-                    isClick = false
+                    isShowingInter = false
                     Handler(Looper.getMainLooper()).postDelayed({
                         Log.d("===Admob", "delay show inter")
 
@@ -1254,7 +1254,7 @@ object AdmobUtils {
                                 if (OnResumeUtils.getInstance().isInitialized) {
                                     OnResumeUtils.getInstance().isOnResumeEnable = true
                                 }
-                                isClick = false
+                                isShowingInter = false
                                 //Set inter = null
 //                                holder.inter = null
                                 holder.inter.removeObservers((activity as LifecycleOwner))
@@ -1269,7 +1269,7 @@ object AdmobUtils {
                                 if (OnResumeUtils.getInstance().isInitialized) {
                                     OnResumeUtils.getInstance().isOnResumeEnable = true
                                 }
-                                isClick = false
+                                isShowingInter = false
                                 isAdShowing = false
                                 //Set inter = null
 //                                holder.inter = null
@@ -1317,7 +1317,7 @@ object AdmobUtils {
                             if (OnResumeUtils.getInstance().isInitialized) {
                                 OnResumeUtils.getInstance().isOnResumeEnable = true
                             }
-                            isClick = false
+                            isShowingInter = false
                             holder.inter.removeObservers((activity as LifecycleOwner))
                             holder.inter.value = null
                             callback.onInterClosed()
@@ -1330,7 +1330,7 @@ object AdmobUtils {
                                 OnResumeUtils.getInstance().isOnResumeEnable = true
                             }
                             handler.removeCallbacksAndMessages(null)
-                            isClick = false
+                            isShowingInter = false
                             holder.inter.value = null
                             holder.inter.removeObservers((activity as LifecycleOwner))
                             isAdShowing = false
@@ -1357,6 +1357,7 @@ object AdmobUtils {
             Handler(Looper.getMainLooper()).postDelayed({
                 callback?.onStartAction()
                 mInterstitialAd.show(activity)
+                dismissAdDialog()
             }, 400)
         } else {
             isAdShowing = false
@@ -1451,6 +1452,7 @@ object AdmobUtils {
                         if (ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && mInterstitialAd != null) {
                             callback.onStartAction()
                             mInterstitialAd!!.show(activity)
+                            dismissAdDialog()
                             isAdShowing = true
                         } else {
                             mInterstitialAd = null
