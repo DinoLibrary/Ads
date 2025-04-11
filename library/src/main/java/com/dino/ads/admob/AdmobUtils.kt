@@ -2253,11 +2253,20 @@ object AdmobUtils {
 
             holder.nativeAd.observe((context as LifecycleOwner)) { nativeAd: NativeAd? ->
                 if (nativeAd != null) {
-                    val adId = if (isTesting) {
-                        context.logId("native_${holder.uid}")
-                        context.getString(R.string.test_admob_native_full_screen_id)
+                    val adId = if (holder.isNativeInter) {
+                        if (isTesting) {
+                            context.logId("native_inter_${holder.uid}")
+                            context.getString(R.string.test_admob_native_id)
+                        } else {
+                            RemoteUtils.getAdId("native_inter_${holder.uid}")
+                        }
                     } else {
-                        RemoteUtils.getAdId("native_${holder.uid}")
+                        if (isTesting) {
+                            context.logId("native_${holder.uid}_full")
+                            context.getString(R.string.test_admob_native_id)
+                        } else {
+                            RemoteUtils.getAdId("native_${holder.uid}_full")
+                        }
                     }
                     nativeAd.setOnPaidEventListener {
                         AdjustUtils.postRevenueAdjustNative(nativeAd, it, adUnit = adId)
