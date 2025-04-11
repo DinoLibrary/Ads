@@ -890,7 +890,14 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
+    fun showNativeLanguage(
+        activity: Activity,
+        holder: NativeIntroHolder,
+        viewGroup: ViewGroup,
+        layout: Int,
+        index: Int,
+        callback: NativeCallbackSimple
+    ) {
         val remoteValue = RemoteUtils.getValue("native_language", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
@@ -972,6 +979,7 @@ object AdmobUtils {
             return
         }
 
+        holder.isNativeInter = true
         when (remoteValue.take(1)) {
             "1" -> {
                 performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
@@ -1189,7 +1197,7 @@ object AdmobUtils {
         InterstitialAd.load(context, adId, adRequest!!, object : InterstitialAdLoadCallback() {
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
                 if (isShowingInter) {
-                holder.inter.value = interstitialAd
+                    holder.inter.value = interstitialAd
                 }
 //                holder.inter = interstitialAd
                 holder.isInterLoading = false
@@ -1207,7 +1215,7 @@ object AdmobUtils {
                 }
                 holder.isInterLoading = false
                 if (isShowingInter) {
-                holder.inter.value = null
+                    holder.inter.value = null
                 }
                 callback.onInterFailed(loadAdError.message)
             }
@@ -2113,11 +2121,20 @@ object AdmobUtils {
         shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
         shimmerFrameLayout?.startShimmer()
 
-        val adId = if (isTesting) {
-            activity.logId("native_${holder.uid}_full")
-            activity.getString(R.string.test_admob_native_id)
+        val adId = if (holder.isNativeInter) {
+            if (isTesting) {
+                activity.logId("native_inter_${holder.uid}")
+                activity.getString(R.string.test_admob_native_id)
+            } else {
+                RemoteUtils.getAdId("native_inter_${holder.uid}")
+            }
         } else {
-            RemoteUtils.getAdId("native_${holder.uid}_full")
+            if (isTesting) {
+                activity.logId("native_${holder.uid}_full")
+                activity.getString(R.string.test_admob_native_id)
+            } else {
+                RemoteUtils.getAdId("native_${holder.uid}_full")
+            }
         }
         val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
         val builder = AdLoader.Builder(activity, adId)
