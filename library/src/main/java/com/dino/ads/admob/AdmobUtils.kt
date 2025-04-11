@@ -902,7 +902,11 @@ object AdmobUtils {
         if (remoteValue == "0") {
             viewGroup.gone()
         } else {
-            performShowNative(activity, viewGroup, if (index == 0) holder.intros[0] else holder.intros[1], layout, callback)
+            val nativeHolder = holder.intros.getOrNull(index) ?: run {
+                callback.onNativeFailed("native language $index is null")
+                return
+            }
+            performShowNative(activity, viewGroup, nativeHolder, layout, callback)
         }
     }
 
@@ -935,7 +939,7 @@ object AdmobUtils {
         holder: NativeIntroHolder,
         viewGroup: ViewGroup,
         layout: Int,
-        position: Int,
+        index: Int,
         callback: NativeCallbackSimple
     ) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
@@ -943,18 +947,13 @@ object AdmobUtils {
             log("showNativeIntros: Not show native")
             return
         }
-        when (position) {
-            1 -> if (remoteValue.contains("1")) {
-                performShowNative(activity, viewGroup, holder.intros[0], layout, callback)
-            }
+        val nativeHolder = holder.intros.getOrNull(index - 1) ?: run {
+            callback.onNativeFailed("native language $index is null")
+            return
+        }
 
-            2 -> if (remoteValue.contains("2")) {
-                performShowNative(activity, viewGroup, holder.intros[1], layout, callback)
-            }
-
-            3 -> if (remoteValue.contains("3")) {
-                performShowNative(activity, viewGroup, holder.intros[2], layout, callback)
-            }
+        if (remoteValue.contains(index.toString())) {
+            performShowNative(activity, viewGroup, nativeHolder, layout, callback)
         }
     }
 
