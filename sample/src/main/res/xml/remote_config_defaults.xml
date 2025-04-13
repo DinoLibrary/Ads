@@ -29,19 +29,23 @@
         <value>1</value>
     </entry>
     <entry>
-        <key>banner_home2</key>
+        <key>banner_home_top</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>banner_home_collap</key>
         <value>2</value>
     </entry>
     <entry>
-        <key>banner_home3</key>
+        <key>banner_home_collap_top</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>banner_home_collap2</key>
         <value>4</value>
     </entry>
     <entry>
-        <key>banner_home_4</key>
-        <value>2</value>
-    </entry>
-    <entry>
-        <key>banner_home5</key>
+        <key>banner_home_collap_top2</key>
         <value>4</value>
     </entry>
     <entry>
@@ -50,11 +54,11 @@
     </entry>
     <entry>
         <key>inter_home</key>
-        <value>1</value>
+        <value>4</value>
     </entry>
     <entry>
-        <key>inter_home_2</key>
-        <value>3</value>
+        <key>inter_home2</key>
+        <value>2</value>
     </entry>
     <entry>
         <key>check_test_ad</key>
@@ -62,7 +66,7 @@
     </entry>
     <entry>
         <key>on_resume</key>
-        <value>1</value>
+        <value>0</value>
     </entry>
     <entry>
         <key>enable_ads</key>

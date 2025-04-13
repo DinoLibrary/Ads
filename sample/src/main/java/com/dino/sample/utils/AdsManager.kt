@@ -67,8 +67,7 @@ object AdsManager {
     }
 
     fun showNativeFullScreen(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup) {
-        AdmobUtils.showNativeFull(
-            activity, holder, viewGroup, R.layout.ad_template_fullscreen, object : AdmobUtils.NativeCallbackSimple() {})
+        AdmobUtils.showNativeFull(activity, holder, viewGroup, R.layout.ad_template_fullscreen, object : AdmobUtils.NativeCallbackSimple() {})
     }
 
     fun showNativeMedium(activity: AppCompatActivity, viewGroup: ViewGroup, holder: AdmobHolder) {

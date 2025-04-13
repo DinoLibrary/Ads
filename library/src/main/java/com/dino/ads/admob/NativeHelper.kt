@@ -295,8 +295,9 @@ class NativeHelper {
                     nativeAdCallbackNew.onNativeClicked()
                     it.gone()
                     adView.findViewById<MediaView>(R.id.ad_media)?.gone()
+                    adView.callToActionView?.gone()
                     (adView.parent as? ViewGroup)?.removeView(adView)
-                    viewGroup.addView(adView)
+                    viewGroup.addView(adView, 0)
                 }
             }
             if (nativeAd.starRating != null) {

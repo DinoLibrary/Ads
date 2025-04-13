@@ -36,6 +36,7 @@ import com.dino.ads.cmp.GoogleMobileAdsConsentManager
 import com.dino.ads.utils.AdNativeSize
 import com.dino.ads.utils.dpToPx
 import com.dino.ads.utils.gone
+import com.dino.ads.utils.invisible
 import com.dino.ads.utils.log
 import com.dino.ads.utils.logE
 import com.dino.ads.utils.visible
@@ -101,6 +102,7 @@ object AdmobUtils {
     private var testDevices: MutableList<String> = ArrayList()
 
     @JvmField
+    var mBannerCollapView: AdView? = null
     var mRewardedAd: RewardedAd? = null
     var mRewardedInterstitialAd: RewardedInterstitialAd? = null
     var mInterstitialAd: InterstitialAd? = null
@@ -883,7 +885,7 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, onFinished: () -> Unit) {
+    fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, layout: Int, onFinished: () -> Unit) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             onFinished()
             return
@@ -898,6 +900,12 @@ object AdmobUtils {
         }
 
         holder.isNativeInter = true
+        val tag = "native_full_view"
+        var decorView: ViewGroup? = null
+        runTry {
+            decorView = activity.window.decorView as ViewGroup
+            decorView!!.findViewWithTag<View>(tag)?.let { decorView!!.removeView(it) }
+        }
         when (remoteValue.take(1)) {
             "1" -> {
                 performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
@@ -912,53 +920,73 @@ object AdmobUtils {
             }
 
             "2" -> {
-                val flNativeFull = viewGroup.findViewById<FrameLayout>(R.id.flNativeFull)
-                val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
-                val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
+                destroyBannerCollapView()
 
-                viewGroup.visible()
+                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+                val btnClose = container.findViewById<View>(R.id.ad_close)
+                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+
+                try {
+                    container.tag = tag
+                    decorView!!.addView(container)
+                } catch (e: Exception) {
+                    logE("Native Inter: cannot add view to decorView")
+                    onFinished()
+                    return
+                }
+                container.visible()
                 OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
-                btnClose.gone()
+                btnClose.invisible()
                 btnClose.setOnClickListener {
                     OnResumeUtils.getInstance().isOnResumeEnable = true
-                    flNativeFull.removeAllViews()
-                    viewGroup.gone()
+                    container.gone()
+                    runTry { decorView?.removeView(container) }
                     onFinished()
                 }
 
-                performLoadAndShowNativeFull(
-                    activity, flNativeFull, holder, layout, object : NativeFullCallback() {
-                        override fun onNativeLoaded(nativeAd: NativeAd) {
-                            btnClose.visible()
-                        }
+                performLoadAndShowNativeFull(activity, viewGroup, holder, layout, object : NativeFullCallback() {
+                    override fun onNativeLoaded(nativeAd: NativeAd) {
+                        btnClose.visible()
+                    }
 
-                        override fun onNativeFailed() {
-                            viewGroup.gone()
-                            OnResumeUtils.getInstance().isOnResumeEnable = true
-                            onFinished()
-                        }
+                    override fun onNativeFailed() {
+                        container.gone()
+                        runTry { decorView?.removeView(container) }
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                        onFinished()
+                    }
 
-                    })
+                })
             }
 
             "3" -> {
-                val flNativeFull = viewGroup.findViewById<FrameLayout>(R.id.flNativeFull)
-                val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
-                val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
-                viewGroup.visible()
-//                OnResumeUtils.getInstance().isOnResumeEnable = false
+                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+                val btnClose = container.findViewById<View>(R.id.ad_close)
+                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+
+                try {
+                    container.tag = tag
+                    decorView!!.addView(container)
+                } catch (e: Exception) {
+                    logE("Native Inter: cannot add view to decorView")
+                    onFinished()
+                    return
+                }
+                container.visible()
+                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
-                btnClose.gone()
+                btnClose.invisible()
                 btnClose.setOnClickListener {
-                    flNativeFull.removeAllViews()
-                    viewGroup.gone()
                     OnResumeUtils.getInstance().isOnResumeEnable = true
-                    holder.nativeAd.removeObservers(activity)
-                    holder.nativeAd.value = null
+                    container.gone()
+                    runTry { decorView?.removeView(container) }
                     onFinished()
                 }
 
+                destroyBannerCollapView()
                 performLoadNativeFull(activity, holder, object : NativeCallback() {
                     override fun onNativeReady(ad: NativeAd?) {
                     }
@@ -978,12 +1006,13 @@ object AdmobUtils {
                         if (holder.isNativeReady()) {
                             btnClose.visible()
                             performShowNativeFull(
-                                activity, flNativeFull, holder, layout, object : NativeCallbackSimple() {
+                                activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
                                     override fun onNativeLoaded() {
                                     }
 
                                     override fun onNativeFailed(error: String) {
-                                        viewGroup.gone()
+                                        container.gone()
+                                        runTry { decorView?.removeView(container) }
                                         OnResumeUtils.getInstance().isOnResumeEnable = true
                                         holder.nativeAd.removeObservers(activity)
                                         holder.nativeAd.value = null
@@ -992,7 +1021,8 @@ object AdmobUtils {
 
                                 })
                         } else {
-                            viewGroup.gone()
+                            container.gone()
+                            runTry { decorView?.removeView(container) }
                             OnResumeUtils.getInstance().isOnResumeEnable = true
                             holder.nativeAd.removeObservers(activity)
                             holder.nativeAd.value = null
@@ -1009,20 +1039,31 @@ object AdmobUtils {
             }
 
             "4" -> {
-                val flNativeFull = viewGroup.findViewById<FrameLayout>(R.id.flNativeFull)
-                val btnClose = viewGroup.findViewById<View>(R.id.ad_close)
-                val tvTimer = viewGroup.findViewById<TextView>(R.id.ad_timer)
-                viewGroup.visible()
-//                OnResumeUtils.getInstance().isOnResumeEnable = false
+                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+                val btnClose = container.findViewById<View>(R.id.ad_close)
+                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+
+                try {
+                    container.tag = tag
+                    decorView!!.addView(container)
+                } catch (e: Exception) {
+                    logE("Native Inter: cannot add view to decorView")
+                    onFinished()
+                    return
+                }
+                container.visible()
+                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
-                btnClose.isInvisible = true
+                btnClose.invisible()
                 btnClose.setOnClickListener {
-                    flNativeFull.removeAllViews()
-                    viewGroup.gone()
                     OnResumeUtils.getInstance().isOnResumeEnable = true
+                    container.gone()
+                    runTry { decorView?.removeView(container) }
                     onFinished()
                 }
 
+                destroyBannerCollapView()
                 performLoadNativeFull(activity, holder, object : NativeCallback() {
                     override fun onNativeReady(ad: NativeAd?) {
                     }
@@ -1049,20 +1090,21 @@ object AdmobUtils {
                                 delay(1000)
                                 btnClose.visible()
                             }
-                            performShowNativeFull(
-                                activity, flNativeFull, holder, layout, object : NativeCallbackSimple() {
-                                    override fun onNativeLoaded() {
-                                    }
+                            performShowNativeFull(activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
+                                override fun onNativeLoaded() {
+                                }
 
-                                    override fun onNativeFailed(error: String) {
-                                        viewGroup.gone()
-                                        OnResumeUtils.getInstance().isOnResumeEnable = true
-                                        onFinished()
-                                    }
+                                override fun onNativeFailed(error: String) {
+                                    container.gone()
+                                    runTry { decorView?.removeView(container) }
+                                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                                    onFinished()
+                                }
 
-                                })
+                            })
                         } else {
-                            viewGroup.gone()
+                            container.gone()
+                            runTry { decorView?.removeView(container) }
                             OnResumeUtils.getInstance().isOnResumeEnable = true
                             onFinished()
                         }
@@ -1093,6 +1135,23 @@ object AdmobUtils {
 
 
     //* ========================Private Internal Functions======================== */
+
+    private fun runTry(function: () -> Unit) {
+        try {
+            function()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun destroyBannerCollapView() {
+        try {
+            mBannerCollapView?.destroy()
+            (mBannerCollapView?.parent as? ViewGroup)?.removeView(mBannerCollapView)
+        } catch (e: Exception) {
+            logE("destroyBannerCollapView: ${e.message}")
+        }
+    }
 
     private fun performLoadInterstitial(context: Context, holder: AdmobHolder, callback: LoadInterCallback) {
         isAdShowing = false
@@ -1453,9 +1512,7 @@ object AdmobUtils {
         }
     }
 
-    private fun performLoadAndShowBanner(
-        activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback
-    ) {
+    private fun performLoadAndShowBanner(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onBannerFailed("Not show banner ${holder.uid}")
@@ -1478,10 +1535,10 @@ object AdmobUtils {
             viewGroup.addView(tagView, 0)
             viewGroup.addView(mAdView, 1)
             val divider = View(activity).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT, 1.dpToPx(activity)
-                )
-                setBackgroundColor(Color.parseColor(holder.dividerColor))
+                layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 1.dpToPx(activity)).apply {
+                    if (holder.anchor == "top") this.gravity = Gravity.BOTTOM
+                }
+                setBackgroundColor(holder.dividerColor.toColorInt())
             }
             viewGroup.addView(divider)
         } catch (_: Exception) {
@@ -1522,9 +1579,7 @@ object AdmobUtils {
         Log.d("===Admob", "loading banner ${holder.uid}")
     }
 
-    private fun performLoadAndShowBannerCollap(
-        activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback
-    ) {
+    private fun performLoadAndShowBannerCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onBannerFailed("Not show banner ${holder.uid} collap")
@@ -1535,6 +1590,7 @@ object AdmobUtils {
             viewGroup.removeView(it)
         }
         holder.bannerAdView = AdView(activity)
+        mBannerCollapView = holder.bannerAdView
         val adId = if (isTesting) {
             activity.logId("banner_${holder.uid}_collap")
             activity.getString(R.string.test_admob_banner_collap_id)
@@ -1858,7 +1914,7 @@ object AdmobUtils {
         } catch (_: Exception) {
 
         }
-        val tagView: View = if (holder.nativeSize == AdNativeSize.MEDIUM) {
+        val tagView = if (holder.nativeSize == AdNativeSize.MEDIUM) {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
         } else {
             activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
@@ -1918,21 +1974,36 @@ object AdmobUtils {
     }
 
     private fun performLoadAndShowNativeCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
+        var decorView: ViewGroup? = null
+        val tag = "native_collap_view"
+        try {
+            decorView = activity.window.decorView as ViewGroup
+            decorView.findViewWithTag<View>(tag)?.let { decorView.removeView(it) }
+        } catch (_: Exception) {
+        }
+
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onNativeFailed("Not show native")
             return
         }
 //        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
-        val resId = if (holder.nativeSize == AdNativeSize.MEDIUM) R.layout.layout_native_loading_medium else R.layout.layout_native_loading_small
-        val tagView = activity.layoutInflater.inflate(resId, null, false)
+        val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
         try {
             viewGroup.removeAllViews()
             viewGroup.addView(tagView, 0)
+            val divider = View(activity).apply {
+                layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 1.dpToPx(activity)).apply {
+                    if (holder.anchor == "top") this.gravity = Gravity.BOTTOM
+                }
+                setBackgroundColor(holder.dividerColor.toColorInt())
+            }
+            viewGroup.addView(divider)
         } catch (_: Exception) {
 
         }
 
+        viewGroup.visible()
         val shimmerFrameLayout = tagView.findViewById<ShimmerFrameLayout>(R.id.shimmer_view_container)
         shimmerFrameLayout.startShimmer()
 
@@ -1946,17 +2017,22 @@ object AdmobUtils {
             callback.onNativeReady(nativeAd)
             val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
             populateNativeAdViewCollap(viewGroup, nativeAd, adView, holder.nativeSize, holder.anchor, callback)
+//            if (ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+//
+//            }
             shimmerFrameLayout.stopShimmer()
             try {
-                viewGroup.removeAllViews()
+//                viewGroup.removeAllViews()
+                viewGroup.removeView(tagView)
 //                viewGroup.addView(adView)
-                val decorView = activity.window.decorView as ViewGroup
+//                val decorView = activity.window.decorView as ViewGroup
                 val layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                layoutParams.gravity = Gravity.BOTTOM
-                decorView.addView(adView, layoutParams)
+                layoutParams.gravity = if (holder.anchor == "top") Gravity.TOP else Gravity.BOTTOM
+                adView.tag = tag
+                decorView?.addView(adView, layoutParams)
             } catch (_: Exception) {
             }
 
@@ -1982,74 +2058,13 @@ object AdmobUtils {
         adRequest?.let { adLoader.loadAd(it) }
     }
 
-//    @JvmStatic
-//    fun loadAndShowNativeNoShimmer(
-//        activity: Activity,
-//        nativeHolder: NativeAdmob,
-//        viewGroup: ViewGroup,
-//        layout: Int,
-//        size: AdNativeSize,
-//        adCallback: NativeCallback
-//    ) {
-//        Log.d("===Native", "Native1")
-//        if (!isEnableAds || !isNetworkConnected(
-//                activity
-//            )
-//        ) {
-//            viewGroup.gone()
-//            return
-//        }
-//        var s = nativeHolder.ads
-//        if (isTesting) {
-//            s = activity.getString(R.string.test_admob_native_id)
-//        }
-//        val adLoader = AdLoader.Builder(activity, s).forNativeAd { nativeAd ->
-//            adCallback.onNativeLoaded()
-//            val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
-//            populateNativeAdView(nativeAd, adView, size)
-//            try {
-//                viewGroup.removeAllViews()
-//                viewGroup.addView(adView)
-//            } catch (_: Exception) {
-//
-//            }
-//
-//            nativeAd.setOnPaidEventListener { adValue: AdValue ->
-//                AdjustUtils.postRevenueAdjustNative(nativeAd, adValue, s)
-//            }
-//            //viewGroup.setVisibility(View.VISIBLE);
-//        }.withAdListener(object : AdListener() {
-//            override fun onAdFailedToLoad(adError: LoadAdError) {
-//                Log.e("Admobfail", "onAdFailedToLoad" + adError.message)
-//                Log.e("Admobfail", "errorCodeAds" + adError.cause)
-//                try {
-//                    viewGroup.removeAllViews()
-//                } catch (_: Exception) {
-//
-//                }
-//                adCallback.onNativeFailed(adError.message)
-//            }
-//
-//            override fun onAdClicked() {
-//                super.onAdClicked()
-//                adCallback.onNativeClicked()
-//            }
-//        }).withNativeAdOptions(NativeAdOptions.Builder().build()).build()
-//        if (adRequest != null) {
-//            adLoader.loadAd(adRequest!!)
-//        }
-//        Log.e("Admob", "loadAdNativeAds")
-//    }
-
-    private fun performLoadAndShowNativeFull(
-        activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback
-    ) {
+    private fun performLoadAndShowNativeFull(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onNativeFailed()
             return
         }
-        val tagView = activity.layoutInflater.inflate(R.layout.layout_native_loading_fullscreen, null, false)
+        val tagView = activity.layoutInflater.inflate(R.layout.layout_native_loading_full, null, false)
         try {
             viewGroup.removeAllViews()
             viewGroup.addView(tagView, 0)
@@ -2106,9 +2121,7 @@ object AdmobUtils {
         adRequest?.let { builder.build().loadAd(it) }
     }
 
-    private fun performLoadNativeFull(
-        context: Context, holder: AdmobHolder, adCallback: NativeCallback
-    ) {
+    private fun performLoadNativeFull(context: Context, holder: AdmobHolder, adCallback: NativeCallback) {
         if (!isEnableAds || !isNetworkConnected(context)) {
             adCallback.onNativeFailed("Not show native")
             return
@@ -2170,10 +2183,7 @@ object AdmobUtils {
         }
     }
 
-    @JvmStatic
-    fun performShowNativeFull(
-        context: Context, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeCallbackSimple
-    ) {
+    private fun performShowNativeFull(context: Context, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeCallbackSimple) {
         if (!isEnableAds || !isNetworkConnected(context)) {
             viewGroup.gone()
             return
@@ -2202,7 +2212,7 @@ object AdmobUtils {
 //                OnResumeUtils.getInstance().isOnResumeEnable = true
             }
         } else {
-            val tagView = inflater.inflate(R.layout.layout_native_loading_fullscreen, null, false)
+            val tagView = inflater.inflate(R.layout.layout_native_loading_full, null, false)
             viewGroup.addView(tagView, 0)
             if (shimmerFrameLayout == null) shimmerFrameLayout = tagView.findViewById(R.id.shimmer_view_container)
             shimmerFrameLayout?.startShimmer()

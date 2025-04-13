@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_ad_native">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ad_container"
@@ -19,6 +19,7 @@
             android:layout_height="@dimen/_150sdp"
             android:layout_gravity="fill"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,12 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="8dp"
-            app:layout_goneMarginTop="0dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/ad_call_to_action"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ad_media">
+            app:layout_constraintTop_toBottomOf="@id/ad_media"
+            app:layout_goneMarginTop="0dp">
 
             <RatingBar
                 android:id="@+id/ad_stars"
@@ -94,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:text="Test Ads to you"
                 android:textColor="#252525"
                 android:textSize="12sp"
@@ -125,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginVertical="16dp"
             android:background="@drawable/bg_btn_install_ads"
             android:backgroundTint="@color/colorAccent"
             android:gravity="center"

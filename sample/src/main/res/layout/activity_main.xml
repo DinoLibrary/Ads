@@ -27,6 +27,12 @@
                 android:text="load and show Banner" />
 
             <Button
+                android:id="@+id/btnLoadShowBannerTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="load and show Banner TOP" />
+
+            <Button
                 android:id="@+id/btnLoadShowBannerCollap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

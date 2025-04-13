@@ -20,11 +20,11 @@ fun Context.toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun log(msg: String) {
-    if (AdmobUtils.isTesting) Log.d("===", msg)
+    if (AdmobUtils.isTesting) Log.d("+===", msg)
 }
 
 fun logE(msg: String) {
-    if (AdmobUtils.isTesting) Log.e("===", msg)
+    if (AdmobUtils.isTesting) Log.e("+===", msg)
 }
 
 fun View.visible() {
