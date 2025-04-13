@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F7F4F4">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingBottom="@dimen/_10sdp"
-        app:layout_constraintBottom_toTopOf="@id/flNative"
-        app:layout_constraintTop_toBottomOf="@id/flBannerTop">
+        app:layout_constraintBottom_toTopOf="@id/dummyBottom"
+        app:layout_constraintTop_toBottomOf="@id/dummyTop">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,15 +73,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="load and show Inter with Native" />
+
+            <FrameLayout
+                android:id="@+id/flNative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:id="@+id/flNative"
+    <TextView
+        android:id="@+id/dummyTop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="50dp"
+        android:background="@color/main_orange_color"
+        android:gravity="center"
+        android:text="Dummy Top"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/flBannerTop" />
+
+    <TextView
+        android:id="@+id/dummyBottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/main_orange_color"
+        android:gravity="center"
+        android:text="Dummy Bottom"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/flBanner" />
 
     <FrameLayout

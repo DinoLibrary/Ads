@@ -31,7 +31,7 @@ object AdsManager {
 
     fun loadAndShowNativeCollap(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
         AdmobUtils.loadAndShowNativeCollap(
-            activity, holder, viewGroup, R.layout.ad_template_medium,
+            activity, holder, viewGroup, R.layout.ad_template_collap,
             object : AdmobUtils.NativeCallback() {})
     }
 
@@ -43,7 +43,7 @@ object AdsManager {
         AdmobUtils.loadNativeLanguage(context, holder, object : AdmobUtils.NativeCallback() {
             override fun onNativeReady(ad: NativeAd?) {
                 super.onNativeReady(ad)
-                log("Native Language Ready: ${holder.intros.first().nativeAd}")
+                log("Native Language Ready: ${holder.holders.first().nativeAd}")
             }
         })
     }

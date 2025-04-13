@@ -23,6 +23,10 @@ fun log(msg: String) {
     if (AdmobUtils.isTesting) Log.d("===", msg)
 }
 
+fun logE(msg: String) {
+    if (AdmobUtils.isTesting) Log.e("===", msg)
+}
+
 fun View.visible() {
     visibility = View.VISIBLE
 }

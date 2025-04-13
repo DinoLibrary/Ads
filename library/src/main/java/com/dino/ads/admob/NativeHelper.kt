@@ -2,6 +2,7 @@ package com.dino.ads.admob
 
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
@@ -230,7 +231,7 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewClose(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, anchor: String, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
+        fun populateNativeAdViewCollap(viewGroup: ViewGroup, nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, anchor: String, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -255,7 +256,7 @@ class NativeHelper {
             }
             if (nativeAd.mediaContent != null) {
                 if (size == AdNativeSize.MEDIUM) {
-                    adView.mediaView!!.setMediaContent(nativeAd.mediaContent!!)
+                    adView.mediaView!!.mediaContent = nativeAd.mediaContent!!
                 }
             }
 
@@ -287,15 +288,15 @@ class NativeHelper {
                     adView.iconView!!.visibility = View.VISIBLE
                 }
             }
-            adView.findViewById<ImageView>(R.id.ad_close)?.let { ivClose ->
-                ivClose.isVisible = true
-                if (anchor == "top") ivClose.rotation = 180f
-                ivClose.setOnClickListener {
+            adView.findViewById<ImageView>(R.id.ad_close)?.let { ivCollap ->
+                ivCollap.isVisible = true
+                if (anchor == "top") ivCollap.rotation = 180f
+                ivCollap.setOnClickListener {
                     nativeAdCallbackNew.onNativeClicked()
-                    it.visibility = View.GONE
-                    adView.findViewById<MediaView>(R.id.ad_media)?.let { ad_media ->
-                        ad_media.visibility = View.GONE
-                    }
+                    it.gone()
+                    adView.findViewById<MediaView>(R.id.ad_media)?.gone()
+                    (adView.parent as? ViewGroup)?.removeView(adView)
+                    viewGroup.addView(adView)
                 }
             }
             if (nativeAd.starRating != null) {

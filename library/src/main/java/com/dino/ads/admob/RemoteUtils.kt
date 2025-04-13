@@ -46,7 +46,7 @@ object RemoteUtils {
     }
 
     fun getValue(key: String, version: Int? = null): String {
-        val remoteKey = if(version == null) key else "${key}_v$version"
+        val remoteKey = if (version == null) key else "${key}_v$version"
         val value = FirebaseRemoteConfig.getInstance().getString(remoteKey)
         log("getValue: $remoteKey = $value")
         return value
@@ -58,7 +58,7 @@ object RemoteUtils {
         return adId
     }
 
-    fun checkTestAd() = getValue("check_test_ad") == "1" && !AdmobUtils.isTesting && !AdmobUtils.isPremium
+    fun checkTestAd() = getValue("check_test_ad") == "1"
 
     fun enableAds() = getValue("enable_ads") == "1" && !AdmobUtils.isPremium
 

@@ -40,8 +40,10 @@ open class AdmobHolder(var uid: String = "") {
         return this
     }
 
+    fun isRewardEnable() = RemoteUtils.getValue("reward_$uid") == "1" && AdmobUtils.isEnableAds && !AdmobUtils.isPremium
+
     /**
-     * Native is ready when it's loaded successfully
+     * Banner divider color
      */
     open fun dividerColor(color: String): AdmobHolder {
         dividerColor = color
@@ -63,7 +65,7 @@ open class AdmobHolder(var uid: String = "") {
 
     /**
      * Only for banner on top of the screen
-     * default is bottom collap banner
+     * default is bottom
      */
     fun anchorTop(): AdmobHolder {
         anchor = "top"
