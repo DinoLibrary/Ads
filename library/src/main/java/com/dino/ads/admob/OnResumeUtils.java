@@ -353,6 +353,11 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
                 return;
             }
 
+            if (AdmobUtils.isNativeInterShowing(currentActivity)){
+                Log.e("===OnResume", "Native inter is showing => disable on_resume");
+                return;
+            }
+
             if (!isOnResumeEnable) {
                 Log.d("===OnResume", "enableOnResume: false");
                 return;

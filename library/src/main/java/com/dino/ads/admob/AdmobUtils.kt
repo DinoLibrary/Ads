@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -1179,6 +1180,23 @@ object AdmobUtils {
         }
     }
 
+    @JvmStatic
+    fun isNativeInterShowing(activity: Activity): Boolean {
+        try {
+            val decorView = activity.window.decorView as ViewGroup
+            val tag = "native_full_view"
+            val nativeView = decorView.findViewWithTag<View>(tag)
+            return if (nativeView != null && nativeView.isVisible) {
+                logE("Native Inter is showing")
+                true
+            } else {
+                false
+            }
+        } catch (_: Exception) {
+        }
+        return false
+    }
+
 
     //* ========================Private Internal Functions======================== */
 
@@ -1629,9 +1647,17 @@ object AdmobUtils {
             callback.onBannerFailed("Not show banner ${holder.uid} collap")
             return
         }
-        holder.bannerAdView?.let {
-            it.destroy()
-            viewGroup.removeView(it)
+        try {
+            holder.bannerAdView?.let {
+                it.destroy()
+                viewGroup.removeView(it)
+            }
+            if (isNativeInterShowing(activity)) {
+                viewGroup.gone()
+                callback.onBannerFailed("Native Inter is showing")
+                return
+            }
+        } catch (_: Exception) {
         }
         holder.bannerAdView = AdView(activity)
         mBannerCollapView = holder.bannerAdView
@@ -2026,6 +2052,11 @@ object AdmobUtils {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onNativeFailed("Not show native")
+            return
+        }
+        if (isNativeInterShowing(activity)) {
+            viewGroup.gone()
+            callback.onNativeFailed("Native Inter is showing")
             return
         }
 //        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
