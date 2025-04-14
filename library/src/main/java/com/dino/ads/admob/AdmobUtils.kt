@@ -21,7 +21,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
-import androidx.core.view.isInvisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -208,7 +207,14 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun loadAndShowBanner(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: BannerCallback, callBack: NativeCallback) {
+    fun loadAndShowBanner(
+        activity: Activity,
+        holder: AdmobHolder,
+        viewGroup: ViewGroup,
+        layout: Int,
+        callback: BannerCallback,
+        callBack: NativeCallback
+    ) {
         when (val remoteValue = RemoteUtils.getValue("banner_${holder.uid}", holder.versionCode)) {
             "1" -> { //* Banner
                 performLoadAndShowBanner(activity, holder, viewGroup, callback)
@@ -831,7 +837,14 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun showNativeLanguage(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
+    fun showNativeLanguage(
+        activity: Activity,
+        holder: NativeIntroHolder,
+        viewGroup: ViewGroup,
+        layout: Int,
+        index: Int,
+        callback: NativeCallbackSimple
+    ) {
         val remoteValue = RemoteUtils.getValue("native_language", holder.versionCode)
         if (remoteValue == "0") {
             viewGroup.gone()
@@ -868,7 +881,14 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun showNativeIntro(activity: Activity, holder: NativeIntroHolder, viewGroup: ViewGroup, layout: Int, index: Int, callback: NativeCallbackSimple) {
+    fun showNativeIntro(
+        activity: Activity,
+        holder: NativeIntroHolder,
+        viewGroup: ViewGroup,
+        layout: Int,
+        index: Int,
+        callback: NativeCallbackSimple
+    ) {
         val remoteValue = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
             log("showNativeIntros: Not show native")
@@ -946,12 +966,21 @@ object AdmobUtils {
                     onFinished()
                 }
 
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    container.gone()
+                    runTry { decorView?.removeView(container) }
+                    onFinished()
+                }, 15000) //* Timeout 15s for loading NativeFull
+
                 performLoadAndShowNativeFull(activity, viewGroup, holder, layout, object : NativeFullCallback() {
                     override fun onNativeLoaded(nativeAd: NativeAd) {
                         btnClose.visible()
+                        handler.removeCallbacksAndMessages(null)
                     }
 
                     override fun onNativeFailed() {
+                        handler.removeCallbacksAndMessages(null)
                         container.gone()
                         runTry { decorView?.removeView(container) }
                         OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -1530,7 +1559,7 @@ object AdmobUtils {
         mAdView.setAdSize(adSize)
         val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
 
-        try {
+        runTry {
             viewGroup.removeAllViews()
             viewGroup.addView(tagView, 0)
             viewGroup.addView(mAdView, 1)
@@ -1541,8 +1570,6 @@ object AdmobUtils {
                 setBackgroundColor(holder.dividerColor.toColorInt())
             }
             viewGroup.addView(divider)
-        } catch (_: Exception) {
-
         }
 
         viewGroup.visible()
@@ -1600,7 +1627,7 @@ object AdmobUtils {
         holder.bannerAdView?.adUnitId = adId
         val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
 
-        try {
+        runTry {
             viewGroup.removeAllViews()
             viewGroup.addView(tagView, 0)
             viewGroup.addView(holder.bannerAdView, 1)
@@ -1613,8 +1640,6 @@ object AdmobUtils {
                 setBackgroundColor(holder.dividerColor.toColorInt())
             }
             viewGroup.addView(divider)
-        } catch (_: Exception) {
-
         }
 
         viewGroup.visible()
@@ -1976,10 +2001,9 @@ object AdmobUtils {
     private fun performLoadAndShowNativeCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
         var decorView: ViewGroup? = null
         val tag = "native_collap_view"
-        try {
+        runTry {
             decorView = activity.window.decorView as ViewGroup
-            decorView.findViewWithTag<View>(tag)?.let { decorView.removeView(it) }
-        } catch (_: Exception) {
+            decorView!!.findViewWithTag<View>(tag)?.let { decorView!!.removeView(it) }
         }
 
         if (!isEnableAds || !isNetworkConnected(activity)) {
@@ -1989,18 +2013,9 @@ object AdmobUtils {
         }
 //        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
         val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
-        try {
+        runTry {
             viewGroup.removeAllViews()
             viewGroup.addView(tagView, 0)
-            val divider = View(activity).apply {
-                layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 1.dpToPx(activity)).apply {
-                    if (holder.anchor == "top") this.gravity = Gravity.BOTTOM
-                }
-                setBackgroundColor(holder.dividerColor.toColorInt())
-            }
-            viewGroup.addView(divider)
-        } catch (_: Exception) {
-
         }
 
         viewGroup.visible()
@@ -2017,15 +2032,9 @@ object AdmobUtils {
             callback.onNativeReady(nativeAd)
             val adView = activity.layoutInflater.inflate(layout, null) as NativeAdView
             populateNativeAdViewCollap(viewGroup, nativeAd, adView, holder.nativeSize, holder.anchor, callback)
-//            if (ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-//
-//            }
             shimmerFrameLayout.stopShimmer()
-            try {
-//                viewGroup.removeAllViews()
+            runTry {
                 viewGroup.removeView(tagView)
-//                viewGroup.addView(adView)
-//                val decorView = activity.window.decorView as ViewGroup
                 val layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -2033,7 +2042,6 @@ object AdmobUtils {
                 layoutParams.gravity = if (holder.anchor == "top") Gravity.TOP else Gravity.BOTTOM
                 adView.tag = tag
                 decorView?.addView(adView, layoutParams)
-            } catch (_: Exception) {
             }
 
             nativeAd.setOnPaidEventListener { adValue: AdValue ->
@@ -2058,7 +2066,13 @@ object AdmobUtils {
         adRequest?.let { adLoader.loadAd(it) }
     }
 
-    private fun performLoadAndShowNativeFull(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, callback: NativeFullCallback) {
+    private fun performLoadAndShowNativeFull(
+        activity: Activity,
+        viewGroup: ViewGroup,
+        holder: AdmobHolder,
+        layout: Int,
+        callback: NativeFullCallback
+    ) {
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             callback.onNativeFailed()
