@@ -54,11 +54,11 @@
     </entry>
     <entry>
         <key>inter_home</key>
-        <value>4</value>
+        <value>1</value>
     </entry>
     <entry>
         <key>inter_home2</key>
-        <value>2</value>
+        <value>4</value>
     </entry>
     <entry>
         <key>check_test_ad</key>
@@ -66,7 +66,7 @@
     </entry>
     <entry>
         <key>on_resume</key>
-        <value>0</value>
+        <value>1</value>
     </entry>
     <entry>
         <key>enable_ads</key>

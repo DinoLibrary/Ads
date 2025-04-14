@@ -257,6 +257,9 @@ object AdmobUtils {
         isAdShowing = false
         val remoteValue = RemoteUtils.getValue("inter_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isOnResumeEnable = true
+            }
             callback.onInterFailed("Not show inter")
         } else {
             holder.interCount++
@@ -767,9 +770,7 @@ object AdmobUtils {
             }
 
             "1" -> {
-                performLoadAndShowNative(
-                    activity, viewGroup, holder.nativeSmall(), layout, callback
-                )
+                performLoadAndShowNative(activity, viewGroup, holder.nativeSmall(), layout, callback)
             }
 
             "2" -> {
@@ -960,7 +961,9 @@ object AdmobUtils {
                 tvTimer.gone()
                 btnClose.invisible()
                 btnClose.setOnClickListener {
-                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                    }
                     container.gone()
                     runTry { decorView?.removeView(container) }
                     onFinished()
@@ -983,7 +986,9 @@ object AdmobUtils {
                         handler.removeCallbacksAndMessages(null)
                         container.gone()
                         runTry { decorView?.removeView(container) }
-                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                        if (OnResumeUtils.getInstance().isInitialized) {
+                            OnResumeUtils.getInstance().isOnResumeEnable = true
+                        }
                         onFinished()
                     }
 
@@ -1005,11 +1010,13 @@ object AdmobUtils {
                     return
                 }
                 container.visible()
-                OnResumeUtils.getInstance().isOnResumeEnable = false
+//                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
                 btnClose.invisible()
                 btnClose.setOnClickListener {
-                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                    }
                     container.gone()
                     runTry { decorView?.removeView(container) }
                     onFinished()
@@ -1042,7 +1049,9 @@ object AdmobUtils {
                                     override fun onNativeFailed(error: String) {
                                         container.gone()
                                         runTry { decorView?.removeView(container) }
-                                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                                        if (OnResumeUtils.getInstance().isInitialized) {
+                                            OnResumeUtils.getInstance().isOnResumeEnable = true
+                                        }
                                         holder.nativeAd.removeObservers(activity)
                                         holder.nativeAd.value = null
                                         onFinished()
@@ -1052,7 +1061,9 @@ object AdmobUtils {
                         } else {
                             container.gone()
                             runTry { decorView?.removeView(container) }
-                            OnResumeUtils.getInstance().isOnResumeEnable = true
+                            if (OnResumeUtils.getInstance().isInitialized) {
+                                OnResumeUtils.getInstance().isOnResumeEnable = true
+                            }
                             holder.nativeAd.removeObservers(activity)
                             holder.nativeAd.value = null
                             onFinished()
@@ -1082,11 +1093,13 @@ object AdmobUtils {
                     return
                 }
                 container.visible()
-                OnResumeUtils.getInstance().isOnResumeEnable = false
+//                OnResumeUtils.getInstance().isOnResumeEnable = false
                 tvTimer.gone()
                 btnClose.invisible()
                 btnClose.setOnClickListener {
-                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                    }
                     container.gone()
                     runTry { decorView?.removeView(container) }
                     onFinished()
@@ -1126,7 +1139,9 @@ object AdmobUtils {
                                 override fun onNativeFailed(error: String) {
                                     container.gone()
                                     runTry { decorView?.removeView(container) }
-                                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                                    if (OnResumeUtils.getInstance().isInitialized) {
+                                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                                    }
                                     onFinished()
                                 }
 
@@ -1134,7 +1149,9 @@ object AdmobUtils {
                         } else {
                             container.gone()
                             runTry { decorView?.removeView(container) }
-                            OnResumeUtils.getInstance().isOnResumeEnable = true
+                            if (OnResumeUtils.getInstance().isInitialized) {
+                                OnResumeUtils.getInstance().isOnResumeEnable = true
+                            }
                             onFinished()
                         }
                     }
@@ -2128,7 +2145,9 @@ object AdmobUtils {
                 Log.d("===Admob", loadAdError.toString())
                 shimmerFrameLayout?.stopShimmer()
                 viewGroup.gone()
-                OnResumeUtils.getInstance().isOnResumeEnable = true
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                }
                 callback.onNativeFailed()
             }
         })
