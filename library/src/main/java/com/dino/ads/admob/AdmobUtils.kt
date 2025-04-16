@@ -226,9 +226,7 @@ object AdmobUtils {
             }
 
             "3" -> {//* Native Small
-                performLoadAndShowNative(
-                    activity, viewGroup, holder.nativeSmall(), layout, callBack
-                )
+                performLoadAndShowNative(activity, viewGroup, holder.nativeSmall().tinyLoading(), layout, callBack)
             }
 
             "4" -> {//* Native Collap
@@ -1971,9 +1969,7 @@ object AdmobUtils {
         }
     }
 
-    private fun performLoadAndShowNative(
-        activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, adCallback: NativeCallback
-    ) {
+    private fun performLoadAndShowNative(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, adCallback: NativeCallback) {
         Log.d("===AdmobNative", "loadAndShowNative")
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()

@@ -18,7 +18,7 @@ object AdsManager {
             activity,
             holder,
             viewGroup,
-            R.layout.ad_template_medium,
+            R.layout.ad_template_collap,
             object : AdmobUtils.BannerCallback() {},
             object : AdmobUtils.NativeCallback() {})
     }

@@ -135,7 +135,7 @@
             app:layout_constraintTop_toBottomOf="@id/middle" />
 
         <ImageView
-            android:id="@+id/ad_close"
+            android:id="@+id/ad_collap"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="4dp"

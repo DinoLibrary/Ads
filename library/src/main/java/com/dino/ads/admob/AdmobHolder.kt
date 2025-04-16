@@ -25,16 +25,21 @@ open class AdmobHolder(var uid: String = "") {
 
     //* Banner
     var anchor = "bottom"
+        private set
     var bannerAdView: AdView? = null
     var dividerColor: String = "#000000"
+        private set
 
     //* Native
     var isNativeLoading = false
     var nativeSize = AdNativeSize.MEDIUM
+        private set
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+        private set
     var isNativeInter = false
     var tinyLoading = false
+        private set
 
     fun version(versionCode: Int): AdmobHolder {
         this.versionCode = versionCode

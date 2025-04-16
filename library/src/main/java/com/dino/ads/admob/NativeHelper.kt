@@ -74,15 +74,14 @@ class NativeHelper {
                 (adView.callToActionView as Button).text = nativeAd.callToAction
             }
 
-
             if (adView.iconView != null) {
                 if (nativeAd.icon == null) {
                     adView.iconView!!.visibility = View.GONE
                 } else {
                     (adView.iconView as ImageView).setImageDrawable(
-                        nativeAd!!.icon!!.drawable
+                        nativeAd.icon!!.drawable
                     )
-                    adView!!.iconView!!.visibility = View.VISIBLE
+                    adView.iconView!!.visibility = View.VISIBLE
                 }
             }
 
@@ -90,16 +89,54 @@ class NativeHelper {
                 (adView.starRatingView as RatingBar).rating = 5f
             }
 
-            adView.setNativeAd(nativeAd)
-
-            val vc = nativeAd.mediaContent!!.videoController
-            if (vc.hasVideoContent()) {
-                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
-                    override fun onVideoEnd() {
-                        super.onVideoEnd()
+            if (adView.findViewById<View>(R.id.ad_collap) != null){
+                try {
+                    //* Update button constraint
+                    val constraintLayout = adView.findViewById<ConstraintLayout>(R.id.ad_container)
+                    val middle = adView.findViewById<ViewGroup>(R.id.middle)
+                    val button = adView.callToActionView ?: return
+                    (button as? Button)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                    button.layoutParams = button.layoutParams.apply {
+                        height = 40.dpToPx(adView.context)
+                        width = 0
                     }
+                    middle.layoutParams = middle.layoutParams.apply { width = 0 }
+
+                    val constraintSet = ConstraintSet()
+                    constraintSet.clone(constraintLayout)
+
+                    constraintSet.clear(button.id, ConstraintSet.START)
+                    constraintSet.connect(button.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                    constraintSet.connect(button.id, ConstraintSet.TOP, middle.id, ConstraintSet.TOP)
+                    constraintSet.connect(button.id, ConstraintSet.BOTTOM, middle.id, ConstraintSet.BOTTOM)
+
+                    constraintSet.clear(middle.id, ConstraintSet.END)
+                    constraintSet.connect(middle.id, ConstraintSet.END, button.id, ConstraintSet.START)
+                    constraintSet.connect(middle.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                    constraintSet.setMargin(middle.id, ConstraintSet.END, 4.dpToPx(adView.context))
+                    constraintSet.setMargin(middle.id, ConstraintSet.START, 0)
+
+                    constraintSet.setMargin(button.id, ConstraintSet.TOP, 0)
+                    constraintSet.setMargin(button.id, ConstraintSet.BOTTOM, 0)
+                    constraintSet.setMargin(button.id, ConstraintSet.END, 0)
+
+                    TransitionManager.beginDelayedTransition(constraintLayout)
+                    constraintSet.applyTo(constraintLayout)
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
+
+            adView.setNativeAd(nativeAd)
+
+//            val vc = nativeAd.mediaContent!!.videoController
+//            if (vc.hasVideoContent()) {
+//                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
+//                    override fun onVideoEnd() {
+//                        super.onVideoEnd()
+//                    }
+//                }
+//            }
         }
 
         fun populateNativeAdView(nativeAd: NativeAd, adView: NativeAdView) {
@@ -154,7 +191,6 @@ class NativeHelper {
 
             // Updates the UI to say whether or not this ad has a video asset.
             if (videoController.hasVideoContent()) {
-
                 // Create a new VideoLifecycleCallbacks object and pass it to the VideoController.
                 // The VideoController will call methods on this object when events occur in the
                 // video lifecycle.
@@ -289,7 +325,6 @@ class NativeHelper {
                 (adView.callToActionView as Button).text = nativeAd.callToAction
             }
 
-
             if (adView.iconView != null) {
                 if (nativeAd.icon == null) {
                     adView.iconView!!.visibility = View.GONE
@@ -300,7 +335,7 @@ class NativeHelper {
                     adView.iconView!!.visibility = View.VISIBLE
                 }
             }
-            adView.findViewById<ImageView>(R.id.ad_close)?.let { ivCollap ->
+            adView.findViewById<ImageView>(R.id.ad_collap)?.let { ivCollap ->
                 ivCollap.isVisible = true
                 if (anchor == "top") ivCollap.rotation = 180f
                 ivCollap.setOnClickListener {
@@ -353,14 +388,14 @@ class NativeHelper {
 
             adView.setNativeAd(nativeAd)
 
-            val vc = nativeAd.mediaContent!!.videoController
-            if (vc.hasVideoContent()) {
-                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
-                    override fun onVideoEnd() {
-                        super.onVideoEnd()
-                    }
-                }
-            }
+//            val vc = nativeAd.mediaContent!!.videoController
+//            if (vc.hasVideoContent()) {
+//                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
+//                    override fun onVideoEnd() {
+//                        super.onVideoEnd()
+//                    }
+//                }
+//            }
         }
 
     }
