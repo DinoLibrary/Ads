@@ -16,7 +16,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="@dimen/_28sdp"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/ic_ad_close"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

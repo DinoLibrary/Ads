@@ -34,6 +34,7 @@ open class AdmobHolder(var uid: String = "") {
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
     var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
     var isNativeInter = false
+    var tinyLoading = false
 
     fun version(versionCode: Int): AdmobHolder {
         this.versionCode = versionCode
@@ -60,6 +61,15 @@ open class AdmobHolder(var uid: String = "") {
      */
     fun enableLoading(b: Boolean): AdmobHolder {
         enableLoadingDialog = b
+        return this
+    }
+
+    /**
+     * Use tiny loading layout for Native Small
+     * (Same as banner loading layout)
+     */
+    fun tinyLoading(): AdmobHolder {
+        tinyLoading = true
         return this
     }
 

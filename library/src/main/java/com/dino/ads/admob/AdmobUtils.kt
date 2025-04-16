@@ -1923,11 +1923,14 @@ object AdmobUtils {
                 callback.onNativeFailed("None Show")
             }
         } else {
-            val tagView = if (holder.nativeSize == AdNativeSize.MEDIUM) {
-                activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
+            val loadingLayout = if (holder.nativeSize == AdNativeSize.MEDIUM) {
+                R.layout.layout_native_loading_medium
+            } else if (holder.tinyLoading) {
+                R.layout.layout_banner_loading
             } else {
-                activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
+                R.layout.layout_native_loading_small
             }
+            val tagView = activity.layoutInflater.inflate(loadingLayout, null, false)
             try {
                 viewGroup.addView(tagView, 0)
             } catch (_: Exception) {
@@ -1982,12 +1985,15 @@ object AdmobUtils {
         } catch (_: Exception) {
 
         }
-        val tagView = if (holder.nativeSize == AdNativeSize.MEDIUM) {
-            activity.layoutInflater.inflate(R.layout.layout_native_loading_medium, null, false)
-        } else {
-            activity.layoutInflater.inflate(R.layout.layout_native_loading_small, null, false)
-        }
 
+        val loadingLayout = if (holder.nativeSize == AdNativeSize.MEDIUM) {
+            R.layout.layout_native_loading_medium
+        } else if (holder.tinyLoading) {
+            R.layout.layout_banner_loading
+        } else {
+            R.layout.layout_native_loading_small
+        }
+        val tagView = activity.layoutInflater.inflate(loadingLayout, null, false)
         try {
             viewGroup.addView(tagView, 0)
         } catch (_: Exception) {

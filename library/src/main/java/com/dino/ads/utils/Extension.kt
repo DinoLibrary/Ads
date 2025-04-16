@@ -48,16 +48,12 @@ fun Context.prefs(): SharedPreferences {
     return getSharedPreferences("APP_PREFS", MODE_PRIVATE)
 }
 
-inline fun <reified T : Activity> Context.addActivity() {
-    startActivity(Intent(this, T::class.java))
-}
-
 inline fun <reified T : Activity> Context.addActivity(block: Intent.() -> Unit = {}) {
     startActivity(Intent(this, T::class.java).apply(block))
 }
 
-inline fun <reified T : Activity> Context.replaceActivity() {
-    val i = Intent(this, T::class.java)
+inline fun <reified T : Activity> Context.replaceActivity(block: Intent.() -> Unit = {}) {
+    val i = Intent(this, T::class.java).apply(block)
     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     startActivity(i)
 }

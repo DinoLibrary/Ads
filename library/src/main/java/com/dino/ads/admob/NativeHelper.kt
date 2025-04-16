@@ -1,15 +1,20 @@
 package com.dino.ads.admob
 
 import android.os.Build
+import android.transition.TransitionManager
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import com.dino.ads.R
 import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.utils.dpToPx
 import com.dino.ads.utils.gone
 import com.dino.ads.utils.visible
 import com.google.android.gms.ads.VideoController
@@ -231,7 +236,14 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewCollap(viewGroup: ViewGroup, nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, anchor: String, nativeAdCallbackNew: AdmobUtils.NativeCallback) {
+        fun populateNativeAdViewCollap(
+            viewGroup: ViewGroup,
+            nativeAd: NativeAd,
+            adView: NativeAdView,
+            size: AdNativeSize,
+            anchor: String,
+            nativeAdCallbackNew: AdmobUtils.NativeCallback
+        ) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -292,12 +304,47 @@ class NativeHelper {
                 ivCollap.isVisible = true
                 if (anchor == "top") ivCollap.rotation = 180f
                 ivCollap.setOnClickListener {
-                    nativeAdCallbackNew.onNativeClicked()
                     it.gone()
                     adView.findViewById<MediaView>(R.id.ad_media)?.gone()
-                    adView.callToActionView?.gone()
                     (adView.parent as? ViewGroup)?.removeView(adView)
                     viewGroup.addView(adView, 0)
+                    nativeAdCallbackNew.onNativeClicked()
+
+                    try {
+                        //* Update button constraint
+                        val constraintLayout = adView.findViewById<ConstraintLayout>(R.id.ad_container)
+                        val middle = adView.findViewById<ViewGroup>(R.id.middle)
+                        val button = adView.callToActionView ?: return@setOnClickListener
+                        (button as? Button)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                        button.layoutParams = button.layoutParams.apply {
+                            height = 40.dpToPx(adView.context)
+                            width = 0
+                        }
+                        middle.layoutParams = middle.layoutParams.apply { width = 0 }
+
+                        val constraintSet = ConstraintSet()
+                        constraintSet.clone(constraintLayout)
+
+                        constraintSet.clear(button.id, ConstraintSet.START)
+                        constraintSet.connect(button.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                        constraintSet.connect(button.id, ConstraintSet.TOP, middle.id, ConstraintSet.TOP)
+                        constraintSet.connect(button.id, ConstraintSet.BOTTOM, middle.id, ConstraintSet.BOTTOM)
+
+                        constraintSet.clear(middle.id, ConstraintSet.END)
+                        constraintSet.connect(middle.id, ConstraintSet.END, button.id, ConstraintSet.START)
+                        constraintSet.connect(middle.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                        constraintSet.setMargin(middle.id, ConstraintSet.END, 4.dpToPx(adView.context))
+                        constraintSet.setMargin(middle.id, ConstraintSet.START, 0)
+
+                        constraintSet.setMargin(button.id, ConstraintSet.TOP, 0)
+                        constraintSet.setMargin(button.id, ConstraintSet.BOTTOM, 0)
+                        constraintSet.setMargin(button.id, ConstraintSet.END, 0)
+
+                        TransitionManager.beginDelayedTransition(constraintLayout)
+                        constraintSet.applyTo(constraintLayout)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
             if (nativeAd.starRating != null) {
