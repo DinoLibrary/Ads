@@ -253,6 +253,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun showInterstitial(activity: Activity, holder: AdmobHolder, callback: InterCallback) {
+        destroyBannerCollapView()
         isAdShowing = false
         val remoteValue = RemoteUtils.getValue("inter_${holder.uid}", holder.versionCode)
         if (remoteValue == "0") {
@@ -906,6 +907,7 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, layout: Int, onFinished: () -> Unit) {
+        destroyBannerCollapView()
         if (!isEnableAds || !isNetworkConnected(activity)) {
             onFinished()
             return
@@ -940,8 +942,6 @@ object AdmobUtils {
             }
 
             "2" -> {
-                destroyBannerCollapView()
-
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -1021,7 +1021,6 @@ object AdmobUtils {
                     onFinished()
                 }
 
-                destroyBannerCollapView()
                 performLoadNativeFull(activity, holder, object : NativeCallback() {
                     override fun onNativeReady(ad: NativeAd?) {
                     }
@@ -1104,7 +1103,6 @@ object AdmobUtils {
                     onFinished()
                 }
 
-                destroyBannerCollapView()
                 performLoadNativeFull(activity, holder, object : NativeCallback() {
                     override fun onNativeReady(ad: NativeAd?) {
                     }
