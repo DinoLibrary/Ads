@@ -32,12 +32,12 @@ object RemoteUtils {
             }
 
             override fun onError(error: FirebaseRemoteConfigException) {
-                Log.d("===RemoteConfig", "onError: ${error.message}")
+                Log.d("+===RemoteConfig", "onError: ${error.message}")
             }
         })
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            task.exception?.let { Log.e("===RemoteConfig", "onComplete: $it") }
+            task.exception?.let { Log.e("+===RemoteConfig", "onComplete: $it") }
 //            if (task.isSuccessful) {
             AdmobUtils.isEnableAds = enableAds()
             onCompleted()

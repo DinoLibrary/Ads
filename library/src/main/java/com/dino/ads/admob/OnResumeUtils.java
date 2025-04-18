@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
-    private static final String TAG = "AppOpenUtils";
+    private static final String TAG = "+===OnResumeUtils";
     private static volatile OnResumeUtils INSTANCE;
     private AppOpenAd appResumeAd = null;
     private AppOpenAd splashAd = null;
@@ -146,17 +146,17 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
             return;
         }
         if (isAdAvailable(isSplash) || appResumeAdId == null || OnResumeUtils.this.appResumeAd != null) {
-            Log.d(TAG, "===AppOpenUtils: Ad is ready or id = null");
+            Log.d(TAG, "Ad is ready or id = null");
             return;
         }
 
         if (isLoading) return;
-        Log.d(TAG, "===AppOpenUtils: fetchAd");
+        Log.d(TAG, "fetchAd");
         isLoading = true;
         loadCallback = new AppOpenAd.AppOpenAdLoadCallback() {
             @Override
             public void onAdLoaded(AppOpenAd ad) {
-                Log.d(TAG, "===AppOpenUtils: Loaded");
+                Log.d(TAG, "Loaded");
                 OnResumeUtils.this.appResumeAd = ad;
                 OnResumeUtils.this.appResumeLoadTime = (new Date()).getTime();
             }
@@ -164,7 +164,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
             @Override
             public void onAdFailedToLoad(LoadAdError loadAdError) {
                 isLoading = false;
-                Log.d(TAG, "===AppOpenUtils: onAdFailedToLoad");
+                Log.d(TAG, "onAdFailedToLoad");
                 String a = "fail";
             }
 
@@ -181,7 +181,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
     public boolean isAdAvailable(boolean isSplash) {
         long loadTime = isSplash ? splashLoadTime : appResumeLoadTime;
         boolean wasLoadTimeLessThanNHoursAgo = wasLoadTimeLessThanNHoursAgo(loadTime, 4);
-        Log.d(TAG, "===AppOpenUtils: isAdAvailable " + wasLoadTimeLessThanNHoursAgo);
+        Log.d(TAG, "isAdAvailable " + wasLoadTimeLessThanNHoursAgo);
         return (isSplash ? splashAd != null : appResumeAd != null)
                 && wasLoadTimeLessThanNHoursAgo;
     }
@@ -193,9 +193,9 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Log.d("===AppOpenUtils", activity.getClass() + "|" + AdActivity.class);
+        Log.d(TAG, activity.getClass() + "|" + AdActivity.class);
         currentActivity = activity;
-        Log.d("===AppOpenUtils", "Running");
+        Log.d(TAG, "Running");
     }
 
     @Override
@@ -236,7 +236,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
 
     public void showAppOpenAd(final boolean isSplash) {
         if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            Log.d("===OnResume", "STARTED");
+            Log.d("+===OnResume", "STARTED");
             if (fullScreenContentCallback != null) {
                 try {
                     dialogFullScreen.dismiss();
@@ -248,7 +248,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
             }
             return;
         }
-        Log.d("===OnResume", "FullScreenContentCallback");
+        Log.d("+===OnResume", "FullScreenContentCallback");
         if (!isShowingAd && isAdAvailable(isSplash)) {
             isDismiss = true;
             FullScreenContentCallback callback =
@@ -330,7 +330,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
     protected void onMoveToForeground() {
         // Show the ad (if available) when the app moves to foreground.
         new Handler().postDelayed(() -> {
-//                Log.d("===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
+//                Log.d("+===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
 
             if (System.currentTimeMillis() - timeToBackground < 30000) {
                 return;
@@ -353,16 +353,16 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
                 return;
             }
 
-            if (AdmobUtils.isNativeInterShowing(currentActivity)){
-                Log.e("===OnResume", "Native inter is showing => disable on_resume");
+            if (AdmobUtils.isNativeInterShowing(currentActivity)) {
+                Log.e("+===OnResume", "Native inter is showing => disable on_resume");
                 return;
             }
 
             if (!isOnResumeEnable) {
-                Log.d("===OnResume", "enableOnResume: false");
+                Log.d("+===OnResume", "enableOnResume: false");
                 return;
             } else {
-                Log.d("===OnResume", "enableOnResume: true");
+                Log.d("+===OnResume", "enableOnResume: true");
                 AdmobUtils.dismissAdDialog();
             }
 

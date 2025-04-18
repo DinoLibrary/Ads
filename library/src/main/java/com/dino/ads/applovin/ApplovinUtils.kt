@@ -302,7 +302,7 @@ object ApplovinUtils : LifecycleObserver {
         callback: InterstitialCallbackNew
     ) {
         if (interHolder.inter != null) {
-            Log.d("===AdsInter", "Inter not null")
+            Log.d("+===AdsInter", "Inter not null")
             return
         }
         if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null) {
@@ -1271,7 +1271,7 @@ object ApplovinUtils : LifecycleObserver {
             return
         }
         if (nativeHolder.nativeAdLoader != null) {
-            Log.d("===AdsInter", "Native not null")
+            Log.d("+===AdsInter", "Native not null")
             return
         }
         if (applovin_sdk?.settings?.isVerboseLoggingEnabled == null) {

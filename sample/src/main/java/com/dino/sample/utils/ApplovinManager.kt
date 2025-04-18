@@ -125,7 +125,7 @@ object ApplovinManager {
             }
 
             override fun onInterstitialLoadFail(error: String) {
-                Log.d("===Ads", error)
+                Log.d("+===Ads", error)
                 adsOnClick.onAdsCloseOrFailed()
             }
 

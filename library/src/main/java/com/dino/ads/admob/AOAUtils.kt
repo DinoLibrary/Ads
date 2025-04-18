@@ -40,7 +40,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
         get() = appOpenAd != null
 
     fun loadAndShowAoa() {
-//        Log.d("===Load", "id1")
+//        Log.d("+===Load", "id1")
         if (!AdmobUtils.isEnableAds || !AdmobUtils.isNetworkConnected(activity)) {
             callback.onAdsFailed("isShowAds false")
             return
@@ -53,7 +53,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                 isLoading = false
                 onAOADestroyed()
                 callback.onAdsFailed("Time out")
-                Log.d("====Timeout", "TimeOut")
+                Log.d("+====Timeout", "TimeOut")
             }
         }
         if (isAdAvailable) {
@@ -61,7 +61,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
             callback.onAdsFailed("isAdAvailable true")
             return
         } else {
-            Log.d("====Timeout", "fetching... ")
+            Log.d("+====Timeout", "fetching... ")
             val adId = if (AdmobUtils.isTesting) {
                 activity.logId("AOA_${holder.uid}")
                 activity.getString(R.string.test_admob_on_resume_id)
@@ -79,7 +79,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                         callback.onAdsFailed(p0.message)
                     }
                     job.cancel()
-                    Log.d("====Timeout", "onAppOpenAdFailedToLoad: $p0")
+                    Log.d("+====Timeout", "onAppOpenAdFailedToLoad: $p0")
                 }
 
                 override fun onAdLoaded(ad: AppOpenAd) {
@@ -87,7 +87,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                     appOpenAd = ad
                     callback.onAdsLoaded()
                     job.cancel()
-                    Log.d("====Timeout", "isAdAvailable = true")
+                    Log.d("+====Timeout", "isAdAvailable = true")
                     if (!OnResumeUtils.getInstance().isShowingAd && !isShowingAd && isLoadAndShow) {
                         showAOA()
                     }
@@ -97,13 +97,13 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
     }
 
     fun showAOA() {
-        Log.d("====Timeout", "$isShowingAd - $isAdAvailable")
+        Log.d("+====Timeout", "$isShowingAd - $isAdAvailable")
         if (!isShowingAd && isAdAvailable && isLoading) {
             isLoading = false
             if (OnResumeUtils.getInstance().isInitialized) {
                 OnResumeUtils.getInstance().isOnResumeEnable = false
             }
-            Log.d("====Timeout", "will show ad ")
+            Log.d("+====Timeout", "will show ad ")
             val fullScreenContentCallback: FullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     try {
@@ -112,7 +112,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                     }
                     appOpenAd = null
                     isShowingAd = true
-                    Log.d("====Timeout", "Dismiss... ")
+                    Log.d("+====Timeout", "Dismiss... ")
                     if (isStart) {
                         isStart = false
                         callback.onAdsClose()
@@ -131,7 +131,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                     if (isStart) {
                         isStart = false
                         callback.onAdsFailed(p0.message)
-                        Log.d("====Timeout", "Failed... $p0")
+                        Log.d("+====Timeout", "Failed... $p0")
                     }
                     if (OnResumeUtils.getInstance().isInitialized) {
                         OnResumeUtils.getInstance().isOnResumeEnable = true
@@ -163,7 +163,7 @@ class AOAUtils(private val activity: Activity, val holder: AdmobHolder, val time
                 }
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (!OnResumeUtils.getInstance().isShowingAd && !isShowingAd) {
-                        Log.d("===AOA", "Show")
+                        Log.d("+===AOA", "Show")
                         try {
                             val txt = dialogFullScreen?.findViewById<TextView>(R.id.txtLoading)
                             img?.visibility = View.INVISIBLE

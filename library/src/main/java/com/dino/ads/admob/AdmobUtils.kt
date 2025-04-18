@@ -320,8 +320,8 @@ object AdmobUtils {
                         OnResumeUtils.getInstance().isOnResumeEnable = true
                     }
                     isAdShowing = false
-                    Log.e("===Admob", "onAdFailedToLoad" + loadAdError.message)
-                    Log.e("===Admob", "errorCodeAds" + loadAdError.cause)
+                    Log.e("+===Admob", "onAdFailedToLoad" + loadAdError.message)
+                    Log.e("+===Admob", "errorCodeAds" + loadAdError.cause)
                 }
 
                 override fun onAdLoaded(rewardedAd: RewardedInterstitialAd) {
@@ -350,8 +350,8 @@ object AdmobUtils {
                             if (OnResumeUtils.getInstance().isInitialized) {
                                 OnResumeUtils.getInstance().isOnResumeEnable = true
                             }
-                            Log.e("===Admob", "onAdFailedToLoad" + adError.message)
-                            Log.e("===Admob", "errorCodeAds" + adError.cause)
+                            Log.e("+===Admob", "onAdFailedToLoad" + adError.message)
+                            Log.e("+===Admob", "errorCodeAds" + adError.cause)
                         }
 
                         override fun onAdDismissedFullScreenContent() {
@@ -398,7 +398,7 @@ object AdmobUtils {
             return
         }
         if (holder.rewardInter.value != null) {
-            Log.d("===Admob", "rewardInter not null")
+            Log.d("+===Admob", "rewardInter not null")
             return
         }
         if (adRequest == null) {
@@ -526,7 +526,7 @@ object AdmobUtils {
                             isAdShowing = false
                             dismissAdDialog()
                             callback.onRewardClosed()
-                            Log.d("===Admob", "The ad was dismissed.")
+                            Log.d("+===Admob", "The ad was dismissed.")
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -539,13 +539,13 @@ object AdmobUtils {
                             isAdShowing = false
                             dismissAdDialog()
                             callback.onRewardFailed(adError.message)
-                            Log.d("===Admob", "The ad failed to show.")
+                            Log.d("+===Admob", "The ad failed to show.")
                         }
 
                         override fun onAdShowedFullScreenContent() {
                             isAdShowing = true
                             callback.onRewardShowed()
-                            Log.d("===Admob", "The ad was shown.")
+                            Log.d("+===Admob", "The ad was shown.")
                         }
                     }
                     holder.rewardInter.value?.show(activity) { callback.onRewardEarned() }
@@ -557,7 +557,7 @@ object AdmobUtils {
                     if (OnResumeUtils.getInstance().isInitialized) {
                         OnResumeUtils.getInstance().isOnResumeEnable = true
                     }
-                    Log.d("===Admob", "Ad did not load.")
+                    Log.d("+===Admob", "Ad did not load.")
                 }
             }
 //            }
@@ -572,7 +572,7 @@ object AdmobUtils {
             return
         }
         if (holder.rewardInter.value != null) {
-            Log.d("===Admob", "mInterstitialRewardAd not null")
+            Log.d("+===Admob", "mInterstitialRewardAd not null")
             return
         }
         if (adRequest == null) {
@@ -650,7 +650,7 @@ object AdmobUtils {
                                 isAdShowing = false
                                 dismissAdDialog()
                                 callback.onRewardClosed()
-                                Log.d("===Admob", "The ad was dismissed.")
+                                Log.d("+===Admob", "The ad was dismissed.")
                             }
 
                             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -663,13 +663,13 @@ object AdmobUtils {
                                 isAdShowing = false
                                 dismissAdDialog()
                                 callback.onRewardFailed(adError.message)
-                                Log.d("===Admob", "The ad failed to show.")
+                                Log.d("+===Admob", "The ad failed to show.")
                             }
 
                             override fun onAdShowedFullScreenContent() {
                                 isAdShowing = true
                                 callback.onRewardShowed()
-                                Log.d("===Admob", "The ad was shown.")
+                                Log.d("+===Admob", "The ad was shown.")
                             }
                         }
                         it.show(activity) { callback.onRewardEarned() }
@@ -1220,7 +1220,7 @@ object AdmobUtils {
             return
         }
         if (holder.inter.value != null) {
-            Log.d("===AdsInter", "Inter not null")
+            Log.d("+===AdsInter", "Inter not null")
             return
         }
         holder.isInterLoading = true
@@ -1243,7 +1243,7 @@ object AdmobUtils {
                     )
                 }
                 callback.onInterLoaded(interstitialAd, false)
-                Log.i("===Admob", "onAdLoaded")
+                Log.i("+===Admob", "onAdLoaded")
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -1287,7 +1287,7 @@ object AdmobUtils {
                 if (interstitialAd != null) {
                     holder.inter.removeObservers((activity as LifecycleOwner))
                     Handler(Looper.getMainLooper()).postDelayed({
-                        Log.d("===Admob", "delay show inter")
+                        Log.d("+===Admob", "delay show inter")
 
                         interstitialAd.fullScreenContentCallback = object : FullScreenContentCallback() {
                             override fun onAdDismissedFullScreenContent() {
@@ -1301,7 +1301,7 @@ object AdmobUtils {
                                 holder.inter.value = null
                                 callback.onInterClosed()
                                 dismissAdDialog()
-                                Log.d("===Admob", "The ad was dismissed.")
+                                Log.d("+===Admob", "The ad was dismissed.")
                             }
 
                             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -1313,8 +1313,8 @@ object AdmobUtils {
                                 //Set inter = null
 //                                holder.inter = null
                                 dismissAdDialog()
-                                Log.e("===Admob", "onAdFailedToLoad" + adError.message)
-                                Log.e("===Admob", "errorCodeAds" + adError.cause)
+                                Log.e("+===Admob", "onAdFailedToLoad" + adError.message)
+                                Log.e("+===Admob", "errorCodeAds" + adError.cause)
                                 holder.inter.removeObservers((activity as LifecycleOwner))
                                 holder.inter.value = null
                                 handler.removeCallbacksAndMessages(null)
@@ -1372,8 +1372,8 @@ object AdmobUtils {
                         isAdShowing = false
                         dismissAdDialog()
                         callback.onInterFailed(adError.message)
-                        Log.e("===Admob", "onAdFailedToLoad" + adError.message)
-                        Log.e("===Admob", "errorCodeAds" + adError.cause)
+                        Log.e("+===Admob", "onAdFailedToLoad" + adError.message)
+                        Log.e("+===Admob", "errorCodeAds" + adError.cause)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -1461,8 +1461,8 @@ object AdmobUtils {
                                 mInterstitialAd = null
                             }
                             dismissAdDialog()
-                            Log.e("===Admob", "onAdFailedToLoad" + adError.message)
-                            Log.e("===Admob", "errorCodeAds" + adError.cause)
+                            Log.e("+===Admob", "onAdFailedToLoad" + adError.message)
+                            Log.e("+===Admob", "errorCodeAds" + adError.cause)
                         }
 
                         override fun onAdDismissedFullScreenContent() {
@@ -1479,7 +1479,7 @@ object AdmobUtils {
 
                         override fun onAdShowedFullScreenContent() {
                             super.onAdShowedFullScreenContent()
-                            Log.e("===Admob", "onAdShowedFullScreenContent")
+                            Log.e("+===Admob", "onAdShowedFullScreenContent")
                             callback.onInterShowed()
                             Handler(Looper.getMainLooper()).postDelayed({
                                 dismissAdDialog()
@@ -1548,7 +1548,7 @@ object AdmobUtils {
         if (RemoteUtils.checkTestAd()) {
             try {
                 val testAdResponse = ad?.headline.toString().replace(" ", "").split(":")[0]
-                Log.d("===CheckAdsTest", ad?.headline.toString().replace(" ", "").split(":")[0])
+                Log.d("+===CheckAdsTest", ad?.headline.toString().replace(" ", "").split(":")[0])
                 val testAdResponses = arrayOf(
                     "TestAd",
                     "Anunciodeprueba",
@@ -1567,7 +1567,7 @@ object AdmobUtils {
                 isEnableAds = !testAdResponses.contains(testAdResponse)
             } catch (e: Exception) {
                 isEnableAds = false
-                Log.d("===CheckAdsTest", "Error ${e.message}")
+                Log.d("+===CheckAdsTest", "Error ${e.message}")
             }
         }
     }
@@ -1618,7 +1618,7 @@ object AdmobUtils {
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===Admob", "onAdFailedToLoad ${holder.uid}: " + adError.message)
+                Log.e("+===Admob", "onAdFailedToLoad ${holder.uid}: " + adError.message)
                 shimmerFrameLayout?.stopShimmer()
                 viewGroup.removeView(tagView)
                 viewGroup.gone()
@@ -1634,7 +1634,7 @@ object AdmobUtils {
             }
         }
         adRequest?.let { mAdView.loadAd(it) }
-        Log.d("===Admob", "loading banner ${holder.uid}")
+        Log.d("+===Admob", "loading banner ${holder.uid}")
     }
 
     private fun performLoadAndShowBannerCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, callback: BannerCallback) {
@@ -1698,7 +1698,7 @@ object AdmobUtils {
             }
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===Admob", "onAdFailedToLoad ${holder.uid}: " + adError.message)
+                Log.e("+===Admob", "onAdFailedToLoad ${holder.uid}: " + adError.message)
                 shimmerFrameLayout?.stopShimmer()
                 viewGroup.removeView(tagView)
                 viewGroup.gone()
@@ -1718,7 +1718,7 @@ object AdmobUtils {
         extras.putString("collapsible", holder.anchor)
         val request = AdRequest.Builder().addNetworkExtrasBundle(AdMobAdapter::class.java, extras).build()
         holder.bannerAdView?.loadAd(request)
-        Log.d("===Admob", "loading banner ${holder.uid} collap")
+        Log.d("+===Admob", "loading banner ${holder.uid} collap")
     }
 
     private fun getBannerSize(activity: Activity): AdSize {
@@ -1765,7 +1765,7 @@ object AdmobUtils {
                     OnResumeUtils.getInstance().isOnResumeEnable = true
                 }
                 isAdShowing = false
-                Log.e("===Admob", "RewardFailedToLoad: ${loadAdError.message}\n${loadAdError.cause}")
+                Log.e("+===Admob", "RewardFailedToLoad: ${loadAdError.message}\n${loadAdError.cause}")
             }
 
             override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -1792,7 +1792,7 @@ object AdmobUtils {
                         if (OnResumeUtils.getInstance().isInitialized) {
                             OnResumeUtils.getInstance().isOnResumeEnable = true
                         }
-                        Log.e("===Admob", "RewardFailedToShowFullScreenContent: ${adError.message}\n${adError.cause}" + adError.message)
+                        Log.e("+===Admob", "RewardFailedToShowFullScreenContent: ${adError.message}\n${adError.cause}" + adError.message)
                     }
 
                     override fun onAdDismissedFullScreenContent() {
@@ -1843,7 +1843,7 @@ object AdmobUtils {
         }
         //If native is loaded return
         if (holder.nativeAd.value != null) {
-            Log.d("===AdmobNative", "Native not null")
+            Log.d("+===AdmobNative", "Native not null")
             return
         }
         val adId = if (isTesting) {
@@ -1867,8 +1867,8 @@ object AdmobUtils {
             checkTestAd(nativeAd)
         }.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===AdmobNative", "onAdFailedToLoad" + adError.message)
-                Log.e("===AdmobNative", "errorCodeAds" + adError.cause)
+                Log.e("+===AdmobNative", "onAdFailedToLoad" + adError.message)
+                Log.e("+===AdmobNative", "errorCodeAds" + adError.cause)
 //                nativeHolder.nativeAd = null
                 holder.isNativeLoading = false
                 holder.nativeAd.value = null
@@ -1968,7 +1968,7 @@ object AdmobUtils {
     }
 
     private fun performLoadAndShowNative(activity: Activity, viewGroup: ViewGroup, holder: AdmobHolder, layout: Int, adCallback: NativeCallback) {
-        Log.d("===AdmobNative", "loadAndShowNative")
+        Log.d("+===AdmobNative", "loadAndShowNative")
         if (!isEnableAds || !isNetworkConnected(activity)) {
             viewGroup.gone()
             return
@@ -2020,8 +2020,8 @@ object AdmobUtils {
             //viewGroup.setVisibility(View.VISIBLE);
         }.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===AdmobNative", "onAdFailedToLoad" + adError.message)
-                Log.e("===AdmobNative", "errorCodeAds" + adError.cause)
+                Log.e("+===AdmobNative", "onAdFailedToLoad" + adError.message)
+                Log.e("+===AdmobNative", "errorCodeAds" + adError.cause)
                 shimmerFrameLayout.stopShimmer()
                 try {
                     viewGroup.removeAllViews()
@@ -2038,7 +2038,7 @@ object AdmobUtils {
             }
         }).withNativeAdOptions(NativeAdOptions.Builder().build()).build()
         adRequest?.let { adLoader.loadAd(it) }
-        Log.e("===AdmobNative", "loadAdNativeAds")
+        Log.e("+===AdmobNative", "loadAdNativeAds")
     }
 
     private fun performLoadAndShowNativeCollap(activity: Activity, holder: AdmobHolder, viewGroup: ViewGroup, layout: Int, callback: NativeCallback) {
@@ -2098,8 +2098,8 @@ object AdmobUtils {
             //viewGroup.setVisibility(View.VISIBLE);
         }.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===AdmobNative", "onAdFailedToLoad" + adError.message)
-                Log.e("===AdmobNative", "errorCodeAds" + adError.cause)
+                Log.e("+===AdmobNative", "onAdFailedToLoad" + adError.message)
+                Log.e("+===AdmobNative", "errorCodeAds" + adError.cause)
                 shimmerFrameLayout.stopShimmer()
                 try {
                     viewGroup.removeAllViews()
@@ -2173,7 +2173,7 @@ object AdmobUtils {
         }
         builder.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                Log.d("===Admob", loadAdError.toString())
+                Log.d("+===Admob", loadAdError.toString())
                 shimmerFrameLayout?.stopShimmer()
                 viewGroup.gone()
                 if (OnResumeUtils.getInstance().isInitialized) {
@@ -2191,7 +2191,7 @@ object AdmobUtils {
             return
         }
         if (holder.nativeAd.value != null) {
-            Log.d("===Admob", "Native not null")
+            Log.d("+===Admob", "Native not null")
             return
         }
         val adId = if (holder.isNativeInter) {
@@ -2218,7 +2218,7 @@ object AdmobUtils {
 //            nativeHolder.nativeAd = nativeAd
             holder.isNativeLoading = false
             holder.nativeAd.value = nativeAd
-            Log.d("===Admob", "Native Fullscreen Loaded")
+            Log.d("+===Admob", "Native Fullscreen Loaded")
             nativeAd.setOnPaidEventListener { adValue: AdValue? ->
                 adValue?.let {
                     AdjustUtils.postRevenueAdjustNative(nativeAd, it, adUnit = adId)
@@ -2229,8 +2229,8 @@ object AdmobUtils {
         }
         adLoader.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.e("===Admob", "onAdFailedToLoad" + adError.message)
-                Log.e("===Admob", "errorCodeAds" + adError.cause)
+                Log.e("+===Admob", "onAdFailedToLoad" + adError.message)
+                Log.e("+===Admob", "errorCodeAds" + adError.cause)
 //                nativeHolder.nativeAd = null
                 holder.isNativeLoading = false
                 holder.nativeAd.value = null
@@ -2368,7 +2368,7 @@ object AdmobUtils {
 //        }
 //        builder.withAdListener(object : AdListener() {
 //            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-//                Log.d("===AdmobFailed", loadAdError.toString())
+//                Log.d("+===AdmobFailed", loadAdError.toString())
 //                listener.onLoadFailed()
 //            }
 //        })
@@ -2386,7 +2386,7 @@ object AdmobUtils {
 //        size: AdNativeSize,
 //        adCallback: NativeCallback
 //    ) {
-//        Log.d("===Native", "Native1")
+//        Log.d("+===Native", "Native1")
 //        if (!isEnableAds || !isNetworkConnected(
 //                activity
 //            )
