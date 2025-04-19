@@ -88,45 +88,6 @@ class NativeHelper {
             if (nativeAd.starRating != null) {
                 (adView.starRatingView as RatingBar).rating = 5f
             }
-
-            if (adView.findViewById<View>(R.id.ad_collap) != null){
-                try {
-                    //* Update button constraint
-                    val constraintLayout = adView.findViewById<ConstraintLayout>(R.id.ad_container)
-                    val middle = adView.findViewById<ViewGroup>(R.id.middle)
-                    val button = adView.callToActionView ?: return
-                    (button as? Button)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                    button.layoutParams = button.layoutParams.apply {
-                        height = 40.dpToPx(adView.context)
-                        width = 0
-                    }
-                    middle.layoutParams = middle.layoutParams.apply { width = 0 }
-
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(constraintLayout)
-
-                    constraintSet.clear(button.id, ConstraintSet.START)
-                    constraintSet.connect(button.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                    constraintSet.connect(button.id, ConstraintSet.TOP, middle.id, ConstraintSet.TOP)
-                    constraintSet.connect(button.id, ConstraintSet.BOTTOM, middle.id, ConstraintSet.BOTTOM)
-
-                    constraintSet.clear(middle.id, ConstraintSet.END)
-                    constraintSet.connect(middle.id, ConstraintSet.END, button.id, ConstraintSet.START)
-                    constraintSet.connect(middle.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-                    constraintSet.setMargin(middle.id, ConstraintSet.END, 4.dpToPx(adView.context))
-                    constraintSet.setMargin(middle.id, ConstraintSet.START, 0)
-
-                    constraintSet.setMargin(button.id, ConstraintSet.TOP, 0)
-                    constraintSet.setMargin(button.id, ConstraintSet.BOTTOM, 0)
-                    constraintSet.setMargin(button.id, ConstraintSet.END, 0)
-
-                    TransitionManager.beginDelayedTransition(constraintLayout)
-                    constraintSet.applyTo(constraintLayout)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
             adView.setNativeAd(nativeAd)
 
 //            val vc = nativeAd.mediaContent!!.videoController
@@ -139,7 +100,7 @@ class NativeHelper {
 //            }
         }
 
-        fun populateNativeAdView(nativeAd: NativeAd, adView: NativeAdView) {
+        fun populateNativeAdViewFull(nativeAd: NativeAd, adView: NativeAdView) {
             val mediaView = adView.findViewById<MediaView>(R.id.ad_media)
             // Set the media view.
             adView.mediaView = mediaView
@@ -200,11 +161,7 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewNoBtn(
-            nativeAd: NativeAd,
-            adView: NativeAdView,
-            size: AdNativeSize
-        ) {
+        fun populateNativeAdViewNoBtn(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -272,14 +229,7 @@ class NativeHelper {
             }
         }
 
-        fun populateNativeAdViewCollap(
-            viewGroup: ViewGroup,
-            nativeAd: NativeAd,
-            adView: NativeAdView,
-            size: AdNativeSize,
-            anchor: String,
-            nativeAdCallbackNew: AdmobUtils.NativeCallback
-        ) {
+        fun populateNativeAdViewCollap(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize, anchor: String, onCollapsed: () -> Unit) {
             if (nativeAd == null || adView == null || size == null) {
                 return
             }
@@ -319,7 +269,6 @@ class NativeHelper {
             }
             if (nativeAd.callToAction == null) {
                 adView.callToActionView!!.visibility = View.INVISIBLE
-
             } else {
                 adView.callToActionView!!.visibility = View.VISIBLE
                 (adView.callToActionView as Button).text = nativeAd.callToAction
@@ -339,47 +288,7 @@ class NativeHelper {
                 ivCollap.isVisible = true
                 if (anchor == "top") ivCollap.rotation = 180f
                 ivCollap.setOnClickListener {
-                    it.gone()
-                    adView.findViewById<MediaView>(R.id.ad_media)?.gone()
-                    (adView.parent as? ViewGroup)?.removeView(adView)
-                    viewGroup.addView(adView, 0)
-                    nativeAdCallbackNew.onNativeClicked()
-
-                    try {
-                        //* Update button constraint
-                        val constraintLayout = adView.findViewById<ConstraintLayout>(R.id.ad_container)
-                        val middle = adView.findViewById<ViewGroup>(R.id.middle)
-                        val button = adView.callToActionView ?: return@setOnClickListener
-                        (button as? Button)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                        button.layoutParams = button.layoutParams.apply {
-                            height = 40.dpToPx(adView.context)
-                            width = 0
-                        }
-                        middle.layoutParams = middle.layoutParams.apply { width = 0 }
-
-                        val constraintSet = ConstraintSet()
-                        constraintSet.clone(constraintLayout)
-
-                        constraintSet.clear(button.id, ConstraintSet.START)
-                        constraintSet.connect(button.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                        constraintSet.connect(button.id, ConstraintSet.TOP, middle.id, ConstraintSet.TOP)
-                        constraintSet.connect(button.id, ConstraintSet.BOTTOM, middle.id, ConstraintSet.BOTTOM)
-
-                        constraintSet.clear(middle.id, ConstraintSet.END)
-                        constraintSet.connect(middle.id, ConstraintSet.END, button.id, ConstraintSet.START)
-                        constraintSet.connect(middle.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-                        constraintSet.setMargin(middle.id, ConstraintSet.END, 4.dpToPx(adView.context))
-                        constraintSet.setMargin(middle.id, ConstraintSet.START, 0)
-
-                        constraintSet.setMargin(button.id, ConstraintSet.TOP, 0)
-                        constraintSet.setMargin(button.id, ConstraintSet.BOTTOM, 0)
-                        constraintSet.setMargin(button.id, ConstraintSet.END, 0)
-
-                        TransitionManager.beginDelayedTransition(constraintLayout)
-                        constraintSet.applyTo(constraintLayout)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    onCollapsed()
                 }
             }
             if (nativeAd.starRating != null) {
@@ -396,6 +305,46 @@ class NativeHelper {
 //                    }
 //                }
 //            }
+        }
+
+        fun reConstraintNativeCollapView(adView: NativeAdView) {
+            try {
+                //* Convert NativeCollap => NativeSmall
+                adView.findViewById<ImageView>(R.id.ad_collap)?.gone()
+                adView.findViewById<MediaView>(R.id.ad_media)?.gone()
+                val constraintLayout = adView.findViewById<ConstraintLayout>(R.id.ad_container)
+                val middle = adView.findViewById<ViewGroup>(R.id.middle)
+                val button = adView.callToActionView ?: return
+                (button as? Button)?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                button.layoutParams = button.layoutParams.apply {
+                    height = 40.dpToPx(adView.context)
+                    width = 0
+                }
+                middle.layoutParams = middle.layoutParams.apply { width = 0 }
+
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(constraintLayout)
+
+                constraintSet.clear(button.id, ConstraintSet.START)
+                constraintSet.connect(button.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constraintSet.connect(button.id, ConstraintSet.TOP, middle.id, ConstraintSet.TOP)
+                constraintSet.connect(button.id, ConstraintSet.BOTTOM, middle.id, ConstraintSet.BOTTOM)
+
+                constraintSet.clear(middle.id, ConstraintSet.END)
+                constraintSet.connect(middle.id, ConstraintSet.END, button.id, ConstraintSet.START)
+                constraintSet.connect(middle.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                constraintSet.setMargin(middle.id, ConstraintSet.END, 4.dpToPx(adView.context))
+                constraintSet.setMargin(middle.id, ConstraintSet.START, 0)
+
+                constraintSet.setMargin(button.id, ConstraintSet.TOP, 0)
+                constraintSet.setMargin(button.id, ConstraintSet.BOTTOM, 0)
+                constraintSet.setMargin(button.id, ConstraintSet.END, 0)
+
+                TransitionManager.beginDelayedTransition(constraintLayout)
+                constraintSet.applyTo(constraintLayout)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }

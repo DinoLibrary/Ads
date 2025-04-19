@@ -35,7 +35,7 @@ open class AdmobHolder(var uid: String = "") {
     var nativeSize = AdNativeSize.MEDIUM
         private set
     var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
-    var mediaAspectRatio: Int = MediaAspectRatio.SQUARE
+    var mediaAspectRatio: Int = MediaAspectRatio.ANY
         private set
     var isNativeInter = false
     var tinyLoading = false

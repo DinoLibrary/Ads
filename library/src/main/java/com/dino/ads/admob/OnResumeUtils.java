@@ -12,9 +12,10 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.dino.ads.R;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
+public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "+===OnResumeUtils";
     private static volatile OnResumeUtils INSTANCE;
     private AppOpenAd appResumeAd = null;
@@ -302,7 +303,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
                             appResumeAd = null;
                         }
                     };
-            showAdsResume(isSplash, callback);
+            showAdsResume(callback);
 
         } else {
             Log.d(TAG, "Ad is not ready");
@@ -312,7 +313,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
         }
     }
 
-    private void showAdsResume(final boolean isSplash, final FullScreenContentCallback callback) {
+    private void showAdsResume(final FullScreenContentCallback callback) {
         if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             new Handler().postDelayed(() -> {
                 if (appResumeAd != null) {
@@ -326,12 +327,11 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, Li
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    protected void onMoveToForeground() {
+    @Override
+    public void onStart(@NonNull LifecycleOwner owner) {
+        Log.d(TAG, "onStart");
         // Show the ad (if available) when the app moves to foreground.
         new Handler().postDelayed(() -> {
-//                Log.d("+===OnStart", (System.currentTimeMillis() - timeToBackground) + "");
-
             if (System.currentTimeMillis() - timeToBackground < 30000) {
                 return;
             }

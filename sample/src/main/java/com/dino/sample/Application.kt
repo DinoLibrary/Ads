@@ -7,6 +7,7 @@ import android.view.View
 import com.dino.ads.adjust.AdjustUtils
 import com.dino.ads.admob.OnResumeUtils
 import com.dino.ads.application.AdsApplication
+import com.dino.ads.utils.log
 
 class Application : AdsApplication(), ActivityLifecycleCallbacks {
     override fun onCreateApplication() {
@@ -14,12 +15,13 @@ class Application : AdsApplication(), ActivityLifecycleCallbacks {
         registerActivityLifecycleCallbacks(this)
     }
 
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        if (level == TRIM_MEMORY_UI_HIDDEN) {
-            OnResumeUtils.getInstance().timeToBackground = System.currentTimeMillis()
-        }
-    }
+//    override fun onTrimMemory(level: Int) {
+//        super.onTrimMemory(level)
+//        if (level == TRIM_MEMORY_UI_HIDDEN) {
+//            log("onTrimMemory: $level")
+//            OnResumeUtils.getInstance().timeToBackground = System.currentTimeMillis()
+//        }
+//    }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE

@@ -15,10 +15,9 @@ object AdsManager {
 
     fun loadAndShowBanner(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
         AdmobUtils.loadAndShowBanner(
-            activity,
-            holder,
-            viewGroup,
+            activity, holder, viewGroup,
             R.layout.ad_template_collap,
+            R.layout.ad_template_banner,
             object : AdmobUtils.BannerCallback() {},
             object : AdmobUtils.NativeCallback() {})
     }
@@ -26,12 +25,6 @@ object AdsManager {
     fun loadAndShowNative(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
         AdmobUtils.loadAndShowNativeDual(
             activity, holder, viewGroup, R.layout.ad_template_medium,
-            object : AdmobUtils.NativeCallback() {})
-    }
-
-    fun loadAndShowNativeCollap(activity: AppCompatActivity, holder: AdmobHolder, viewGroup: ViewGroup) {
-        AdmobUtils.loadAndShowNativeCollap(
-            activity, holder, viewGroup, R.layout.ad_template_collap,
             object : AdmobUtils.NativeCallback() {})
     }
 

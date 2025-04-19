@@ -37,11 +37,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoadShowNativeCollap.setOnClickListener {
-            AdsManager.loadAndShowNativeCollap(this, RemoteConfig.BANNER_HOME_COLLAP2, binding.flBanner)
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME_COLLAP2, binding.flBanner)
         }
 
         binding.btnLoadShowNativeCollapTop.setOnClickListener {
-            AdsManager.loadAndShowNativeCollap(this, RemoteConfig.BANNER_HOME_COLLAP_TOP2.anchorTop(), binding.flBannerTop)
+            AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME_COLLAP_TOP2.anchorTop(), binding.flBannerTop)
         }
 
         binding.btnLoadShowInter.setOnClickListener {
