@@ -3,7 +3,6 @@ package com.dino.ads.admob;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,11 +11,8 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.dino.ads.R;
 import com.dino.ads.applovin.ApplovinUtils;
@@ -39,14 +35,13 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private FullScreenContentCallback fullScreenContentCallback;
     private String appResumeAdId;
-    private Activity currentActivity;
     private Application myApplication;
     private static boolean isShowingAd = false;
     public boolean isShowingAdsOnResume = false;
     public boolean isShowingAdsOnResumeBanner = false;
     private long appResumeLoadTime = 0;
     private long splashLoadTime = 0;
-//    public long timeToBackground = 0;
+    //    public long timeToBackground = 0;
     private boolean isInitialized = false;
     public boolean isOnResumeEnable = true;
     private final List<Class> disabledAppOpenList;
@@ -79,7 +74,6 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
             this.appResumeAdId = RemoteUtils.INSTANCE.getAdId("on_resume");
         }
         this.myApplication.registerActivityLifecycleCallbacks(this);
-//        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         if (!isAdAvailable(false) && appResumeAdId != null) {
             fetchAd(false);
         }
@@ -87,7 +81,6 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
 
     AdRequest adRequest;
 
-    // get AdRequest
     public void initAdRequest() {
         adRequest = new AdRequest.Builder()
                 .setHttpTimeoutMillis(5000)
@@ -193,58 +186,46 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Log.d(TAG, activity.getClass() + "|" + AdActivity.class);
-        currentActivity = activity;
-        Log.d(TAG, "onActivityStarted");
-        // Show the ad (if available) when the app moves to foreground.
-        new Handler().postDelayed(() -> {
-//            if (System.currentTimeMillis() - timeToBackground < 30000) {
-//                return;
-//            }
+        Log.d(TAG, activity.getClass().getSimpleName() + " onStarted");
+        if (activity.getClass() == AdActivity.class ||
+                ApplovinUtils.INSTANCE.isClickAds() ||
+                AdmobUtils.isAdShowing ||
+                !AdmobUtils.isEnableAds ||
+                !(activity instanceof AppCompatActivity) ||
+                AdmobUtils.isNativeInterShowing(activity)) {
 
-            if (currentActivity == null) {
-                return;
-            }
-            if (currentActivity.getClass() == AdActivity.class) {
-                return;
-            }
             if (ApplovinUtils.INSTANCE.isClickAds()) {
                 ApplovinUtils.INSTANCE.setClickAds(false);
-                return;
-            }
-            if (AdmobUtils.isAdShowing) {
-                return;
-            }
-            if (!AdmobUtils.isEnableAds) {
-                return;
             }
 
-            if (AdmobUtils.isNativeInterShowing(currentActivity)) {
+            if (AdmobUtils.isNativeInterShowing(activity)) {
                 Log.e("+===OnResume", "Native inter is showing => disable on_resume");
+            }
+            return;
+        }
+
+        if (!isOnResumeEnable) {
+            Log.d("+===OnResume", "enableOnResume: false");
+            return;
+        } else {
+            Log.d("+===OnResume", "enableOnResume: true");
+            AdmobUtils.dismissAdDialog();
+        }
+        for (Class act : disabledAppOpenList) {
+            if (act.getName().equals(activity.getClass().getName())) {
+                Log.d(TAG, "onStart: activity is disabled");
                 return;
             }
+        }
 
-            if (!isOnResumeEnable) {
-                Log.d("+===OnResume", "enableOnResume: false");
-                return;
-            } else {
-                Log.d("+===OnResume", "enableOnResume: true");
-                AdmobUtils.dismissAdDialog();
-            }
-
-            for (Class act : disabledAppOpenList) {
-                if (act.getName().equals(currentActivity.getClass().getName())) {
-                    Log.d(TAG, "onStart: activity is disabled");
-                    return;
-                }
-            }
-            showAppOpenAd(false);
+        // Show the ad (if available) when the app moves to foreground.
+        new Handler().postDelayed(() -> {
+            showAppOpenAd((AppCompatActivity) activity, false);
         }, 30);
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        currentActivity = activity;
         if (!activity.getClass().getName().equals(AdActivity.class.getName())) {
             fetchAd(false);
         }
@@ -266,14 +247,13 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        currentActivity = null;
         if (dialogFullScreen != null && dialogFullScreen.isShowing()) {
             dialogFullScreen.dismiss();
         }
     }
 
-    public void showAppOpenAd(final boolean isSplash) {
-        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+    public void showAppOpenAd(AppCompatActivity activity, final boolean isSplash) {
+        if (!activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             Log.d("+===OnResume", "STARTED");
             if (fullScreenContentCallback != null) {
                 try {
@@ -340,7 +320,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
                             appResumeAd = null;
                         }
                     };
-            showAdsResume(callback);
+            showAdsResume(activity, callback);
 
         } else {
             Log.d(TAG, "Ad is not ready");
@@ -350,31 +330,29 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
         }
     }
 
-    private void showAdsResume(final FullScreenContentCallback callback) {
-        if (ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+    private void showAdsResume(AppCompatActivity activity, final FullScreenContentCallback callback) {
+        if (activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             new Handler().postDelayed(() -> {
                 if (appResumeAd != null) {
                     appResumeAd.setFullScreenContentCallback(callback);
-                    if (currentActivity != null) {
-                        showDialog(currentActivity);
-                        appResumeAd.show(currentActivity);
-                    }
+                    showDialog(activity);
+                    appResumeAd.show(activity);
                 }
             }, 100);
         }
     }
 
-    public void showDialog(Context context) {
+    public void showDialog(AppCompatActivity activity) {
         isShowingAdsOnResume = true;
         isShowingAdsOnResumeBanner = true;
-        dialogFullScreen = new Dialog(context);
+        dialogFullScreen = new Dialog(activity);
         dialogFullScreen.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogFullScreen.setContentView(R.layout.dialog_onresume);
         dialogFullScreen.setCancelable(false);
         dialogFullScreen.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         dialogFullScreen.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         try {
-            if (!currentActivity.isFinishing() && dialogFullScreen != null && !dialogFullScreen.isShowing()) {
+            if (!activity.isFinishing() && dialogFullScreen != null && !dialogFullScreen.isShowing()) {
                 dialogFullScreen.show();
             }
         } catch (Exception ignored) {

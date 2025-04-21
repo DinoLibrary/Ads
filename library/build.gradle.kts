@@ -47,7 +47,6 @@ dependencies {
     implementation(libs.material)
 
     implementation(libs.androidx.lifecycle.runtime.ktx.v251)
-    implementation(libs.androidx.lifecycle.process.v251)
 
     // UI
     implementation(libs.androidx.appcompat.v170)
