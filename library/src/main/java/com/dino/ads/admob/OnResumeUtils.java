@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
+public class OnResumeUtils implements Application.ActivityLifecycleCallbacks {
     private static final String TAG = "+===OnResumeUtils";
     private static volatile OnResumeUtils INSTANCE;
     private AppOpenAd appResumeAd = null;
@@ -46,11 +46,10 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
     public boolean isShowingAdsOnResumeBanner = false;
     private long appResumeLoadTime = 0;
     private long splashLoadTime = 0;
-    public long timeToBackground = 0;
+//    public long timeToBackground = 0;
     private boolean isInitialized = false;
     public boolean isOnResumeEnable = true;
     private final List<Class> disabledAppOpenList;
-    private Class splashActivity;
     private Dialog dialogFullScreen;
 
     public OnResumeUtils() {
@@ -66,7 +65,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
 
     public void init(Activity activity) {
         String remoteValue = RemoteUtils.INSTANCE.getValue("on_resume", null);
-        if (!remoteValue.equals("1")) return;
+        if (!remoteValue.equals("1") || !AdmobUtils.isEnableAds) return;
         isInitialized = true;
         this.myApplication = activity.getApplication();
         initAdRequest();
@@ -80,7 +79,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
             this.appResumeAdId = RemoteUtils.INSTANCE.getAdId("on_resume");
         }
         this.myApplication.registerActivityLifecycleCallbacks(this);
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+//        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         if (!isAdAvailable(false) && appResumeAdId != null) {
             fetchAd(false);
         }
@@ -196,20 +195,58 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
     public void onActivityStarted(Activity activity) {
         Log.d(TAG, activity.getClass() + "|" + AdActivity.class);
         currentActivity = activity;
-        Log.d(TAG, "Running");
+        Log.d(TAG, "onActivityStarted");
+        // Show the ad (if available) when the app moves to foreground.
+        new Handler().postDelayed(() -> {
+//            if (System.currentTimeMillis() - timeToBackground < 30000) {
+//                return;
+//            }
+
+            if (currentActivity == null) {
+                return;
+            }
+            if (currentActivity.getClass() == AdActivity.class) {
+                return;
+            }
+            if (ApplovinUtils.INSTANCE.isClickAds()) {
+                ApplovinUtils.INSTANCE.setClickAds(false);
+                return;
+            }
+            if (AdmobUtils.isAdShowing) {
+                return;
+            }
+            if (!AdmobUtils.isEnableAds) {
+                return;
+            }
+
+            if (AdmobUtils.isNativeInterShowing(currentActivity)) {
+                Log.e("+===OnResume", "Native inter is showing => disable on_resume");
+                return;
+            }
+
+            if (!isOnResumeEnable) {
+                Log.d("+===OnResume", "enableOnResume: false");
+                return;
+            } else {
+                Log.d("+===OnResume", "enableOnResume: true");
+                AdmobUtils.dismissAdDialog();
+            }
+
+            for (Class act : disabledAppOpenList) {
+                if (act.getName().equals(currentActivity.getClass().getName())) {
+                    Log.d(TAG, "onStart: activity is disabled");
+                    return;
+                }
+            }
+            showAppOpenAd(false);
+        }, 30);
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         currentActivity = activity;
-        if (splashActivity == null) {
-            if (!activity.getClass().getName().equals(AdActivity.class.getName())) {
-                fetchAd(false);
-            }
-        } else {
-            if (!activity.getClass().getName().equals(splashActivity.getName()) && !activity.getClass().getName().equals(AdActivity.class.getName())) {
-                fetchAd(false);
-            }
+        if (!activity.getClass().getName().equals(AdActivity.class.getName())) {
+            fetchAd(false);
         }
     }
 
@@ -325,55 +362,6 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
                 }
             }, 100);
         }
-    }
-
-    @Override
-    public void onStart(@NonNull LifecycleOwner owner) {
-        Log.d(TAG, "onStart");
-        // Show the ad (if available) when the app moves to foreground.
-        new Handler().postDelayed(() -> {
-            if (System.currentTimeMillis() - timeToBackground < 30000) {
-                return;
-            }
-
-            if (currentActivity == null) {
-                return;
-            }
-            if (currentActivity.getClass() == AdActivity.class) {
-                return;
-            }
-            if (ApplovinUtils.INSTANCE.isClickAds()) {
-                ApplovinUtils.INSTANCE.setClickAds(false);
-                return;
-            }
-            if (AdmobUtils.isAdShowing) {
-                return;
-            }
-            if (!AdmobUtils.isEnableAds) {
-                return;
-            }
-
-            if (AdmobUtils.isNativeInterShowing(currentActivity)) {
-                Log.e("+===OnResume", "Native inter is showing => disable on_resume");
-                return;
-            }
-
-            if (!isOnResumeEnable) {
-                Log.d("+===OnResume", "enableOnResume: false");
-                return;
-            } else {
-                Log.d("+===OnResume", "enableOnResume: true");
-                AdmobUtils.dismissAdDialog();
-            }
-
-            for (Class activity : disabledAppOpenList) {
-                if (activity.getName().equals(currentActivity.getClass().getName())) {
-                    Log.d(TAG, "onStart: activity is disabled");
-                    return;
-                }
-            }
-            showAppOpenAd(false);
-        }, 30);
     }
 
     public void showDialog(Context context) {
