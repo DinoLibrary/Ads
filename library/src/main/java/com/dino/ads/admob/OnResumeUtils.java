@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 
-import androidx.annotation.DisplayContext;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
@@ -31,8 +30,6 @@ import com.google.android.gms.ads.appopen.AppOpenAd;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import kotlin.UnsafeVariance;
 
 public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "+===OnResumeUtils";
@@ -234,13 +231,17 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
 //        protected void onMoveToForeground() {
         Log.d(TAG, "LifecycleOwner onStart");
         // Show the ad (if available) when the app moves to foreground.
-        new Handler().postDelayed(this::checkAndShowOnResume, 30);
+        new Handler().postDelayed(() -> checkAndShowOnResume(true), 30);
     }
 
     /**
      * ⚠️ DO NOT use this in Project unless you know what you are doing
      */
-    public void checkAndShowOnResume() {
+    public void checkAndShowOnResumeNoLifecycle() {
+        checkAndShowOnResume(false);
+    }
+
+    private void checkAndShowOnResume(boolean checkLifecycle) {
         if (currentActivity == null ||
                 currentActivity.getClass() == AdActivity.class ||
                 AdmobUtils.isAdShowing ||
@@ -273,11 +274,11 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
             Log.d("+===OnResume", "enableOnResume: true");
             AdmobUtils.dismissAdDialog();
         }
-        showAppOpenAd(false);
+        showAppOpenAd(checkLifecycle);
     }
 
-    public void showAppOpenAd(final boolean isSplash) {
-        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+    private void showAppOpenAd(boolean checkLifecycle) {
+        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED) || !checkLifecycle) {
             Log.d("+===OnResume", "LifecycleOwner NOT STARTED");
             if (fullScreenContentCallback != null) {
                 try {
@@ -290,7 +291,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
             }
             return;
         }
-        if (!isShowingAd && isAdAvailable(isSplash)) {
+        if (!isShowingAd && isAdAvailable(false)) {
             isDismiss = true;
             FullScreenContentCallback callback =
                     new FullScreenContentCallback() {
@@ -313,7 +314,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
                                 fullScreenContentCallback.onAdDismissedFullScreenContent();
                             }
                             isShowingAd = false;
-                            fetchAd(isSplash);
+                            fetchAd(false);
                         }
 
                         @Override
@@ -331,7 +332,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
                             if (fullScreenContentCallback != null) {
                                 fullScreenContentCallback.onAdFailedToShowFullScreenContent(adError);
                             }
-                            fetchAd(isSplash);
+                            fetchAd(false);
                         }
 
                         @Override
@@ -345,9 +346,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
 
         } else {
             Log.d(TAG, "OnResume is showing or not available");
-            if (!isSplash) {
-                fetchAd(false);
-            }
+            fetchAd(false);
         }
     }
 
