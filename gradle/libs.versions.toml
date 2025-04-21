@@ -12,8 +12,8 @@ kotlin = "2.1.0"
 coreKtx = "1.13.1"
 appcompat = "1.6.1"
 kotlinReflect = "2.1.0"
-lifecycleProcess = "2.5.1"
-lifecycleRuntimeKtxVersion = "2.5.1"
+lifecycleProcess = "2.8.7"
+lifecycleRuntimeKtxVersion = "2.8.7"
 lottieVersion = "6.4.0"
 material = "1.12.0"
 activity = "1.9.0"
@@ -26,13 +26,15 @@ sdpAndroid = "1.1.1"
 shimmer = "0.5.0"
 userMessagingPlatform = "3.2.0"
 firebaseConfigKtx = "22.1.0"
+activityCompose = "1.10.1"
+composeBom = "2024.09.00"
 
 [libraries]
 adjust-android-v520 = { module = "com.adjust.sdk:adjust-android", version.ref = "adjustAndroidVersion" }
 adjust-android-webbridge-v520 = { module = "com.adjust.sdk:adjust-android-webbridge", version.ref = "adjustAndroidWebbridge" }
 androidx-appcompat-v170 = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-lifecycle-process-v251 = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleProcess" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleProcess" }
 androidx-lifecycle-runtime-ktx-v251 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 applovin = { module = "com.google.ads.mediation:applovin", version.ref = "applovin" }
 applovin-sdk = { module = "com.applovin:applovin-sdk", version.ref = "applovinSdk" }
@@ -53,9 +55,19 @@ sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 user-messaging-platform = { module = "com.google.android.ump:user-messaging-platform", version.ref = "userMessagingPlatform" }
 firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx", version.ref = "firebaseConfigKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

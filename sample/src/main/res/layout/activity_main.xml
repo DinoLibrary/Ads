@@ -80,6 +80,12 @@
                 android:layout_height="wrap_content"
                 android:text="load and show Inter with Native" />
 
+            <Button
+                android:id="@+id/btnComposeActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compose Activity" />
+
             <FrameLayout
                 android:id="@+id/flNative"
                 android:layout_width="match_parent"

@@ -6,11 +6,11 @@
     </entry>
     <entry>
         <key>inter_language</key>
-        <value>1</value>
+        <value>0</value>
     </entry>
     <entry>
         <key>native_language</key>
-        <value>1</value>
+        <value>0</value>
     </entry>
     <entry>
         <key>inter_intro</key>
@@ -18,7 +18,7 @@
     </entry>
     <entry>
         <key>native_intro</key>
-        <value>123</value>
+        <value>0</value>
     </entry>
     <entry>
         <key>native_intro_full</key>

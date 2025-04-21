@@ -9,4 +9,5 @@
     <string name="intro1_content">Weather forecast, Air quality, rainfall, wind…</string>
     <string name="intro2_content">Always update accurate weather information</string>
     <string name="intro3_content">Measure temperature with a smart thermometer</string>
+    <string name="title_activity_compose">ComposeActivity</string>
 </resources>

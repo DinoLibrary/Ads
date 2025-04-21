@@ -6,6 +6,7 @@ import com.dino.ads.admob.AdmobUtils
 import com.dino.ads.utils.addActivity
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
+import com.dino.sample.compose.ComposeActivity
 import com.dino.sample.databinding.ActivityMainBinding
 import com.dino.sample.utils.AdsManager
 
@@ -53,6 +54,9 @@ class MainActivity : AppCompatActivity() {
             AdmobUtils.loadAndShowInterstitial(this, RemoteConfig.INTER_HOME2, R.layout.ad_template_fullscreen) {
                 addActivity<InterDummyActivity>()
             }
+        }
+        binding.btnComposeActivity.setOnClickListener {
+            addActivity<ComposeActivity>()
         }
     }
 
