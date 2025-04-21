@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 
+import androidx.annotation.DisplayContext;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
@@ -30,6 +31,8 @@ import com.google.android.gms.ads.appopen.AppOpenAd;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import kotlin.UnsafeVariance;
 
 public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private static final String TAG = "+===OnResumeUtils";
@@ -225,6 +228,54 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
         }
     }
 
+    @Override
+    public void onStart(@NonNull LifecycleOwner owner) {
+//        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+//        protected void onMoveToForeground() {
+        Log.d(TAG, "LifecycleOwner onStart");
+        // Show the ad (if available) when the app moves to foreground.
+        new Handler().postDelayed(this::checkAndShowOnResume, 30);
+    }
+
+    /**
+     * ⚠️ DO NOT use this in Project unless you know what you are doing
+     */
+    public void checkAndShowOnResume() {
+        if (currentActivity == null ||
+                currentActivity.getClass() == AdActivity.class ||
+                AdmobUtils.isAdShowing ||
+                !AdmobUtils.isEnableAds
+        ) {
+            return;
+        }
+
+        if (AdmobUtils.isNativeInterShowing(currentActivity)) {
+            Log.e("+===OnResume", "Native inter is showing => disable on_resume");
+            return;
+        }
+
+        if (ApplovinUtils.INSTANCE.isClickAds()) {
+            ApplovinUtils.INSTANCE.setClickAds(false);
+            return;
+        }
+
+        for (Class activity : disabledAppOpenList) {
+            if (activity.getName().equals(currentActivity.getClass().getName())) {
+                Log.d(TAG, activity.getSimpleName() + " is disabled onResume");
+                return;
+            }
+        }
+
+        if (!isOnResumeEnable) {
+            Log.d("+===OnResume", "enableOnResume: false");
+            return;
+        } else {
+            Log.d("+===OnResume", "enableOnResume: true");
+            AdmobUtils.dismissAdDialog();
+        }
+        showAppOpenAd(false);
+    }
+
     public void showAppOpenAd(final boolean isSplash) {
         if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             Log.d("+===OnResume", "LifecycleOwner NOT STARTED");
@@ -311,49 +362,6 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
                 }
             }
         }, 100);
-    }
-
-    @Override
-    public void onStart(@NonNull LifecycleOwner owner) {
-//        @OnLifecycleEvent(Lifecycle.Event.ON_START)
-//        protected void onMoveToForeground() {
-        Log.d(TAG, "LifecycleOwner onStart");
-        // Show the ad (if available) when the app moves to foreground.
-        new Handler().postDelayed(() -> {
-            if (currentActivity == null ||
-                    currentActivity.getClass() == AdActivity.class ||
-                    AdmobUtils.isAdShowing ||
-                    !AdmobUtils.isEnableAds
-            ) {
-                return;
-            }
-
-            if (AdmobUtils.isNativeInterShowing(currentActivity)) {
-                Log.e("+===OnResume", "Native inter is showing => disable on_resume");
-                return;
-            }
-
-            if (ApplovinUtils.INSTANCE.isClickAds()) {
-                ApplovinUtils.INSTANCE.setClickAds(false);
-                return;
-            }
-
-            for (Class activity : disabledAppOpenList) {
-                if (activity.getName().equals(currentActivity.getClass().getName())) {
-                    Log.d(TAG, activity.getSimpleName() + " is disabled onResume");
-                    return;
-                }
-            }
-
-            if (!isOnResumeEnable) {
-                Log.d("+===OnResume", "enableOnResume: false");
-                return;
-            } else {
-                Log.d("+===OnResume", "enableOnResume: true");
-                AdmobUtils.dismissAdDialog();
-            }
-            showAppOpenAd(false);
-        }, 30);
     }
 
     public void showDialog(Context context) {

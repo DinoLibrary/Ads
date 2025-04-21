@@ -27,7 +27,7 @@ shimmer = "0.5.0"
 userMessagingPlatform = "3.2.0"
 firebaseConfigKtx = "22.1.0"
 activityCompose = "1.10.1"
-composeBom = "2024.09.00"
+composeBom = "2025.04.00"
 
 [libraries]
 adjust-android-v520 = { module = "com.adjust.sdk:adjust-android", version.ref = "adjustAndroidVersion" }
@@ -35,7 +35,7 @@ adjust-android-webbridge-v520 = { module = "com.adjust.sdk:adjust-android-webbri
 androidx-appcompat-v170 = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleProcess" }
-androidx-lifecycle-runtime-ktx-v251 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 applovin = { module = "com.google.ads.mediation:applovin", version.ref = "applovin" }
 applovin-sdk = { module = "com.applovin:applovin-sdk", version.ref = "applovinSdk" }
 applovin-sdk-v1320 = { module = "com.applovin:applovin-sdk", version.ref = "applovinSdkVersion" }

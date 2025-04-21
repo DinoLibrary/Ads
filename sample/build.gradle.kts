@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.applovin.sdk)
     implementation(libs.applovin)
     implementation(libs.play.services.ads)
-    implementation(libs.androidx.lifecycle.runtime.ktx.v251)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
