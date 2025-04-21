@@ -278,7 +278,7 @@ public class OnResumeUtils implements Application.ActivityLifecycleCallbacks, De
     }
 
     private void showAppOpenAd(boolean checkLifecycle) {
-        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED) || !checkLifecycle) {
+        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED) && checkLifecycle) {
             Log.d("+===OnResume", "LifecycleOwner NOT STARTED");
             if (fullScreenContentCallback != null) {
                 try {
