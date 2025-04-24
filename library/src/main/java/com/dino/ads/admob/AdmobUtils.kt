@@ -2101,7 +2101,14 @@ object AdmobUtils {
                 val layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                     gravity = if (holder.anchor == "top") Gravity.TOP else Gravity.BOTTOM
                 }
-                decorView?.addView(adViewCollap, layoutParams)
+                if (isNativeInterShowing(activity)) {
+                    if (layoutSmall == null) {
+                        NativeHelper.reConstraintNativeCollapView(adViewCollap)
+                        viewGroup.addView(adViewCollap)
+                    }
+                } else {
+                    decorView?.addView(adViewCollap, layoutParams)
+                }
                 if (layoutSmall != null) {
                     val adViewSmall = activity.layoutInflater.inflate(layoutSmall, null) as NativeAdView
                     populateNativeAdView(nativeAd, adViewSmall, AdNativeSize.SMALL)

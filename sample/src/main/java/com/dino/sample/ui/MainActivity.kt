@@ -13,6 +13,10 @@ import com.dino.sample.utils.AdsManager
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
+    override fun onStart() {
+        super.onStart()
+        AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME_COLLAP2, binding.flBanner)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
