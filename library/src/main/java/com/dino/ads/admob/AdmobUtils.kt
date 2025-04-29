@@ -20,6 +20,7 @@ import android.view.Window
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
@@ -930,6 +931,10 @@ object AdmobUtils {
 
     @JvmStatic
     fun loadAndShowInterstitial(activity: AppCompatActivity, holder: AdmobHolder, layout: Int, onFinished: () -> Unit) {
+        if (isNativeInterShowing(activity)) {
+            logE("ERROR: Native Inter is showing")
+            return
+        }
         destroyBannerCollapView()
         if (!isEnableAds || !isNetworkConnected(activity)) {
             onFinished()
@@ -965,6 +970,12 @@ object AdmobUtils {
             }
 
             "2" -> {
+                val callback = object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        //* Do nothing! Block back press.
+                    }
+                }
+
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -973,8 +984,11 @@ object AdmobUtils {
                 try {
                     container.tag = tag
                     decorView!!.addView(container)
+                    activity.onBackPressedDispatcher.addCallback(activity, callback)
                 } catch (e: Exception) {
                     logE("Native Inter: cannot add view to decorView")
+                    callback.isEnabled = false
+                    callback.remove()
                     onFinished()
                     return
                 }
@@ -988,6 +1002,8 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
+                    callback.isEnabled = false
+                    callback.remove()
                     onFinished()
                 }
 
@@ -995,6 +1011,8 @@ object AdmobUtils {
                 handler.postDelayed({
                     container.gone()
                     runCatching { decorView?.removeView(container) }
+                    callback.isEnabled = false
+                    callback.remove()
                     onFinished()
                 }, 15000) //* Timeout 15s for loading NativeFull
 
@@ -1011,6 +1029,8 @@ object AdmobUtils {
                         if (OnResumeUtils.getInstance().isInitialized) {
                             OnResumeUtils.getInstance().isOnResumeEnable = true
                         }
+                        callback.isEnabled = false
+                        callback.remove()
                         onFinished()
                     }
 
@@ -1018,6 +1038,12 @@ object AdmobUtils {
             }
 
             "3" -> {
+                val callback = object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        //* Do nothing! Block back press.
+                    }
+                }
+
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -1041,6 +1067,8 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
+                    callback.isEnabled = false
+                    callback.remove()
                     onFinished()
                 }
 
@@ -1056,11 +1084,9 @@ object AdmobUtils {
 
                 })
                 performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
-                    override fun onStartAction() {
-                    }
-
                     override fun onInterClosed() {
                         if (holder.isNativeReady()) {
+                            activity.onBackPressedDispatcher.addCallback(activity, callback)
                             btnClose.visible()
                             performShowNativeFull(
                                 activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
@@ -1075,6 +1101,8 @@ object AdmobUtils {
                                         }
                                         holder.nativeAd.removeObservers(activity)
                                         holder.nativeAd.value = null
+                                        callback.isEnabled = false
+                                        callback.remove()
                                         onFinished()
                                     }
 
@@ -1100,6 +1128,12 @@ object AdmobUtils {
             }
 
             "4" -> {
+                val callback = object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        //* Do nothing! Block back press.
+                    }
+                }
+
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -1123,6 +1157,8 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
+                    callback.isEnabled = false
+                    callback.remove()
                     onFinished()
                 }
 
@@ -1141,6 +1177,7 @@ object AdmobUtils {
                     override fun onInterClosed() {
                         if (holder.isNativeReady()) {
                             activity.lifecycleScope.launch(Dispatchers.Main) {
+                                activity.onBackPressedDispatcher.addCallback(activity, callback)
                                 tvTimer.visible()
                                 val timeOut = tvTimer.text.toString().toInt()
                                 for (i in timeOut downTo 0) {
@@ -1162,6 +1199,8 @@ object AdmobUtils {
                                     if (OnResumeUtils.getInstance().isInitialized) {
                                         OnResumeUtils.getInstance().isOnResumeEnable = true
                                     }
+                                    callback.isEnabled = false
+                                    callback.remove()
                                     onFinished()
                                 }
 

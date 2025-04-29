@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.admob.AdmobUtils
 import com.dino.ads.utils.addActivity
+import com.dino.ads.utils.log
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
 import com.dino.sample.compose.ComposeActivity
@@ -64,4 +65,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        log("onBackPressed")
+        super.onBackPressed()
+    }
 }
