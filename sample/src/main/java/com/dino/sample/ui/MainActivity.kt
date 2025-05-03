@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.admob.AdmobUtils
 import com.dino.ads.utils.addActivity
-import com.dino.ads.utils.log
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
 import com.dino.sample.compose.ComposeActivity
 import com.dino.sample.databinding.ActivityMainBinding
 import com.dino.sample.utils.AdsManager
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         AdsManager.loadAndShowBanner(this, RemoteConfig.BANNER_HOME_COLLAP2, binding.flBanner)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -63,10 +64,12 @@ class MainActivity : AppCompatActivity() {
         binding.btnComposeActivity.setOnClickListener {
             addActivity<ComposeActivity>()
         }
+
     }
 
     override fun onBackPressed() {
-        log("onBackPressed")
         super.onBackPressed()
+        finish()
+        exitProcess(0)
     }
 }

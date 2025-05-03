@@ -85,8 +85,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun nextActivity() {
-//        replaceActivity<LanguageActivity>()
-        replaceActivity<MainActivity>()
+        replaceActivity<LanguageActivity>()
+//        replaceActivity<MainActivity>()
     }
 
     private fun initApplovin() {

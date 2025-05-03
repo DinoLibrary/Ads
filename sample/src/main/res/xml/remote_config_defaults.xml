@@ -22,7 +22,7 @@
     </entry>
     <entry>
         <key>native_intro_full</key>
-        <value>2</value>
+        <value>12</value>
     </entry>
     <entry>
         <key>banner_home</key>
@@ -61,19 +61,11 @@
         <value>2</value>
     </entry>
     <entry>
-        <key>check_test_ad</key>
-        <value>0</value>
-    </entry>
-    <entry>
         <key>on_resume</key>
         <value>1</value>
     </entry>
     <entry>
         <key>enable_ads</key>
         <value>1</value>
-    </entry>
-    <entry>
-        <key>NATIVE_HOME_COLLAP2_ID</key>
-        <value>ca-app-pub-3940256099942544/1044960115</value>
     </entry>
 </defaultsMap>

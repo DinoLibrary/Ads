@@ -16,11 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-
 import com.dino.ads.utils.SweetAlert.SweetAlertDialog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -49,9 +50,6 @@ public class Utils {
     public void dismissProgress(Context context, String title, String hexcolor) {
         pDialog.dismissWithAnimation();
     }
-
-
-
 
     public String getCurrentCountry(Context context) {
         String countryCode = "";
@@ -105,6 +103,13 @@ public class Utils {
             return countryCode.toLowerCase();
         // general fallback to "us"
         return "us";
+    }
+
+    public List<String> zzd() {
+        return Arrays.asList("Anunciodeprueba", "Annoncetest", "테스트광고", "TestAd", "Annuncioditesto",
+                "Testanzeige", "TesIklan", "Quảngcáothửnghiệm", "Anúnciodeteste",
+                "পরীক্ষামূলকবিজ্ঞাপন", "जाँचविज्ञापन", "إعلانتجريبي", "Тестовоеобъявление"
+        );
     }
 
     @SuppressLint("PrivateApi")
@@ -185,7 +190,6 @@ public class Utils {
     }
 
 
-
     public void addActivity(Context context, Class activity) {
         Intent i = new Intent(context, activity);
         context.startActivity(i);
@@ -228,8 +232,5 @@ public class Utils {
         }
         transaction.commit();
     }
-
-
-
 
 }

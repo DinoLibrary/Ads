@@ -20,7 +20,6 @@ import android.view.Window
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
@@ -37,6 +36,7 @@ import com.dino.ads.admob.NativeHelper.Companion.populateNativeAdViewFull
 import com.dino.ads.admob.RemoteUtils.logId
 import com.dino.ads.cmp.GoogleMobileAdsConsentManager
 import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.utils.Utils
 import com.dino.ads.utils.dpToPx
 import com.dino.ads.utils.gone
 import com.dino.ads.utils.invisible
@@ -90,9 +90,6 @@ object AdmobUtils {
     //Ẩn hiện quảng cáo
     @JvmField
     var isEnableAds = false
-
-    @JvmField
-    var isPremium = false
 
     //Dùng ID Test để hiển thị quảng cáo
     @JvmField
@@ -853,7 +850,7 @@ object AdmobUtils {
 
         val remoteEntry = RemoteUtils.getValue("native_${holder.uid}", holder.versionCode)
         if (remoteEntry == "0") {
-            log("loadNativeIntros: Not load native language")
+            log("loadNativeLanguage: Not load native language")
             return
         } else {
             performLoadNative(context, holder.holders[0], callback)
@@ -970,12 +967,6 @@ object AdmobUtils {
             }
 
             "2" -> {
-                val callback = object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        //* Do nothing! Block back press.
-                    }
-                }
-
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -984,11 +975,9 @@ object AdmobUtils {
                 try {
                     container.tag = tag
                     decorView!!.addView(container)
-                    activity.onBackPressedDispatcher.addCallback(activity, callback)
+//                    activity.onBackPressedDispatcher.addCallback(activity, callback)
                 } catch (e: Exception) {
-                    logE("Native Inter: cannot add view to decorView")
-                    callback.isEnabled = false
-                    callback.remove()
+                    logE("Native Inter: ${e.message}")
                     onFinished()
                     return
                 }
@@ -1002,8 +991,6 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
-                    callback.isEnabled = false
-                    callback.remove()
                     onFinished()
                 }
 
@@ -1011,8 +998,6 @@ object AdmobUtils {
                 handler.postDelayed({
                     container.gone()
                     runCatching { decorView?.removeView(container) }
-                    callback.isEnabled = false
-                    callback.remove()
                     onFinished()
                 }, 15000) //* Timeout 15s for loading NativeFull
 
@@ -1029,8 +1014,6 @@ object AdmobUtils {
                         if (OnResumeUtils.getInstance().isInitialized) {
                             OnResumeUtils.getInstance().isOnResumeEnable = true
                         }
-                        callback.isEnabled = false
-                        callback.remove()
                         onFinished()
                     }
 
@@ -1038,12 +1021,6 @@ object AdmobUtils {
             }
 
             "3" -> {
-                val callback = object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        //* Do nothing! Block back press.
-                    }
-                }
-
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -1053,7 +1030,7 @@ object AdmobUtils {
                     container.tag = tag
                     decorView!!.addView(container)
                 } catch (e: Exception) {
-                    logE("Native Inter: cannot add view to decorView")
+                    logE("Native Inter: ${e.message}")
                     onFinished()
                     return
                 }
@@ -1067,8 +1044,6 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
-                    callback.isEnabled = false
-                    callback.remove()
                     onFinished()
                 }
 
@@ -1086,7 +1061,6 @@ object AdmobUtils {
                 performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
                     override fun onInterClosed() {
                         if (holder.isNativeReady()) {
-                            activity.onBackPressedDispatcher.addCallback(activity, callback)
                             btnClose.visible()
                             performShowNativeFull(
                                 activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
@@ -1101,8 +1075,6 @@ object AdmobUtils {
                                         }
                                         holder.nativeAd.removeObservers(activity)
                                         holder.nativeAd.value = null
-                                        callback.isEnabled = false
-                                        callback.remove()
                                         onFinished()
                                     }
 
@@ -1128,12 +1100,6 @@ object AdmobUtils {
             }
 
             "4" -> {
-                val callback = object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        //* Do nothing! Block back press.
-                    }
-                }
-
                 val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
                 val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
                 val btnClose = container.findViewById<View>(R.id.ad_close)
@@ -1143,7 +1109,7 @@ object AdmobUtils {
                     container.tag = tag
                     decorView!!.addView(container)
                 } catch (e: Exception) {
-                    logE("Native Inter: cannot add view to decorView")
+                    logE("Native Inter: ${e.message}")
                     onFinished()
                     return
                 }
@@ -1157,8 +1123,6 @@ object AdmobUtils {
                     }
                     container.gone()
                     runCatching { decorView?.removeView(container) }
-                    callback.isEnabled = false
-                    callback.remove()
                     onFinished()
                 }
 
@@ -1177,7 +1141,6 @@ object AdmobUtils {
                     override fun onInterClosed() {
                         if (holder.isNativeReady()) {
                             activity.lifecycleScope.launch(Dispatchers.Main) {
-                                activity.onBackPressedDispatcher.addCallback(activity, callback)
                                 tvTimer.visible()
                                 val timeOut = tvTimer.text.toString().toInt()
                                 for (i in timeOut downTo 0) {
@@ -1199,8 +1162,6 @@ object AdmobUtils {
                                     if (OnResumeUtils.getInstance().isInitialized) {
                                         OnResumeUtils.getInstance().isOnResumeEnable = true
                                     }
-                                    callback.isEnabled = false
-                                    callback.remove()
                                     onFinished()
                                 }
 
@@ -1595,31 +1556,16 @@ object AdmobUtils {
         }
     }
 
-    private fun checkTestAd(ad: NativeAd?) {
+    private fun aggregateErr(ad: NativeAd?) {
         if (!isEnableAds || isTesting) return
-        if (RemoteUtils.checkTestAd()) {
+        if (RemoteUtils.getValue("enable_ads") == "1") {
             try {
-                val testAdResponse = ad?.headline.toString().replace(" ", "").split(":")[0]
-                Log.d("+===CheckAdsTest", ad?.headline.toString().replace(" ", "").split(":")[0])
-                val testAdResponses = arrayOf(
-                    "TestAd",
-                    "Anunciodeprueba",
-                    "Annoncetest",
-                    "테스트광고",
-                    "Annuncioditesto",
-                    "Testanzeige",
-                    "TesIklan",
-                    "Anúnciodeteste",
-                    "Тестовоеобъявление",
-                    "পরীক্ষামূলকবিজ্ঞাপন",
-                    "जाँचविज्ञापन",
-                    "إعلانتجريبي",
-                    "Quảngcáothửnghiệm"
-                )
-                isEnableAds = !testAdResponses.contains(testAdResponse)
+                val x = ad?.headline.toString().replace(" ", "").split(":")[0]
+                val y = Utils.getInstance().zzd()
+                isEnableAds = !y.contains(x)
             } catch (e: Exception) {
                 isEnableAds = false
-                Log.d("+===CheckAdsTest", "Error ${e.message}")
+                Log.d("+===aggregateErr", "Error ${e.message}")
             }
         }
     }
@@ -1912,8 +1858,8 @@ object AdmobUtils {
                     AdjustUtils.postRevenueAdjustNative(nativeAd, adValue, adId)
                 }
             }
+            aggregateErr(nativeAd)
             callback.onNativeReady(nativeAd)
-            checkTestAd(nativeAd)
         }.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.e("+===AdmobNative", "onAdFailedToLoad" + adError.message)
@@ -2050,6 +1996,7 @@ object AdmobUtils {
             populateNativeAdView(nativeAd, adView, holder.nativeSize)
             if (reConstraint == true) NativeHelper.reConstraintNativeCollapView(adView)
             shimmerFrameLayout.stopShimmer()
+            aggregateErr(nativeAd)
             runCatching {
                 viewGroup.removeAllViews()
                 viewGroup.addView(adView)
@@ -2101,7 +2048,7 @@ object AdmobUtils {
             callback.onNativeFailed("Native Inter is showing")
             return
         }
-//        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
+        val videoOptions = VideoOptions.Builder().setStartMuted(false).build()
 //        val videoOptions = VideoOptions.Builder().setStartMuted(false).setCustomControlsRequested(false).build()
 //        val adOptions = NativeAdOptions.Builder().setMediaAspectRatio(holder.mediaAspectRatio).setVideoOptions(videoOptions).build()
         val tagView = activity.layoutInflater.inflate(R.layout.layout_banner_loading, null, false)
@@ -2125,6 +2072,7 @@ object AdmobUtils {
             callback.onNativeReady(nativeAd)
             val adViewCollap = activity.layoutInflater.inflate(layoutCollap, null) as NativeAdView
             adViewCollap.tag = tag
+            aggregateErr(nativeAd)
             populateNativeAdViewCollap(nativeAd, adViewCollap, holder.nativeSize, holder.anchor) {
                 runCatching { //* On icon collapse clicked
                     decorView?.removeView(adViewCollap)
@@ -2225,6 +2173,7 @@ object AdmobUtils {
         val videoOptions = VideoOptions.Builder().setStartMuted(false).setCustomControlsRequested(false).build()
         val adOptions = NativeAdOptions.Builder().setMediaAspectRatio(holder.mediaAspectRatio).setVideoOptions(videoOptions).build()
         builder.withNativeAdOptions(adOptions).forNativeAd { nativeAd ->
+            aggregateErr(nativeAd)
             nativeAd.setOnPaidEventListener { adValue: AdValue? ->
                 adValue?.let { AdjustUtils.postRevenueAdjustNative(nativeAd, it, adUnit = adId) }
             }
@@ -2262,14 +2211,15 @@ object AdmobUtils {
         val adId = if (holder.isNativeInter) {
             if (isTesting) {
                 context.logId("native_inter_${holder.uid}")
-                context.getString(R.string.test_admob_native_id)
+//                context.getString(R.string.test_admob_native_id)
+                context.getString(R.string.test_admob_native_full_screen_id)
             } else {
                 RemoteUtils.getAdId("native_inter_${holder.uid}")
             }
         } else {
             if (isTesting) {
                 context.logId("native_${holder.uid}_full")
-                context.getString(R.string.test_admob_native_id)
+                context.getString(R.string.test_admob_native_full_screen_id)
             } else {
                 RemoteUtils.getAdId("native_${holder.uid}_full")
             }
@@ -2289,8 +2239,8 @@ object AdmobUtils {
                     AdjustUtils.postRevenueAdjustNative(nativeAd, it, adUnit = adId)
                 }
             }
+            aggregateErr(nativeAd)
             adCallback.onNativeReady(nativeAd)
-            checkTestAd(nativeAd)
         }
         adLoader.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
@@ -2351,14 +2301,14 @@ object AdmobUtils {
                     val adId = if (holder.isNativeInter) {
                         if (isTesting) {
                             context.logId("native_inter_${holder.uid}")
-                            context.getString(R.string.test_admob_native_id)
+                            context.getString(R.string.test_admob_native_full_screen_id)
                         } else {
                             RemoteUtils.getAdId("native_inter_${holder.uid}")
                         }
                     } else {
                         if (isTesting) {
                             context.logId("native_${holder.uid}_full")
-                            context.getString(R.string.test_admob_native_id)
+                            context.getString(R.string.test_admob_native_full_screen_id)
                         } else {
                             RemoteUtils.getAdId("native_${holder.uid}_full")
                         }

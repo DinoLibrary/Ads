@@ -38,10 +38,8 @@ object RemoteUtils {
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             task.exception?.let { Log.e("+===RemoteConfig", "onComplete: $it") }
-//            if (task.isSuccessful) {
             AdmobUtils.isEnableAds = enableAds()
             onCompleted()
-//            }
         }
     }
 
@@ -58,9 +56,7 @@ object RemoteUtils {
         return adId
     }
 
-    fun checkTestAd() = getValue("check_test_ad") == "1"
-
-    fun enableAds() = getValue("enable_ads") == "1" && !AdmobUtils.isPremium
+    fun enableAds() = (getValue("enable_ads") == "1" || getValue("enable_ads") == "2")
 
     fun Context.logId(key: String) {
         if (!enableLogId) return

@@ -288,6 +288,7 @@ class NativeHelper {
                 ivCollap.isVisible = true
                 if (anchor == "top") ivCollap.rotation = 180f
                 ivCollap.setOnClickListener {
+                    adView.mediaView?.mediaContent = null
                     onCollapsed()
                 }
             }
