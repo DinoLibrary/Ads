@@ -142,23 +142,7 @@ class NativeHelper {
                 adView.iconView!!.visibility = View.VISIBLE
             }
 
-            // This method tells the Google Mobile Ads SDK that you have finished populating your
-            // native ad view with this native ad.
             adView.setNativeAd(nativeAd)
-
-            // Get the video controller for the ad. One will always be provided,
-            // even if the ad doesn't have a video asset.
-            val videoController = nativeAd.mediaContent!!.videoController
-
-            // Updates the UI to say whether or not this ad has a video asset.
-            if (videoController.hasVideoContent()) {
-                // Create a new VideoLifecycleCallbacks object and pass it to the VideoController.
-                // The VideoController will call methods on this object when events occur in the
-                // video lifecycle.
-                videoController.videoLifecycleCallbacks =
-                    object : VideoController.VideoLifecycleCallbacks() {
-                    }
-            }
         }
 
         fun populateNativeAdViewNoBtn(nativeAd: NativeAd, adView: NativeAdView, size: AdNativeSize) {
@@ -288,7 +272,6 @@ class NativeHelper {
                 ivCollap.isVisible = true
                 if (anchor == "top") ivCollap.rotation = 180f
                 ivCollap.setOnClickListener {
-                    adView.mediaView?.mediaContent = null
                     onCollapsed()
                 }
             }
@@ -297,15 +280,6 @@ class NativeHelper {
             }
 
             adView.setNativeAd(nativeAd)
-
-//            val vc = nativeAd.mediaContent!!.videoController
-//            if (vc.hasVideoContent()) {
-//                vc.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
-//                    override fun onVideoEnd() {
-//                        super.onVideoEnd()
-//                    }
-//                }
-//            }
         }
 
         fun reConstraintNativeCollapView(adView: NativeAdView) {

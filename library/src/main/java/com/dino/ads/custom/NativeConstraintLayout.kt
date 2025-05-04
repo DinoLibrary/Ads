@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.constraintlayout.widget.ConstraintLayout
 
-class ConstraintLayout @JvmOverloads constructor(
+class NativeConstraintLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -22,4 +22,5 @@ class ConstraintLayout @JvmOverloads constructor(
         }
         return super.dispatchKeyEvent(event)
     }
+
 }

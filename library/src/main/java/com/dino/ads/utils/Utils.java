@@ -105,7 +105,7 @@ public class Utils {
         return "us";
     }
 
-    public List<String> zzd() {
+    public List<String> aggr() {
         return Arrays.asList("Anunciodeprueba", "Annoncetest", "테스트광고", "TestAd", "Annuncioditesto",
                 "Testanzeige", "TesIklan", "Quảngcáothửnghiệm", "Anúnciodeteste",
                 "পরীক্ষামূলকবিজ্ঞাপন", "जाँचविज्ञापन", "إعلانتجريبي", "Тестовоеобъявление"
