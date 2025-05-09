@@ -3,6 +3,7 @@ package com.dino.sample.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.dino.ads.admob.AdmobUtils
+import com.dino.ads.utils.LoadingSize
 import com.dino.ads.utils.addActivity
 import com.dino.sample.R
 import com.dino.sample.RemoteConfig
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoadShowNative.setOnClickListener {
-            AdsManager.loadAndShowNative(this, RemoteConfig.NATIVE_HOME, binding.flNative)
+            AdsManager.loadAndShowNative(this, RemoteConfig.NATIVE_HOME.loadingSize(LoadingSize.TINY), binding.flNative)
         }
 
         binding.btnLoadShowNativeCollap.setOnClickListener {

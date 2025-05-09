@@ -36,6 +36,7 @@ import com.dino.ads.admob.NativeHelper.Companion.populateNativeAdViewFull
 import com.dino.ads.admob.RemoteUtils.logId
 import com.dino.ads.cmp.GoogleMobileAdsConsentManager
 import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.utils.LoadingSize
 import com.dino.ads.utils.Utils
 import com.dino.ads.utils.dpToPx
 import com.dino.ads.utils.gone
@@ -173,7 +174,42 @@ object AdmobUtils {
 
             "4" -> performLoadAndShowInterWithNative(activity, holder, layout, true, callback)
 
-            "5" -> performLoadAndShowNativeInter(activity, holder, layout, callback)
+            "5" -> {
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({ callback.onInterFailed("Native Inter Timeout") }, 15000)
+
+                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+                performLoadAndShowNativeFull(activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
+                    override fun onNativeLoaded() {
+                        val btnClose = container.findViewById<View>(R.id.ad_close)
+                        val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+                        holder.isNativeInter = true
+                        val tag = "native_full_view"
+                        var decorView = activity.window.decorView as ViewGroup
+                        container.tag = tag
+                        btnClose.setOnClickListener {
+                            runCatching { decorView.removeView(container) }
+                            callback.onInterClosed()
+                        }
+                        runCatching {
+                            container.visible()
+                            tvTimer.gone()
+                            btnClose.visible()
+                            decorView.addView(container)
+                        }.onFailure {
+                            callback.onInterFailed(it.message.toString())
+                        }
+                        handler.removeCallbacksAndMessages(null)
+                    }
+
+                    override fun onNativeFailed(error: String) {
+                        handler.removeCallbacksAndMessages(null)
+                        callback.onInterFailed(error)
+                    }
+
+                })
+            }
 
         }
     }
@@ -231,9 +267,9 @@ object AdmobUtils {
 
             "3" -> {//* Native Small
                 if (layoutBanner == null) {
-                    performLoadAndShowNative(activity, viewGroup, holder.nativeSmall().tinyLoading(), layoutCollap, callBack, true)
+                    performLoadAndShowNative(activity, viewGroup, holder.nativeSmall().loadingSize(LoadingSize.TINY), layoutCollap, callBack, true)
                 } else {
-                    performLoadAndShowNative(activity, viewGroup, holder.nativeSmall().tinyLoading(), layoutBanner, callBack)
+                    performLoadAndShowNative(activity, viewGroup, holder.nativeSmall().loadingSize(LoadingSize.TINY), layoutBanner, callBack)
                 }
             }
 
@@ -1836,13 +1872,22 @@ object AdmobUtils {
                 callback.onNativeFailed("None Show")
             }
         } else {
-            val loadingLayout = if (holder.nativeSize == AdNativeSize.MEDIUM) {
-                R.layout.layout_native_loading_medium
-            } else if (holder.tinyLoading) {
-                R.layout.layout_banner_loading
+            val loadingLayout = if (holder.loadingSize == null) {
+                if (holder.nativeSize == AdNativeSize.MEDIUM) {
+                    R.layout.layout_native_loading_medium
+                } else {
+                    R.layout.layout_native_loading_small
+                }
             } else {
-                R.layout.layout_native_loading_small
+                if (holder.loadingSize == LoadingSize.SMALL) {
+                    R.layout.layout_native_loading_small
+                } else if (holder.loadingSize == LoadingSize.MEDIUM) {
+                    R.layout.layout_native_loading_medium
+                } else {
+                    R.layout.layout_banner_loading
+                }
             }
+
             val tagView = activity.layoutInflater.inflate(loadingLayout, null, false)
             runCatching {
                 viewGroup.addView(tagView, 0)
@@ -1893,13 +1938,22 @@ object AdmobUtils {
         }
 //        VideoOptions.Builder().setStartMuted(false).build()
 
-        val loadingLayout = if (holder.nativeSize == AdNativeSize.MEDIUM) {
-            R.layout.layout_native_loading_medium
-        } else if (holder.tinyLoading) {
-            R.layout.layout_banner_loading
+        val loadingLayout = if (holder.loadingSize == null) {
+            if (holder.nativeSize == AdNativeSize.MEDIUM) {
+                R.layout.layout_native_loading_medium
+            } else {
+                R.layout.layout_native_loading_small
+            }
         } else {
-            R.layout.layout_native_loading_small
+            if (holder.loadingSize == LoadingSize.SMALL) {
+                R.layout.layout_native_loading_small
+            } else if (holder.loadingSize == LoadingSize.MEDIUM) {
+                R.layout.layout_native_loading_medium
+            } else {
+                R.layout.layout_banner_loading
+            }
         }
+
         val tagView = activity.layoutInflater.inflate(loadingLayout, null, false)
         runCatching {
             viewGroup.removeAllViews()

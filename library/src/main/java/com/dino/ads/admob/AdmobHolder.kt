@@ -2,6 +2,7 @@ package com.dino.ads.admob
 
 import androidx.lifecycle.MutableLiveData
 import com.dino.ads.utils.AdNativeSize
+import com.dino.ads.utils.LoadingSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MediaAspectRatio
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -10,36 +11,31 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 
 open class AdmobHolder(var uid: String = "") {
-    var enableLoadingDialog = true
-    var versionCode: Int? = null
+    internal var enableLoadingDialog = true
+    internal var versionCode: Int? = null
 
     //* Inter
-    var isInterLoading = false
-    val inter: MutableLiveData<InterstitialAd> = MutableLiveData()
-    var interCount: Int = 0
+    internal var isInterLoading = false
+    internal val inter: MutableLiveData<InterstitialAd> = MutableLiveData()
+    internal var interCount: Int = 0
 
     //* Reward
-    var isRewardLoading = false
-    val rewardInter: MutableLiveData<RewardedInterstitialAd> = MutableLiveData()
-    val reward: MutableLiveData<RewardedAd> = MutableLiveData()
+    internal var isRewardLoading = false
+    internal val rewardInter: MutableLiveData<RewardedInterstitialAd> = MutableLiveData()
+    internal val reward: MutableLiveData<RewardedAd> = MutableLiveData()
 
     //* Banner
-    var anchor = "bottom"
-        private set
-    var bannerAdView: AdView? = null
-    var dividerColor: String = "#000000"
-        private set
+    internal var anchor = "bottom"
+    internal var bannerAdView: AdView? = null
+    internal var dividerColor: String = "#000000"
 
     //* Native
-    var isNativeLoading = false
-    var nativeSize = AdNativeSize.MEDIUM
-        private set
-    var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
-    var mediaAspectRatio: Int = MediaAspectRatio.ANY
-        private set
-    var isNativeInter = false
-    var tinyLoading = false
-        private set
+    internal var isNativeLoading = false
+    internal var nativeSize = AdNativeSize.MEDIUM
+    internal var nativeAd: MutableLiveData<NativeAd> = MutableLiveData()
+    internal var mediaAspectRatio: Int = MediaAspectRatio.ANY
+    internal var isNativeInter = false
+    internal var loadingSize: LoadingSize? = null
 
     open fun version(versionCode: Int): AdmobHolder {
         this.versionCode = versionCode
@@ -73,8 +69,8 @@ open class AdmobHolder(var uid: String = "") {
      * Use tiny loading layout for Native Small
      * (Same as banner loading layout)
      */
-    fun tinyLoading(): AdmobHolder {
-        tinyLoading = true
+    fun loadingSize(size: LoadingSize): AdmobHolder {
+        loadingSize = size
         return this
     }
 

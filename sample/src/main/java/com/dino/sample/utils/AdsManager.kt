@@ -36,7 +36,6 @@ object AdsManager {
         AdmobUtils.loadNativeLanguage(context, holder, object : AdmobUtils.NativeCallback() {
             override fun onNativeReady(ad: NativeAd?) {
                 super.onNativeReady(ad)
-                log("Native Language Ready: ${holder.holders.first().nativeAd}")
             }
         })
     }
