@@ -7,6 +7,7 @@ import com.dino.ads.utils.replaceActivity
 import com.dino.ads.utils.toast
 import com.dino.ads.utils.visible
 import com.dino.demo.opening.LanguageModel
+import com.dino.sample.BuildConfig
 import com.dino.sample.RemoteConfig
 import com.dino.sample.databinding.ActivityLanguageBinding
 import com.dino.sample.utils.AdsManager
@@ -25,7 +26,7 @@ class LanguageActivity : AppCompatActivity() {
         binding.toolbar.navigationIcon = null
         binding.tvNext.gone()
         AdsManager.loadNativeFullscreen(this, RemoteConfig.NATIVE_INTRO_FULL)
-        AdsManager.loadNativeIntro(this, RemoteConfig.NATIVE_INTRO)
+        AdsManager.loadNativeIntro(this, RemoteConfig.NATIVE_INTRO.version(BuildConfig.VERSION_CODE))
         AdsManager.showNativeLanguage(this, RemoteConfig.NATIVE_LANGUAGE, binding.flNative, 0)
 
         languages = Common.getListLocation(this)

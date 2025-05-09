@@ -41,7 +41,7 @@ open class AdmobHolder(var uid: String = "") {
     var tinyLoading = false
         private set
 
-    fun version(versionCode: Int): AdmobHolder {
+    open fun version(versionCode: Int): AdmobHolder {
         this.versionCode = versionCode
         return this
     }

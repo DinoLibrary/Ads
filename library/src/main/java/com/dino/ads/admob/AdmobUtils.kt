@@ -57,7 +57,6 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.OnPaidEventListener
 import com.google.android.gms.ads.RequestConfiguration
-import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
@@ -66,7 +65,6 @@ import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -77,15 +75,19 @@ object AdmobUtils {
     private var dialogFullScreen: Dialog? = null
     var lastTimeShowInterstitial: Long = 0
     var timeOut = 10000
+
     @JvmField
     var isAdShowing = false
+
     @JvmField
     var isEnableAds = false
+
     @JvmField
     var isTesting = true
     private var isInitialized = false
     private var isConsented = false
     private var testDevices: MutableList<String> = ArrayList()
+
     @JvmField
     var mBannerCollapView: AdView? = null
     var mRewardedAd: RewardedAd? = null
@@ -138,7 +140,7 @@ object AdmobUtils {
     }
 
     @JvmStatic
-    fun loadAndShowAdSplash(activity: AppCompatActivity, holder: AdmobHolder, callback: InterCallback) {
+    fun loadAndShowAdSplash(activity: AppCompatActivity, holder: AdmobHolder, layout: Int, callback: InterCallback) {
         val remoteValue = RemoteUtils.getValue("ads_${holder.uid}", holder.versionCode)
         if (!isEnableAds || !isNetworkConnected(activity)) {
             callback.onInterFailed("Not show ads ${holder.uid}: remoteValue = 0")
@@ -165,9 +167,14 @@ object AdmobUtils {
                 }).loadAndShowAoa()
             }
 
-            "2" -> {
-                performLoadAndShowInterstitial(activity, holder, callback)
-            }
+            "2" -> performLoadAndShowInterstitial(activity, holder, callback)
+
+            "3" -> performLoadAndShowInterWithNative(activity, holder, layout, false, callback)
+
+            "4" -> performLoadAndShowInterWithNative(activity, holder, layout, true, callback)
+
+            "5" -> performLoadAndShowNativeInter(activity, holder, layout, callback)
+
         }
     }
 
@@ -916,243 +923,28 @@ object AdmobUtils {
             return
         }
 
-        holder.isNativeInter = true
-        val tag = "native_full_view"
-        var decorView: ViewGroup? = null
         runCatching {
-            decorView = activity.window.decorView as ViewGroup
-            decorView!!.findViewWithTag<View>(tag)?.let { decorView!!.removeView(it) }
+            val tag = "native_full_view"
+            val decorView = activity.window.decorView as ViewGroup
+            decorView.findViewWithTag<View>(tag)?.let { decorView.removeView(it) }
+        }
+        val callback = object : InterCallback() {
+            override fun onInterClosed() {
+                onFinished()
+            }
+
+            override fun onInterFailed(error: String) {
+                onFinished()
+            }
         }
         when (remoteValue.take(1)) {
-            "1" -> {
-                performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
-                    override fun onInterClosed() {
-                        onFinished()
-                    }
+            "1" -> performLoadAndShowInterstitial(activity, holder, callback)
 
-                    override fun onInterFailed(error: String) {
-                        onInterClosed()
-                    }
-                })
-            }
+            "2" -> performLoadAndShowNativeInter(activity, holder, layout, callback)
 
-            "2" -> {
-                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
-                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
-                val btnClose = container.findViewById<View>(R.id.ad_close)
-                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+            "3" -> performLoadAndShowInterWithNative(activity, holder, layout, false, callback)
 
-                try {
-                    container.tag = tag
-                    decorView!!.addView(container)
-//                    activity.onBackPressedDispatcher.addCallback(activity, callback)
-                } catch (e: Exception) {
-                    logE("Native Inter: ${e.message}")
-                    onFinished()
-                    return
-                }
-                container.visible()
-                OnResumeUtils.getInstance().isOnResumeEnable = false
-                tvTimer.gone()
-                btnClose.invisible()
-                btnClose.setOnClickListener {
-                    if (OnResumeUtils.getInstance().isInitialized) {
-                        OnResumeUtils.getInstance().isOnResumeEnable = true
-                    }
-                    container.gone()
-                    runCatching { decorView?.removeView(container) }
-                    onFinished()
-                }
-
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed({
-                    container.gone()
-                    runCatching { decorView?.removeView(container) }
-                    onFinished()
-                }, 10000) //* Timeout 10s for loading NativeFull
-
-                performLoadAndShowNativeFull(activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
-                    override fun onNativeLoaded() {
-                        btnClose.visible()
-                        handler.removeCallbacksAndMessages(null)
-                    }
-
-                    override fun onNativeFailed(error: String) {
-                        handler.removeCallbacksAndMessages(null)
-                        container.gone()
-                        runCatching { decorView?.removeView(container) }
-                        if (OnResumeUtils.getInstance().isInitialized) {
-                            OnResumeUtils.getInstance().isOnResumeEnable = true
-                        }
-                        onFinished()
-                    }
-
-                })
-            }
-
-            "3" -> {
-                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
-                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
-                val btnClose = container.findViewById<View>(R.id.ad_close)
-                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
-
-                try {
-                    container.tag = tag
-                    decorView!!.addView(container)
-                } catch (e: Exception) {
-                    logE("Native Inter: ${e.message}")
-                    onFinished()
-                    return
-                }
-                container.visible()
-//                OnResumeUtils.getInstance().isOnResumeEnable = false
-                tvTimer.gone()
-                btnClose.invisible()
-                btnClose.setOnClickListener {
-                    if (OnResumeUtils.getInstance().isInitialized) {
-                        OnResumeUtils.getInstance().isOnResumeEnable = true
-                    }
-                    container.gone()
-                    runCatching { decorView?.removeView(container) }
-                    onFinished()
-                }
-
-                performLoadNativeFull(activity, holder, object : NativeCallback() {
-                    override fun onNativeReady(ad: NativeAd?) {
-                    }
-
-                    override fun onNativeFailed(error: String) {
-                    }
-
-                    override fun onNativeClicked() {
-                    }
-
-                })
-                performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
-                    override fun onInterClosed() {
-                        if (holder.isNativeReady()) {
-                            btnClose.visible()
-                            performShowNativeFull(
-                                activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
-                                    override fun onNativeLoaded() {
-                                    }
-
-                                    override fun onNativeFailed(error: String) {
-                                        container.gone()
-                                        runCatching { decorView?.removeView(container) }
-                                        if (OnResumeUtils.getInstance().isInitialized) {
-                                            OnResumeUtils.getInstance().isOnResumeEnable = true
-                                        }
-                                        holder.nativeAd.removeObservers(activity)
-                                        holder.nativeAd.value = null
-                                        onFinished()
-                                    }
-
-                                })
-                        } else {
-                            container.gone()
-                            runCatching { decorView?.removeView(container) }
-                            if (OnResumeUtils.getInstance().isInitialized) {
-                                OnResumeUtils.getInstance().isOnResumeEnable = true
-                            }
-                            holder.nativeAd.removeObservers(activity)
-                            holder.nativeAd.value = null
-                            onFinished()
-                        }
-                    }
-
-                    override fun onInterFailed(error: String) {
-                        log("inter failed: $error")
-                        onInterClosed()
-                    }
-
-                })
-            }
-
-            "4" -> {
-                val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
-                val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
-                val btnClose = container.findViewById<View>(R.id.ad_close)
-                val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
-
-                try {
-                    container.tag = tag
-                    decorView!!.addView(container)
-                } catch (e: Exception) {
-                    logE("Native Inter: ${e.message}")
-                    onFinished()
-                    return
-                }
-                container.visible()
-//                OnResumeUtils.getInstance().isOnResumeEnable = false
-                tvTimer.gone()
-                btnClose.invisible()
-                btnClose.setOnClickListener {
-                    if (OnResumeUtils.getInstance().isInitialized) {
-                        OnResumeUtils.getInstance().isOnResumeEnable = true
-                    }
-                    container.gone()
-                    runCatching { decorView?.removeView(container) }
-                    onFinished()
-                }
-
-                performLoadNativeFull(activity, holder, object : NativeCallback() {
-                    override fun onNativeReady(ad: NativeAd?) {
-                    }
-
-                    override fun onNativeFailed(error: String) {
-                    }
-
-                    override fun onNativeClicked() {
-                    }
-
-                })
-                performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
-                    override fun onInterClosed() {
-                        if (holder.isNativeReady()) {
-                            activity.lifecycleScope.launch(Dispatchers.Main) {
-                                tvTimer.visible()
-                                val timeOut = tvTimer.text.toString().toInt()
-                                for (i in timeOut downTo 0) {
-                                    tvTimer.text = i.toString()
-                                    delay(1000)
-                                }
-                                tvTimer.gone()
-                                tvTimer.text = timeOut.toString()
-                                delay(1000)
-                                btnClose.visible()
-                            }
-                            performShowNativeFull(activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
-                                override fun onNativeLoaded() {
-                                }
-
-                                override fun onNativeFailed(error: String) {
-                                    container.gone()
-                                    runCatching { decorView?.removeView(container) }
-                                    if (OnResumeUtils.getInstance().isInitialized) {
-                                        OnResumeUtils.getInstance().isOnResumeEnable = true
-                                    }
-                                    onFinished()
-                                }
-
-                            })
-                        } else {
-                            container.gone()
-                            runCatching { decorView?.removeView(container) }
-                            if (OnResumeUtils.getInstance().isInitialized) {
-                                OnResumeUtils.getInstance().isOnResumeEnable = true
-                            }
-                            onFinished()
-                        }
-                    }
-
-                    override fun onInterFailed(error: String) {
-                        log("inter failed: $error")
-                        onInterClosed()
-                    }
-
-                })
-            }
+            "4" -> performLoadAndShowInterWithNative(activity, holder, layout, true, callback)
 
             else -> {
                 log("loadAndShowInter: remoteValue = $remoteValue")
@@ -1194,6 +986,171 @@ object AdmobUtils {
         }.onFailure {
             logE("destroyBannerCollapView: ${it.message}")
         }
+    }
+
+    private fun performLoadAndShowNativeInter(activity: AppCompatActivity, holder: AdmobHolder, layout: Int, callback: InterCallback) {
+        val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+        val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+        val btnClose = container.findViewById<View>(R.id.ad_close)
+        val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+
+        holder.isNativeInter = true
+        val tag = "native_full_view"
+        var decorView: ViewGroup? = null
+        try {
+            decorView = activity.window.decorView as ViewGroup
+            decorView.findViewWithTag<View>(tag)?.let { decorView.removeView(it) }
+            container.tag = tag
+            decorView.addView(container)
+        } catch (e: Exception) {
+            logE("Native Inter: ${e.message}")
+            callback.onInterFailed(e.message.toString())
+            return
+        }
+
+        container.visible()
+        OnResumeUtils.getInstance().isOnResumeEnable = false
+        tvTimer.gone()
+        btnClose.invisible()
+        btnClose.setOnClickListener {
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isOnResumeEnable = true
+            }
+            container.gone()
+            runCatching { decorView.removeView(container) }
+            callback.onInterClosed()
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            container.gone()
+            runCatching { decorView.removeView(container) }
+            callback.onInterFailed("Native Inter Timeout")
+        }, 10000) //* Timeout 10s for loading NativeFull
+
+        performLoadAndShowNativeFull(activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
+            override fun onNativeLoaded() {
+                btnClose.visible()
+                handler.removeCallbacksAndMessages(null)
+            }
+
+            override fun onNativeFailed(error: String) {
+                handler.removeCallbacksAndMessages(null)
+                container.gone()
+                runCatching { decorView.removeView(container) }
+                if (OnResumeUtils.getInstance().isInitialized) {
+                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                }
+                callback.onInterFailed(error)
+            }
+
+        })
+    }
+
+    private fun performLoadAndShowInterWithNative(
+        activity: AppCompatActivity,
+        holder: AdmobHolder,
+        layout: Int,
+        wait5s: Boolean,
+        callback: InterCallback
+    ) {
+        val container = activity.layoutInflater.inflate(R.layout.ad_native_inter_container, null, false)
+        val viewGroup = container.findViewById<FrameLayout>(R.id.viewGroup)
+        val btnClose = container.findViewById<View>(R.id.ad_close)
+        val tvTimer = container.findViewById<TextView>(R.id.ad_timer)
+
+        holder.isNativeInter = true
+        val tag = "native_full_view"
+        var decorView: ViewGroup? = null
+        try {
+            decorView = activity.window.decorView as ViewGroup
+            decorView.findViewWithTag<View>(tag)?.let { decorView.removeView(it) }
+            container.tag = tag
+            decorView.addView(container)
+        } catch (e: Exception) {
+            logE("Native Inter: ${e.message}")
+            callback.onInterFailed(e.message.toString())
+            return
+        }
+        container.visible()
+//                OnResumeUtils.getInstance().isOnResumeEnable = false
+        tvTimer.gone()
+        btnClose.invisible()
+        btnClose.setOnClickListener {
+            if (OnResumeUtils.getInstance().isInitialized) {
+                OnResumeUtils.getInstance().isOnResumeEnable = true
+            }
+            container.gone()
+            runCatching { decorView.removeView(container) }
+            callback.onInterClosed()
+        }
+
+        performLoadNativeFull(activity, holder, object : NativeCallback() {
+            override fun onNativeReady(ad: NativeAd?) {
+            }
+
+            override fun onNativeFailed(error: String) {
+            }
+
+            override fun onNativeClicked() {
+            }
+
+        })
+        performLoadAndShowInterstitial(activity, holder, object : InterCallback() {
+            override fun onInterClosed() {
+                if (holder.isNativeReady()) {
+                    if (wait5s) {
+                        activity.lifecycleScope.launch(Dispatchers.Main) {
+                            tvTimer.visible()
+                            val timeOut = tvTimer.text.toString().toInt()
+                            for (i in timeOut downTo 0) {
+                                tvTimer.text = i.toString()
+                                delay(1000)
+                            }
+                            tvTimer.gone()
+                            tvTimer.text = timeOut.toString()
+                            delay(1000)
+                            btnClose.visible()
+                        }
+                    } else {
+                        btnClose.visible()
+                    }
+
+                    performShowNativeFull(
+                        activity, viewGroup, holder, layout, object : NativeCallbackSimple() {
+                            override fun onNativeLoaded() {
+                            }
+
+                            override fun onNativeFailed(error: String) {
+                                container.gone()
+                                runCatching { decorView.removeView(container) }
+                                if (OnResumeUtils.getInstance().isInitialized) {
+                                    OnResumeUtils.getInstance().isOnResumeEnable = true
+                                }
+                                holder.nativeAd.removeObservers(activity)
+                                holder.nativeAd.value = null
+                                callback.onInterFailed(error)
+                            }
+
+                        })
+                } else {
+                    container.gone()
+                    runCatching { decorView.removeView(container) }
+                    if (OnResumeUtils.getInstance().isInitialized) {
+                        OnResumeUtils.getInstance().isOnResumeEnable = true
+                    }
+                    holder.nativeAd.removeObservers(activity)
+                    holder.nativeAd.value = null
+                    callback.onInterFailed("Native Inter not ready")
+                }
+            }
+
+            override fun onInterFailed(error: String) {
+                log("inter failed: $error")
+                onInterClosed()
+            }
+
+        })
     }
 
     private fun performLoadInterstitial(context: Context, holder: AdmobHolder, callback: LoadInterCallback) {

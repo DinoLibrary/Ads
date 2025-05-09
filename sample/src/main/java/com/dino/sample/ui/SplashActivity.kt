@@ -73,7 +73,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun showInterOrAoa() {
-        AdmobUtils.loadAndShowAdSplash(this, RemoteConfig.ADS_SPLASH, object : AdmobUtils.InterCallback() {
+        AdmobUtils.loadAndShowAdSplash(this, RemoteConfig.ADS_SPLASH, R.layout.ad_template_fullscreen, object : AdmobUtils.InterCallback() {
             override fun onInterClosed() {
                 nextActivity()
             }
